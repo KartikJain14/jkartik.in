@@ -81,8 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
         - Rapid learner with a strong ability to adapt to new technologies<br>
         - Strong communication and interpersonal skills<br>
         - Strong problem-solving skills<br>
-        - Managed a team of 15+ developers for ACM MPSTME's Technical Team<br>
-        - Managed a team of 5+ developers for NMIMS' official Technical Fest
+        - Supercore at ACM MPSTME 25-26, leading over 150 students to achieve digital literacy.<br>
         `,
         whoami: `<a href="https://jkartik.in" class="custom-link">Kartik Jain</a> | Backend Developer`,
 
