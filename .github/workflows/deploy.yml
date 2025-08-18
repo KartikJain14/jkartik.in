@@ -19,6 +19,6 @@ jobs:
     - name: Deploy to Server using SSH with password
       run: |
         sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no "${{ secrets.SSH_USER }}"@"${{ secrets.SSH_HOST }}" << 'EOF'
-          cd /home/"${{ secrets.SSH_USER }}"/sites/portfolio || exit
+          cd /home/"${{ secrets.SSH_USER }}"/sites/jkartik.in || exit
           git pull origin main || exit
         EOF
