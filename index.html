@@ -1,53 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Meta Tags -->
-    <meta charset="UTF-8">
-    <meta property="og:title" content="Kartik Jain's Portfolio">
-    <meta property="og:locale" content="en_US">
-    <meta property="og:description" content="Explore the terminal based portfolio of Kartik Jain, a passionate software developer. Discover projects, skills, and more.">
-    <meta property="og:image" content="https://jkartik.in/kartik.png">
-    <meta property="og:url" content="https://jkartik.in">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="Kartik Jain's Portfolio">
-    <meta name="twitter:title" content="Kartik Jain's Portfolio">
-    <meta name="twitter:description" content="Explore the terminal based portfolio of Kartik Jain, a passionate software developer. Discover projects, skills, and more.">
-    <meta name="twitter:image" content="https://jkartik.in/kartik.png">
-    <meta name="twitter:site" content="@kartikjain1410">
-    <meta name="twitter:creator" content="@kartikjain1410">
-    <meta name="description" content="Explore the portfolio of Kartik Jain, a passionate software developer. Discover projects, skills, and more.">
-    <meta name="keywords" content="Kartik Jain, Backend Developer, Cybersecurity Enthusiast, Portfolio, Software Developer, Projects, Skills">
-    <meta name="author" content="Kartik Jain">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#001a33">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Kartik Jain | Portfolio</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Umami Analytics -->
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="2d866edd-cb4c-4a8e-90b2-f2152ce0a813"></script>
+<title>Kartik Jain – Software Developer | jkartik.in</title>
+
+<meta name="description" content="Kartik Jain is a software developer and backend engineer. Explore his terminal-based portfolio showcasing projects, cybersecurity work, and developer tools.">
+<meta name="keywords" content="Kartik Jain, Software Developer, Backend Developer, Cybersecurity Enthusiast, Portfolio">
+<meta name="author" content="Kartik Jain">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#001a33">
+
+<link rel="canonical" href="https://jkartik.in">
+
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="styles.css">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Kartik Jain – Software Developer">
+<meta property="og:description" content="Explore the terminal based portfolio of Kartik Jain, a passionate software developer.">
+<meta property="og:image" content="https://jkartik.in/kartik.png">
+<meta property="og:url" content="https://jkartik.in">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kartik Jain – Software Developer">
+<meta name="twitter:description" content="Terminal-style portfolio of Kartik Jain. Projects, skills and development work.">
+<meta name="twitter:image" content="https://jkartik.in/kartik.png">
+<meta name="twitter:site" content="@kartikjain1410">
+<meta name="twitter:creator" content="@kartikjain1410">
+
+<!-- Structured Data for Google -->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Person",
+ "name": "Kartik Jain",
+ "url": "https://jkartik.in",
+ "image": "https://jkartik.in/kartik.png",
+ "jobTitle": "Software Developer",
+ "sameAs": [
+   "https://github.com/KartikJain14",
+   "https://linkedin.com/in/kartikjain1410",
+   "https://twitter.com/kartikjain1410"
+ ]
+}
+</script>
+
+<!-- Umami Analytics -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="2d866edd-cb4c-4a8e-90b2-f2152ce0a813"></script>
+
 </head>
+
 <body>
-    <div id="terminal-wrapper">
-        <div id="terminal-container">
-            <div id="terminal">
-                <div id="output"></div>
-                <div class="input-line">
-                    <span class="prompt">λ</span>
-                    <div class="autocomplete-container">
-                        <span id="inputMirror"></span>
-                        <input type="text" id="commandInput" autofocus autocomplete="off">
-                        <span id="autocompleteHint"></span>
-                    </div>
+
+<!-- Hidden SEO Content -->
+<div style="display:none">
+
+<h1>Kartik Jain – Software Developer</h1>
+
+<p>
+Kartik Jain is a software developer and backend engineer based in India.
+He builds developer tools, backend systems, and cybersecurity related projects.
+This website jkartik.in is the official portfolio of Kartik Jain where he
+showcases projects, technical skills, and development work.
+</p>
+
+<p>
+Profiles:
+GitHub: https://github.com/KartikJain14
+LinkedIn: https://linkedin.com/in/kartikjain1410
+</p>
+
+</div>
+
+<!-- Terminal UI -->
+<div id="terminal-wrapper">
+    <div id="terminal-container">
+        <div id="terminal">
+            <div id="output"></div>
+
+            <div class="input-line">
+                <span class="prompt">λ</span>
+
+                <div class="autocomplete-container">
+                    <span id="inputMirror"></span>
+
+                    <input type="text"
+                           id="commandInput"
+                           autofocus
+                           autocomplete="off">
+
+                    <span id="autocompleteHint"></span>
                 </div>
             </div>
-        </div>
 
-        <div id="command-bar"></div>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <div id="command-bar"></div>
+</div>
+
+<script src="script.js"></script>
+
 </body>
 </html>
