@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1
 
 # ---- build stage: compile the Astro site to static files in /app/dist ----
-FROM node:22-alpine AS build
+# Pin to the builder's native arch ($BUILDPLATFORM): the output (dist/) is just static
+# files, so we build once natively (fast) and reuse it for every target platform below.
+FROM --platform=$BUILDPLATFORM node:22-alpine AS build
 WORKDIR /app
 
 # git -> the sitemap derives each URL's <lastmod> from that file's last commit date.
