@@ -1,0 +1,22 @@
+---
+import { coverFor } from '../lib/covers';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { post: CollectionEntry<'blog'>; style?: string }
+const { post, style } = Astro.props;
+
+const cover = post.data.cover ?? coverFor(post.data.tag);
+const date = post.data.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+const dateISO = post.data.date.toISOString();
+const words = (post.body ?? '').trim().split(/\s+/).length;
+const mins = Math.max(1, Math.round(words / 200));
+---
+<a class="card reveal" href={`/blog/${post.id}/`} style={style}>
+  <img class="card-cover" alt="" loading="lazy" src={cover} />
+  <div class="card-body">
+    <span class="card-tag">{post.data.tag}</span>
+    <h3>{post.data.title}</h3>
+    <p class="card-excerpt">{post.data.description}</p>
+    <span class="card-meta"><time datetime={dateISO}>{date}</time> · {mins} min read</span>
+  </div>
+</a>

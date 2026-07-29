@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { coverFor } from '../../lib/covers';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const [featured, ...rest] = posts;
+const fCover = featured?.data.cover ?? coverFor(featured?.data.tag, 630);
+const fDate = featured?.data.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+const fWords = (featured?.body ?? '').trim().split(/\s+/).length;
+const fMins = Math.max(1, Math.round(fWords / 200));
+---
+<Base
+  title="Writing — Kartik Jain"
+  description="Notes on backend engineering and security research by Kartik Jain — what broke, what shipped, and what to do differently."
+  active="blog"
+>
+  <header class="wrap-wide page-head">
+    <a class="crumb hero-in" href="/">← Home</a>
+    <h1 class="hero-in" style="--d:.06s"><em>Writing</em></h1>
+    <p class="intro hero-in" style="--d:.12s">Notes on backend engineering and security research — what broke, what I shipped, and what I'd do differently.</p>
+  </header>
+
+  <main class="wrap-wide">
+    {featured && (
+      <a class="featured reveal" href={`/blog/${featured.id}/`}>
+        <img class="cover" alt="" src={fCover} />
+        <div class="body">
+          <span class="flag">Latest · {featured.data.tag}</span>
+          <h2>{featured.data.title}</h2>
+          <p class="excerpt">{featured.data.description}</p>
+          <span class="meta">{fDate} · {fMins} min read</span>
+        </div>
+      </a>
+    )}
+
+    {rest.length > 0 && <h2 class="list-label reveal">All posts</h2>}
+
+    <div class="cards three">
+      {rest.map((post, i) => <PostCard post={post} style={`--d:${0.04 + (i % 3) * 0.04}s`} />)}
+    </div>
+  </main>
+</Base>

@@ -1,0 +1,190 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { disclosures } from '../data/disclosures';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const latest = posts.slice(0, 4);
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://jkartik.in/#kartik',
+      name: 'Kartik Jain',
+      alternateName: 'jkartik',
+      url: 'https://jkartik.in/',
+      image: 'https://jkartik.in/kartik.png',
+      description:
+        'Backend engineer and security researcher in Mumbai, India. Builds production backend systems; has reported vulnerabilities to Meta, Microsoft, and CERT-In. Available for freelance work.',
+      jobTitle: ['Backend Engineer', 'Security Researcher'],
+      email: 'mailto:contact@jkartik.in',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Mumbai',
+        addressRegion: 'Maharashtra',
+        addressCountry: 'IN',
+      },
+      alumniOf: {
+        '@type': 'CollegeOrUniversity',
+        name: 'NMIMS Mukesh Patel School of Technology Management and Engineering',
+      },
+      knowsAbout: [
+        'Backend Development', 'Application Security', 'Penetration Testing',
+        'Vulnerability Research', 'Node.js', 'TypeScript', 'Python', 'FastAPI',
+        'PostgreSQL', 'Docker', 'Redis', 'AWS', 'Linux', 'API Design',
+      ],
+      sameAs: [
+        'https://github.com/KartikJain14',
+        'https://linkedin.com/in/kartikjain1410',
+        'https://twitter.com/kartikjain1410',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://jkartik.in/#website',
+      url: 'https://jkartik.in/',
+      name: 'Kartik Jain',
+      inLanguage: 'en',
+      author: { '@id': 'https://jkartik.in/#kartik' },
+      publisher: { '@id': 'https://jkartik.in/#kartik' },
+    },
+    {
+      '@type': 'ProfilePage',
+      '@id': 'https://jkartik.in/#profilepage',
+      url: 'https://jkartik.in/',
+      name: 'Kartik Jain — Backend Engineer & Security Researcher',
+      isPartOf: { '@id': 'https://jkartik.in/#website' },
+      about: { '@id': 'https://jkartik.in/#kartik' },
+      mainEntity: { '@id': 'https://jkartik.in/#kartik' },
+    },
+  ],
+};
+---
+<Base
+  title="Kartik Jain — Backend Engineer & Security Researcher"
+  description="Kartik Jain is a backend engineer and security researcher in Mumbai, India. He builds production backend systems and has reported vulnerabilities to Meta, Microsoft, and CERT-In. Available for freelance work."
+  ogType="profile"
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <header class="hero wrap">
+    <div>
+      <p class="kicker hero-in"><span id="kicker">MUMBAI · OPEN TO FREELANCE WORK</span></p>
+      <h1 class="hero-in" style="--d:.08s">Kartik Jain</h1>
+      <p class="tagline hero-in" style="--d:.16s">Backend engineer &amp; <em>security researcher</em>. I build production systems — and <em>break</em> the rest.</p>
+      <ul class="quick hero-in" style="--d:.24s">
+        <li><a class="primary" href="/Kartik_Resume.pdf">Résumé</a></li>
+        <li><a href="/blog/">Blogs</a></li>
+        <li><a href="https://github.com/KartikJain14">GitHub</a></li>
+        <li><a href="https://linkedin.com/in/kartikjain1410">LinkedIn</a></li>
+        <li><a href="https://twitter.com/kartikjain1410">Twitter</a></li>
+        <li><a href="mailto:contact@jkartik.in">Email</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="home wrap">
+
+    <section id="about">
+      <h2 class="label reveal">About</h2>
+      <p class="reveal" style="--d:.05s; max-width:40em">
+        I've reported vulnerabilities to <strong>Meta</strong>, <strong>Microsoft</strong>, and the&nbsp;
+        <strong>Mumbai Police</strong> (through CERT-In), and my backends have handled payments,
+        ticketing, and media for events with thousands of attendees.
+      </p>
+      <p class="reveal" style="--d:.1s; max-width:40em; margin-top:1rem">
+        I'm studying IT at NMIMS Mumbai (class of 2028) and working as a security engineer intern at
+        R.U.D.R.A Cybersecurity. I take on <strong>freelance work</strong> — security assessments,
+        penetration testing, and backend or API builds. The fastest way to reach me is&nbsp;
+        <a href="mailto:contact@jkartik.in" style="color:var(--accent)">contact@jkartik.in</a>.
+      </p>
+    </section>
+
+    <section id="research">
+      <h2 class="label reveal">Security research</h2>
+      {disclosures.slice(0, 5).map((d, i) => (
+        <div class="row reveal" style={`--d:${0.05 + i * 0.05}s`}>
+          <span class="org">{d.org}</span>
+          <span class="finding">{d.summary}</span>
+        </div>
+      ))}
+      <p class="aside reveal" style="--d:.3s">On the defensive side: hardened infrastructure protecting <strong>16,000+ users' data</strong>, and stopped a ransomware incident with a backup-and-recovery deployment under pressure.</p>
+      <div class="see-more-wrap reveal" style="--d:.35s">
+        <a class="see-more" href="/research/">See more <span class="arr">&rarr;</span></a>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="section-head">
+        <h2 class="label reveal">Projects</h2>
+        <a class="all-link reveal" style="--d:.05s" href="/projects/">All projects &rarr;</a>
+      </div>
+      {projects.slice(0, 6).map((p, i) => (
+        <a class="row row-lg reveal" style={`--d:${0.05 + i * 0.05}s`} href={`/projects/${p.id}/`}>
+          <span class="name">{p.data.title}<span class="arrow">&nearr;</span></span>
+          <span class="desc">
+            {p.data.description}
+            {p.data.stack.length > 0 && <span class="stack">{p.data.stack.join(' · ')}</span>}
+          </span>
+        </a>
+      ))}
+      <div class="see-more-wrap reveal">
+        <a class="see-more" href="/projects/">See all projects <span class="arr">&rarr;</span></a>
+      </div>
+    </section>
+
+    <section id="writing">
+      <div class="section-head">
+        <h2 class="label reveal">Writing</h2>
+        <a class="all-link reveal" style="--d:.05s" href="/blog/">All posts &rarr;</a>
+      </div>
+      <div class="cards">
+        {latest.map((post, i) => <PostCard post={post} style={`--d:${0.05 + i * 0.05}s`} />)}
+      </div>
+    </section>
+
+    <section id="experience">
+      <h2 class="label reveal">Experience</h2>
+      <div class="xp-head reveal" style="--d:.05s">
+        <h3>R.U.D.R.A Cybersecurity</h3>
+        <span class="role">Security engineer intern</span>
+      </div>
+      <div class="xp">
+        <ul>
+          <li class="reveal" style="--d:.1s">Automated attack-surface monitoring with <strong>BBOT</strong>, cutting ~$20k/yr of manual work.</li>
+          <li class="reveal" style="--d:.15s">Built a custom <strong>Semgrep</strong> module with findings visualized in Neo4j.</li>
+          <li class="reveal" style="--d:.2s">Found two high-severity vulns (<strong>LFI, broken access control</strong>) in a banking client's portal via manual code review; automated detection with Nuclei.</li>
+          <li class="reveal" style="--d:.25s">Purple-team exercises with <strong>Sliver C2</strong>.</li>
+        </ul>
+      </div>
+      <div class="xp-head reveal" style="--d:.3s">
+        <h3><a href="https://mpstmeacm.com">ACM MPSTME</a></h3>
+        <span class="role">Chairperson</span>
+      </div>
+      <div class="xp">
+        <ul>
+          <li class="reveal" style="--d:.34s">Chairperson of <strong>ACM MPSTME</strong> (since 2026), my college's computing society — leading its technical direction. Head of Technical Department across NMIMS's biggest student bodies in 2025–26: <a href="https://taqneeqfest.com">Taqneeq</a> (the tech fest), <a href="https://munsocietympstme.com">MUN Society</a> / Mumbai MUN, <a href="https://socialconclave.in">Social Conclave</a>, and Sattva — where I led the platforms and apps thousands use each year.</li>
+          <li class="reveal" style="--d:.38s">Shipped <strong>Delego</strong>, the Mumbai MUN delegate app, to the App Store and Play Store — and built the FastAPI backend running it for <strong>600+ delegates</strong>.</li>
+          <li class="reveal" style="--d:.42s">Built fest infrastructure at scale: a gamified loyalty/credits backend and a Discord onboarding system that registered <strong>1,100+ hackathon participants</strong>.</li>
+        </ul>
+      </div>
+      <p class="campus reveal" style="--d:.46s">Also: <strong>1st globally</strong> at the chat.win AI Jailbreakathon (LLM attack &amp; defense) · <strong>1st</strong> at Taqneeq CodeForge 2026 · Rank&nbsp;1 in Smart India Hackathon's internal round · open-source contributor (SWFT) · NMIMS Mumbai IT, class of 2028.</p>
+    </section>
+
+    <section id="contact" class="contact-block">
+      <h2 class="reveal">Have something to <em>build</em> — or <em>break</em>?</h2>
+      <p class="reveal" style="--d:.08s">Open to freelance work: security assessments, penetration testing, and backend/API builds.</p>
+      <a class="cta-btn reveal" style="--d:.16s" href="mailto:contact@jkartik.in">contact@jkartik.in</a>
+    </section>
+
+  </main>
+</Base>

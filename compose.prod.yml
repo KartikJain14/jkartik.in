@@ -1,0 +1,23 @@
+# Runs on the server. The app is pulled from GHCR (never built here); Watchtower polls the
+# registry and auto-updates the container whenever CI pushes a new :latest.
+#   deploy:  docker compose -f compose.prod.yml up -d
+services:
+  web:
+    image: ghcr.io/kartikjain14/jkartik.in:latest
+    container_name: jkartik-in
+    ports:
+      - "127.0.0.1:8080:80" # localhost only — reached via the host nginx reverse proxy
+    restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # --label-enable: only watch containers opted in via the label above
+    # --cleanup: delete the old image after each update
+    # --interval 60: check GHCR every 60s (tune to taste)
+    command: --label-enable --cleanup --interval 60

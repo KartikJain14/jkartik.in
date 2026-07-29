@@ -1,0 +1,32 @@
+# Kartik Jain
+
+> Backend engineer and security researcher in Mumbai, India. Builds production backend systems; has reported vulnerabilities to Meta (WhatsApp), Microsoft, and CERT-In. Available for freelance work.
+
+Kartik Jain (handle: jkartik) is a backend engineer and security researcher based in Mumbai, India. He is studying IT at NMIMS Mumbai (class of 2028), is Chairperson of ACM MPSTME (his college's computing society), and has worked as a Security Engineer Intern at R.U.D.R.A Cybersecurity.
+
+**Available for freelance work:** security assessments and penetration testing, vulnerability research and responsible disclosure, secure backend and API development (Node.js, FastAPI, PostgreSQL), and DevOps/cloud (Docker, AWS). The fastest way to reach him is contact@jkartik.in.
+
+**Security research:** reported a privilege-escalation vulnerability in Meta's WhatsApp; disclosed vulnerabilities in Microsoft Intune and Exchange Admin; responsibly disclosed a stored XSS on the Mumbai Police website in coordination with CERT-In; reported critical exposures at The Souled Store (staging infrastructure) and Belgian Waffle Co. (source code and credential leak); and found two high-severity vulnerabilities (LFI and broken access control) in a banking client's web portal. On defence, he hardened infrastructure protecting the data of 16,000+ users and stopped a ransomware incident with a rapid backup-and-recovery deployment.
+
+**Selected projects:** GhostShare (end-to-end-encrypted, zero-knowledge realtime sharing — keys are derived in the browser, so the server only ever stores ciphertext); bad-db (a storage engine written from scratch in Java, with a hand-rolled B-Tree index and its own query language); Fool The LLM (a prompt-injection contest platform built on Gemini); the FastAPI backend behind Delego, the Mumbai MUN delegate app that shipped to the App Store for 600+ delegates; GrouPay (a multi-tenant billing SaaS); and the gamified credits backend for the Taqneeq tech fest.
+
+**Skills:** Python, TypeScript, Node.js, FastAPI, Express, PostgreSQL, Redis, Neo4j; Burp Suite, Nmap, Semgrep, BBOT, Nuclei, Sliver C2, Wireshark, OWASP ZAP; Docker, Nginx, AWS, Azure, GCP, Linux.
+
+## Key pages
+
+- [Home](https://jkartik.in/): profile, security research, projects, and experience
+- [Writing](https://jkartik.in/blog/): notes on backend engineering and security research
+- [Projects](https://jkartik.in/projects/): production backends and security tooling
+- [Security research](https://jkartik.in/research/): responsible disclosures and defensive work
+- [Résumé (PDF)](https://jkartik.in/Kartik_Resume.pdf): full CV
+
+## Profiles
+
+- [GitHub](https://github.com/KartikJain14): code and open-source projects
+- [LinkedIn](https://linkedin.com/in/kartikjain1410): professional profile
+- [Twitter/X](https://twitter.com/kartikjain1410): updates and notes
+
+## Optional
+
+- [RSS feed](https://jkartik.in/rss.xml): the blog as a feed
+- [Security contact](https://jkartik.in/.well-known/security.txt): responsible-disclosure contact (security.txt)

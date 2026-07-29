@@ -1,0 +1,23 @@
+# build output
+dist/
+.astro/
+resume/.out/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# environment
+.env
+.env.production
+
+# macOS
+.DS_Store
+
+# editor
+.vscode/
+!.vscode/extensions.json

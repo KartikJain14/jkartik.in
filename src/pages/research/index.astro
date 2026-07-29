@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import { disclosures, defensive } from '../../data/disclosures';
+---
+<Base
+  title="Security research — Kartik Jain"
+  description="Responsible vulnerability disclosures and defensive security work by Kartik Jain — reports to Meta, Microsoft, CERT-In, and more."
+>
+  <header class="wrap page-head">
+    <a class="crumb hero-in" href="/">← Home</a>
+    <h1 class="hero-in" style="--d:.06s"><em>Security research</em></h1>
+    <p class="intro hero-in" style="--d:.12s">Responsible disclosures and defensive work. Findings are reported through official programs or coordinated channels — details here are kept high-level on purpose.</p>
+  </header>
+
+  <main class="wrap">
+    <h2 class="list-label reveal">Responsible disclosures</h2>
+    <div class="research-list">
+      {disclosures.map((d, i) => (
+        <div class="disclosure reveal" style={`--d:${Math.min(i * 0.05, 0.3)}s`}>
+          <div class="d-head">
+            <span class="d-org">{d.org}</span>
+            <span class="d-type">{d.type}</span>
+          </div>
+          <p class="d-detail">{d.detail}</p>
+        </div>
+      ))}
+    </div>
+
+    <h2 class="list-label reveal">Defensive work</h2>
+    <div class="research-list">
+      {defensive.map((d, i) => (
+        <div class="disclosure reveal" style={`--d:${Math.min(i * 0.05, 0.2)}s`}>
+          <div class="d-head">
+            <span class="d-org">{d.title}</span>
+            <span class="d-type">Blue team</span>
+          </div>
+          <p class="d-detail">{d.detail}</p>
+        </div>
+      ))}
+    </div>
+
+    <p class="aside reveal" style="margin-top:36px">
+      Found something on a system I run? Report it at&nbsp;
+      <a href="mailto:security@jkartik.in" style="color:var(--accent)">security@jkartik.in</a>&nbsp;
+      — see <a href="/.well-known/security.txt" style="color:var(--accent)">security.txt</a>.
+    </p>
+
+    <div class="see-more-wrap reveal" style="margin-bottom:8px">
+      <a class="see-more" href="/">← Back home</a>
+    </div>
+  </main>
+</Base>

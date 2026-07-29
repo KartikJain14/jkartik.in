@@ -1,0 +1,183 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  ogType?: string;
+  image?: string;
+  active?: string;
+  progress?: boolean;
+}
+
+const {
+  title,
+  description,
+  ogType = 'website',
+  image = '/kartik.png',
+  active,
+  progress = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const imageUrl = new URL(image, Astro.site).href;
+---
+<!DOCTYPE html>
+<html lang="en" id="top">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="author" content="Kartik Jain" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#14120f" media="(prefers-color-scheme: dark)" />
+
+  <link rel="canonical" href={canonical} />
+  <link rel="alternate" type="application/rss+xml" title="Kartik Jain — Writing" href="/rss.xml" />
+  <link rel="author" type="text/plain" href="/humans.txt" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="/kartik.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <link rel="me" href="https://github.com/KartikJain14" />
+  <link rel="me" href="https://linkedin.com/in/kartikjain1410" />
+  <link rel="me" href="https://twitter.com/kartikjain1410" />
+
+  <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-900.woff2" as="font" type="font/woff2" crossorigin />
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="jkartik.in" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={imageUrl} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:type" content={ogType} />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={imageUrl} />
+  <meta name="twitter:site" content="@kartikjain1410" />
+
+  <script is:inline>document.documentElement.classList.add('js')</script>
+
+  <slot name="head" />
+
+  <!-- Umami analytics -->
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="2d866edd-cb4c-4a8e-90b2-f2152ce0a813"></script>
+</head>
+<body>
+  <Nav active={active} />
+  {progress && <div class="progress" id="progress"></div>}
+
+  <slot />
+
+  <Footer />
+
+  <script is:inline>
+    (function () {
+      var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* a little something for anyone who opens the console */
+      console.log('%c ~ Kartik Jain ', 'background:#e0a054;color:#14120f;font:700 13px monospace;padding:3px 8px;border-radius:4px');
+      console.log('%cPoking around the source? Respect.\nFound a bug or a vuln?  → /.well-known/security.txt\nWant to build something? → contact@jkartik.in', 'color:#8b8375;font:12px/1.7 monospace');
+
+      /* copy button on every code block (subtle, appears on hover) */
+      var COPY_ICON = '<svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+      var CHECK_ICON = '<svg class="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+      document.querySelectorAll('.prose pre').forEach(function (pre) {
+        var wrap = document.createElement('div');
+        wrap.className = 'code-wrap';
+        pre.parentNode.insertBefore(wrap, pre);
+        wrap.appendChild(pre);
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'copy-btn';
+        btn.setAttribute('aria-label', 'Copy code');
+        btn.innerHTML = COPY_ICON + CHECK_ICON;
+        wrap.appendChild(btn);
+        btn.addEventListener('click', function () {
+          navigator.clipboard.writeText(pre.innerText.replace(/\n$/, '')).then(function () {
+            wrap.classList.add('copied');
+            setTimeout(function () { wrap.classList.remove('copied'); }, 1400);
+          });
+        });
+      });
+
+      /* any link leaving jkartik.in opens in a new tab */
+      document.querySelectorAll('a[href]').forEach(function (a) {
+        var url;
+        try { url = new URL(a.href, location.href); } catch (e) { return; }
+        if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+        if (url.host === location.host || url.host === 'jkartik.in') return;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      });
+
+      /* reveal the fixed navbar only after the hero — up top it just duplicates
+         the hero's own links, so it stays hidden until you've scrolled past */
+      var nav = document.querySelector('body > nav');
+      if (nav) {
+        var hero = document.querySelector('header.hero');
+        // measure once (and on resize) — never read layout inside the scroll handler
+        var navThreshold = 300;
+        var measureNav = function () { navThreshold = hero ? Math.max(hero.offsetHeight - 72, 120) : 300; };
+        measureNav();
+        var onNav = function () { nav.classList.toggle('show', window.scrollY > navThreshold); };
+        document.addEventListener('scroll', onNav, { passive: true });
+        window.addEventListener('resize', measureNav);
+        onNav();
+      }
+
+      /* reading progress bar (articles) */
+      var bar = document.getElementById('progress');
+      if (bar && !reduced) {
+        var onScroll = function () {
+          var h = document.documentElement;
+          var max = h.scrollHeight - h.clientHeight;
+          bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+        };
+        document.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+
+      /* one-time decode on the hero kicker */
+      var kicker = document.getElementById('kicker');
+      if (kicker && !reduced) {
+        var out0 = kicker.textContent, glyphs = '!<>-_\\/[]{}=+*^?#', frame = 0, total = 24;
+        var iv = setInterval(function () {
+          frame++;
+          var locked = Math.floor((frame / total) * out0.length), s = '';
+          for (var i = 0; i < out0.length; i++) {
+            var c = out0[i];
+            s += (i < locked || c === ' ' || c === '·') ? c : glyphs[Math.floor(Math.random() * glyphs.length)];
+          }
+          kicker.textContent = s;
+          if (frame >= total) { kicker.textContent = out0; clearInterval(iv); }
+        }, 32);
+      }
+
+      /* scroll reveals */
+      var els = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
+        els.forEach(function (n) { io.observe(n); });
+      } else {
+        els.forEach(function (n) { n.classList.add('in'); });
+      }
+    })();
+  </script>
+</body>
+</html>

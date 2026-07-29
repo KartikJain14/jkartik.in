@@ -1,0 +1,24 @@
+---
+interface Props { active?: string }
+const { active } = Astro.props;
+
+const links = [
+  { href: '/Kartik_Resume.pdf', label: 'Résumé' },
+  { href: 'https://github.com/KartikJain14', label: 'GitHub' },
+  { href: 'https://linkedin.com/in/kartikjain1410', label: 'LinkedIn' },
+  { href: 'https://twitter.com/kartikjain1410', label: 'Twitter' },
+  { href: 'mailto:contact@jkartik.in', label: 'Email' },
+  { href: '/blog/', label: 'Blog', key: 'blog' },
+  { href: '/projects/', label: 'Projects', key: 'projects' },
+];
+---
+<nav>
+  <div class="nav-inner">
+    <a class="wordmark" href="/">Kartik Jain</a>
+    <div class="nav-links">
+      {links.map((l) => (
+        <a href={l.href} class={l.key && active === l.key ? 'here' : undefined}>{l.label}</a>
+      ))}
+    </div>
+  </div>
+</nav>

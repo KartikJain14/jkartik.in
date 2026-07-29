@@ -1,0 +1,126 @@
+---
+import Base from '../../layouts/Base.astro';
+import { coverFor } from '../../lib/covers';
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+  );
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: posts[i - 1] ?? null, older: posts[i + 1] ?? null },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  newer: CollectionEntry<'blog'> | null;
+  older: CollectionEntry<'blog'> | null;
+}
+const { post, newer, older } = Astro.props as Props;
+const { Content } = await render(post);
+
+const d = post.data;
+const cover = d.cover ?? coverFor(d.tag, 600);
+const dateH = d.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+const dateISO = d.date.toISOString();
+const words = (post.body ?? '').trim().split(/\s+/).length;
+const mins = Math.max(1, Math.round(words / 200));
+
+// OG image must be a real, fetchable URL — use a real cover file if the post has
+// one, otherwise the brand image (never the inline SVG data-URI cover).
+const ogImage = d.cover ?? '/kartik.png';
+const postUrl = new URL(`/blog/${post.id}/`, Astro.site).href;
+const imageUrl = new URL(ogImage, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BlogPosting',
+      '@id': `${postUrl}#post`,
+      headline: d.title,
+      description: d.description,
+      datePublished: dateISO,
+      dateModified: dateISO,
+      url: postUrl,
+      mainEntityOfPage: postUrl,
+      inLanguage: 'en',
+      image: imageUrl,
+      wordCount: words,
+      articleSection: d.tag,
+      keywords: d.tag,
+      author: { '@id': 'https://jkartik.in/#kartik' },
+      publisher: { '@id': 'https://jkartik.in/#kartik' },
+      isPartOf: { '@id': 'https://jkartik.in/#website' },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://jkartik.in/' },
+        { '@type': 'ListItem', position: 2, name: 'Writing', item: 'https://jkartik.in/blog/' },
+        { '@type': 'ListItem', position: 3, name: d.title, item: postUrl },
+      ],
+    },
+  ],
+};
+---
+<Base title={`${d.title} — Kartik Jain`} description={d.description} ogType="article" image={ogImage} active="blog" progress={true}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <main>
+  <article>
+    <div class="post-head">
+      <a class="crumb hero-in" href="/blog/">← Writing</a>
+      <p class="eyebrow hero-in" style="--d:.05s">{d.tag}</p>
+      <h1 class="title hero-in" style="--d:.1s">{d.title}</h1>
+      <div class="byline hero-in" style="--d:.15s">
+        <span class="who">Kartik Jain</span>
+        <time datetime={dateISO}>{dateH}</time>
+        <span>{mins} min read</span>
+      </div>
+    </div>
+
+    <img class="cover-hero hero-in" style="--d:.2s" alt="" src={cover} />
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <div class="endcard reveal">
+      <div class="txt">
+        <p class="ec-title">Kartik Jain</p>
+        <p>Backend engineer &amp; security researcher in Mumbai. Available for security assessments, penetration testing, and backend/API builds.</p>
+        <a class="cta" href="mailto:contact@jkartik.in">Get in touch →</a>
+      </div>
+    </div>
+
+    <nav class="pager">
+      {newer ? (
+        <a class="prev" href={`/blog/${newer.id}/`}>
+          <span class="plabel">← Newer</span>
+          <span class="ptitle">{newer.data.title}</span>
+        </a>
+      ) : (
+        <a class="prev" href="/blog/">
+          <span class="plabel">← Index</span>
+          <span class="ptitle">All posts</span>
+        </a>
+      )}
+      {older ? (
+        <a class="next" href={`/blog/${older.id}/`}>
+          <span class="plabel">Older →</span>
+          <span class="ptitle">{older.data.title}</span>
+        </a>
+      ) : (
+        <a class="next" href="/blog/">
+          <span class="plabel">Index →</span>
+          <span class="ptitle">All posts</span>
+        </a>
+      )}
+    </nav>
+  </article>
+  </main>
+</Base>

@@ -1,0 +1,238 @@
+---
+// Personal, client-side-only live Markdown preview. No server component.
+// noindex + not linked + not in the sitemap. Desktop-only.
+// The preview renders inside an <iframe> so responsive CSS (media queries,
+// vw fonts) reacts to the chosen device width — resizable via presets + slider.
+import '../../styles/global.css';
+import templateRaw from '../../content/blog/_template.md?raw';
+import globalCssRaw from '../../styles/global.css?raw';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preview — Kartik Jain</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#14120f" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+  <div class="pv-toobig">
+    <div>
+      <p class="pv-code">Preview · desktop only</p>
+      <p>The live editor needs a wider screen. Open it on a laptop.</p>
+      <a class="nf-home" href="/">← Back home</a>
+    </div>
+  </div>
+
+  <main class="pv">
+    <div class="pv-bar">
+      <span class="pv-title">Markdown preview · <b>local only</b></span>
+      <span class="pv-note">syntax colours &amp; copy button appear on the published post</span>
+      <span class="pv-meta"><span id="pv-count">0</span> words</span>
+      <button id="pv-reset" type="button">Reset to template</button>
+    </div>
+    <div class="pv-panes">
+      <textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off">{templateRaw}</textarea>
+      <div class="pv-right">
+        <div class="pv-device-bar">
+          <button type="button" data-w="390">Phone</button>
+          <button type="button" data-w="768">Tablet</button>
+          <button type="button" data-w="1280">Laptop</button>
+          <button type="button" data-w="0">Full</button>
+          <input type="range" id="pv-range" min="320" max="1600" step="10" value="768" aria-label="Preview width" />
+          <span class="pv-w"><span id="pv-w">—</span>&nbsp;px</span>
+        </div>
+        <div class="pv-stage" id="pv-stage">
+          <div class="pv-sizer" id="pv-sizer">
+            <div class="pv-frame-wrap" id="pv-wrap">
+              <iframe id="pv-frame" title="Preview"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <textarea id="pv-css" hidden>{globalCssRaw}</textarea>
+
+  <style>
+    .pv { height: 100vh; height: 100svh; display: flex; flex-direction: column; }
+    .pv-bar {
+      display: flex; align-items: center; gap: 18px; padding: 11px 18px;
+      border-bottom: 1px solid var(--hairline);
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink-faint);
+    }
+    .pv-title b { color: var(--accent); font-weight: 700; }
+    .pv-note { color: var(--ink-faint); opacity: 0.7; }
+    .pv-meta { margin-left: auto; }
+    .pv-bar button {
+      font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink-dim); background: none; border: 1px solid var(--pill-border); border-radius: 999px;
+      padding: 6px 13px; cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease;
+    }
+    .pv-bar button:hover { color: var(--accent); border-color: var(--accent); }
+    .pv-panes { flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: 0; }
+    #editor {
+      border: none; outline: none; resize: none; padding: 26px 28px;
+      background: var(--code-bg); color: var(--ink);
+      font-family: var(--mono); font-size: 0.82rem; line-height: 1.7;
+      border-right: 1px solid var(--hairline); tab-size: 2;
+    }
+
+    .pv-right { display: flex; flex-direction: column; min-height: 0; }
+    .pv-device-bar {
+      display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+      border-bottom: 1px solid var(--hairline); flex-wrap: wrap;
+    }
+    .pv-device-bar button {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-dim); background: none; border: 1px solid var(--pill-border); border-radius: 999px;
+      padding: 5px 11px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+    .pv-device-bar button:hover { color: var(--accent); border-color: var(--accent); }
+    .pv-device-bar button.active { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+    #pv-range { flex: 1; min-width: 90px; max-width: 240px; accent-color: var(--accent); }
+    .pv-w { font-family: var(--mono); font-size: 0.66rem; color: var(--ink-faint); white-space: nowrap; }
+
+    .pv-stage {
+      flex: 1; min-height: 0; overflow: auto; background: var(--code-bg);
+      display: flex; justify-content: center; align-items: flex-start; padding: 16px;
+    }
+    .pv-sizer { flex: none; }
+    .pv-frame-wrap {
+      transform-origin: top left; background: var(--bg);
+      border: 1px solid var(--hairline); border-radius: 8px; overflow: hidden;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
+    }
+    #pv-frame { width: 100%; height: 100%; border: 0; display: block; background: var(--bg); }
+
+    .pv-toobig { display: none; }
+    @media (max-width: 900px) {
+      .pv { display: none; }
+      .pv-toobig {
+        display: flex; min-height: 100vh; align-items: center; justify-content: center;
+        text-align: center; padding: 40px;
+      }
+      .pv-toobig p { color: var(--ink-dim); margin-bottom: 12px; }
+      .pv-code { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+      .pv-toobig .nf-home { margin-top: 12px; }
+    }
+  </style>
+
+  <script>
+    import { marked } from 'marked';
+
+    const KEY = 'jk-blog-preview';
+    const ed = document.getElementById('editor');
+    const countEl = document.getElementById('pv-count');
+    const resetBtn = document.getElementById('pv-reset');
+    const frame = document.getElementById('pv-frame');
+    const wrap = document.getElementById('pv-wrap');
+    const sizer = document.getElementById('pv-sizer');
+    const stage = document.getElementById('pv-stage');
+    const range = document.getElementById('pv-range');
+    const wEl = document.getElementById('pv-w');
+    const css = document.getElementById('pv-css').value;
+    const template = ed.value;
+
+    marked.setOptions({ gfm: true, breaks: false });
+    const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+    function splitFrontmatter(src) {
+      const m = src.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+      const data = {};
+      let body = src;
+      if (m) {
+        body = src.slice(m[0].length);
+        for (const line of m[1].split(/\r?\n/)) {
+          const t = line.trim();
+          if (!t || t.startsWith('#')) continue;
+          const km = t.match(/^([A-Za-z_]+):\s*(.*)$/);
+          if (km) data[km[1]] = km[2].trim().replace(/\s+#.*$/, '').replace(/^["']|["']$/g, '');
+        }
+      }
+      return { data, body };
+    }
+
+    // build the iframe document once, then only swap innerHTML on edits
+    const skeleton =
+      '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<style>' + css + '</style>' +
+      '<style>.post-head{padding-top:34px}body{overflow-x:hidden}</style>' +
+      '</head><body><article><div class="post-head" id="h"></div><div class="prose" id="b"></div></article></body></html>';
+    const doc = frame.contentDocument;
+    doc.open(); doc.write(skeleton); doc.close();
+    const fHead = doc.getElementById('h');
+    const fBody = doc.getElementById('b');
+
+    function render() {
+      const { data, body } = splitFrontmatter(ed.value);
+      const tag = esc(data.tag || 'Notes');
+      const title = esc(data.title || 'Untitled');
+      const date = esc(data.date || '');
+      fHead.innerHTML =
+        '<p class="eyebrow">' + tag + '</p><h1 class="title">' + title + '</h1>' +
+        '<div class="byline"><span class="who">Kartik Jain</span>' +
+        (date ? '<span>' + date + '</span>' : '') + '<span>preview</span></div>';
+      fBody.innerHTML = marked.parse(body);
+      const words = body.trim() ? body.trim().split(/\s+/).length : 0;
+      countEl.textContent = String(words);
+      try { localStorage.setItem(KEY, ed.value); } catch (e) {}
+    }
+
+    // device sizing — scale-to-fit so a wide device still fits inside the pane
+    let deviceW = 0; // 0 = full (pane width)
+    function applyDevice() {
+      const SW = Math.max(200, stage.clientWidth - 32);
+      const SH = Math.max(200, stage.clientHeight - 32);
+      const DW = deviceW > 0 ? deviceW : SW;
+      const scale = Math.min(1, SW / DW);
+      const vh = SH / scale;
+      wrap.style.width = DW + 'px';
+      wrap.style.height = vh + 'px';
+      wrap.style.transform = 'scale(' + scale + ')';
+      sizer.style.width = DW * scale + 'px';
+      sizer.style.height = vh * scale + 'px';
+      wEl.textContent = String(Math.round(DW));
+    }
+
+    const deviceBtns = Array.from(document.querySelectorAll('.pv-device-bar button[data-w]'));
+    function setActive(btn) { deviceBtns.forEach((b) => b.classList.toggle('active', b === btn)); }
+    deviceBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        deviceW = +btn.dataset.w;
+        setActive(btn);
+        if (deviceW > 0) range.value = String(deviceW);
+        applyDevice();
+      });
+    });
+    range.addEventListener('input', () => {
+      deviceW = +range.value;
+      setActive(null);
+      applyDevice();
+    });
+    window.addEventListener('resize', applyDevice);
+
+    // restore draft
+    try { const s = localStorage.getItem(KEY); if (s) ed.value = s; } catch (e) {}
+    ed.addEventListener('input', render);
+    resetBtn.addEventListener('click', () => { ed.value = template; render(); });
+
+    // init — optional ?w=390 sets the starting width (bookmarkable)
+    const pw = parseInt(new URLSearchParams(location.search).get('w') || '', 10);
+    if (pw > 0) {
+      deviceW = pw;
+      range.value = String(Math.min(1600, Math.max(320, pw)));
+      setActive(deviceBtns.find((b) => +b.dataset.w === pw) || null);
+    } else {
+      setActive(deviceBtns.find((b) => b.dataset.w === '0') || null);
+    }
+    render();
+    requestAnimationFrame(applyDevice);
+  </script>
+</body>
+</html>

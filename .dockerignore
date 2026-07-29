@@ -1,0 +1,12 @@
+node_modules
+dist
+.astro
+resume/.out
+npm-debug.log*
+yarn-error.log*
+*.log
+.env
+.env.*
+.vscode
+.DS_Store
+# NOTE: .git is intentionally NOT ignored — the sitemap reads git history to date each page.

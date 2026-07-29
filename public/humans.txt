@@ -1,0 +1,14 @@
+/* TEAM */
+  Backend engineer & security researcher: Kartik Jain
+  Site: https://jkartik.in
+  Contact: contact@jkartik.in
+  Twitter: @kartikjain1410
+  GitHub: KartikJain14
+  LinkedIn: kartikjain1410
+  Location: Mumbai, India
+
+/* SITE */
+  Built with: Astro, hand-written CSS
+  Standards: HTML5, CSS3
+  Components: No client framework
+  Design: "Ember" — warm editorial, dark/light

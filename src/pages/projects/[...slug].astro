@@ -1,0 +1,127 @@
+---
+import Base from '../../layouts/Base.astro';
+import { coverFor } from '../../lib/covers';
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, prev: projects[i - 1] ?? null, next: projects[i + 1] ?? null },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  prev: CollectionEntry<'projects'> | null;
+  next: CollectionEntry<'projects'> | null;
+}
+const { project, prev, next } = Astro.props as Props;
+const { Content } = await render(project);
+
+const d = project.data;
+const cover = d.cover ?? coverFor(d.tag, 600);
+const ogImage = d.cover ?? '/kartik.png';
+const projUrl = new URL(`/projects/${project.id}/`, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CreativeWork',
+      '@id': `${projUrl}#project`,
+      name: d.title,
+      description: d.description,
+      url: projUrl,
+      inLanguage: 'en',
+      image: new URL(ogImage, Astro.site).href,
+      keywords: [d.tag, ...d.stack].join(', '),
+      author: { '@id': 'https://jkartik.in/#kartik' },
+      creator: { '@id': 'https://jkartik.in/#kartik' },
+      isPartOf: { '@id': 'https://jkartik.in/#website' },
+      ...(d.live ? { sameAs: d.live } : {}),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://jkartik.in/' },
+        { '@type': 'ListItem', position: 2, name: 'Projects', item: 'https://jkartik.in/projects/' },
+        { '@type': 'ListItem', position: 3, name: d.title, item: projUrl },
+      ],
+    },
+  ],
+};
+---
+<Base title={`${d.title} — Kartik Jain`} description={d.description} ogType="article" image={ogImage} active="projects" progress={true}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <main>
+  <article>
+    <div class="post-head">
+      <a class="crumb hero-in" href="/projects/">← Projects</a>
+      <p class="eyebrow hero-in" style="--d:.05s">{d.tag}{d.live ? ' · Live' : ''}</p>
+      <h1 class="title hero-in" style="--d:.1s">{d.title}</h1>
+      <p class="subtitle hero-in" style="--d:.14s">{d.description}</p>
+      <div class="proj-bar hero-in" style="--d:.18s">
+        <div class="proj-facts">
+          {d.role && <span><b>Role</b> — {d.role}</span>}
+          {d.year && <span><b>Year</b> — {d.year}</span>}
+          {d.status && <span><b>Status</b> — {d.status}</span>}
+        </div>
+        {(d.live || d.source) && (
+          <div class="proj-actions">
+            {d.live && <a class="btn primary" href={d.live}>Demo ↗</a>}
+            {d.source && <a class="btn ghost" href={d.source}>Source ↗</a>}
+          </div>
+        )}
+      </div>
+    </div>
+
+    <img class="cover-hero hero-in" style="--d:.22s" alt="" src={cover} />
+
+    {d.stack.length > 0 && (
+      <div class="chips reveal" style="margin-top:1.8rem">
+        {d.stack.map((s) => <span class="chip">{s}</span>)}
+      </div>
+    )}
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <div class="endcard reveal">
+      <div class="txt">
+        <p class="ec-title">Want something like this built?</p>
+        <p>I take on freelance backend and API work — auth, payments, media, and the security review to go with it.</p>
+        <a class="cta" href="mailto:contact@jkartik.in">Start a conversation →</a>
+      </div>
+    </div>
+
+    <nav class="pager">
+      {prev ? (
+        <a class="prev" href={`/projects/${prev.id}/`}>
+          <span class="plabel">← Previous</span>
+          <span class="ptitle">{prev.data.title}</span>
+        </a>
+      ) : (
+        <a class="prev" href="/projects/">
+          <span class="plabel">← Index</span>
+          <span class="ptitle">All projects</span>
+        </a>
+      )}
+      {next ? (
+        <a class="next" href={`/projects/${next.id}/`}>
+          <span class="plabel">Next →</span>
+          <span class="ptitle">{next.data.title}</span>
+        </a>
+      ) : (
+        <a class="next" href="/projects/">
+          <span class="plabel">Index →</span>
+          <span class="ptitle">All projects</span>
+        </a>
+      )}
+    </nav>
+  </article>
+  </main>
+</Base>

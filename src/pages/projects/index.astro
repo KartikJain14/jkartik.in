@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { coverFor } from '../../lib/covers';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const featured = projects.find((p) => p.data.featured) ?? projects[0];
+const rest = projects.filter((p) => p.id !== featured?.id);
+const fCover = featured?.data.cover ?? coverFor(featured?.data.tag, 630);
+const fMeta = featured?.data.stack.slice(0, 4).join(' · ');
+---
+<Base
+  title="Projects — Kartik Jain"
+  description="Backend and security engineering projects by Kartik Jain — payments, ticketing, media, and the systems that keep them honest."
+  active="projects"
+>
+  <header class="wrap-wide page-head">
+    <a class="crumb hero-in" href="/">← Home</a>
+    <h1 class="hero-in" style="--d:.06s"><em>Projects</em></h1>
+    <p class="intro hero-in" style="--d:.12s">Production backends and security tooling — payments, ticketing, media, and the systems that keep them honest. A few are live; the rest ship behind event apps.</p>
+  </header>
+
+  <main class="wrap-wide">
+    {featured && (
+      <a class="featured reveal" href={`/projects/${featured.id}/`}>
+        <img class="cover" alt="" src={fCover} />
+        <div class="body">
+          <span class="flag">Featured{featured.data.live ? ' · Live' : ''}</span>
+          <h2>{featured.data.title}</h2>
+          <p class="excerpt">{featured.data.description}</p>
+          {fMeta && <span class="meta">{fMeta}</span>}
+        </div>
+      </a>
+    )}
+
+    {rest.length > 0 && <h2 class="list-label reveal">All projects</h2>}
+
+    <div class="cards three">
+      {rest.map((project, i) => <ProjectCard project={project} style={`--d:${0.04 + (i % 3) * 0.04}s`} />)}
+    </div>
+  </main>
+</Base>

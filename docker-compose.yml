@@ -1,0 +1,11 @@
+# Local development / testing. Builds the image from source and serves it.
+#   run:  docker compose up --build   ->  http://localhost:8080
+# The server uses compose.prod.yml instead (pulls from GHCR + Watchtower auto-updates).
+services:
+  web:
+    build: .
+    image: jkartik-in
+    container_name: jkartik-in
+    ports:
+      - "127.0.0.1:8080:80"
+    restart: unless-stopped

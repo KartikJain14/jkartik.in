@@ -1,0 +1,19 @@
+---
+import { coverFor } from '../lib/covers';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { project: CollectionEntry<'projects'>; style?: string }
+const { project, style } = Astro.props;
+
+const cover = project.data.cover ?? coverFor(project.data.tag);
+const meta = project.data.stack.slice(0, 3).join(' · ');
+---
+<a class="card reveal" href={`/projects/${project.id}/`} style={style}>
+  <img class="card-cover" alt="" loading="lazy" src={cover} />
+  <div class="card-body">
+    <span class="card-tag">{project.data.tag}</span>
+    <h3>{project.data.title}</h3>
+    <p class="card-excerpt">{project.data.description}</p>
+    {meta && <span class="card-meta">{meta}</span>}
+  </div>
+</a>
