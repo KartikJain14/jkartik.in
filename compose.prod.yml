@@ -15,6 +15,10 @@ services:
     image: containrrr/watchtower
     container_name: watchtower
     restart: unless-stopped
+    environment:
+      # containrrr/watchtower (unmaintained) defaults to an old Docker API version;
+      # pin it to one the modern daemon still accepts (its stated minimum is 1.40).
+      DOCKER_API_VERSION: "1.40"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     # --label-enable: only watch containers opted in via the label above
