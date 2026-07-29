@@ -22,7 +22,7 @@
   --accent: #e0a054;
   --hairline: rgba(237, 232, 223, 0.1);
   --pill-border: rgba(237, 232, 223, 0.22);
-  --nav-bg: rgba(20, 18, 15, 0.72);
+  --nav-bg: rgba(20, 18, 15, 0.55);
   --code-bg: #100e0b;
   --grain-opacity: 0.05;
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -37,7 +37,7 @@
     --accent: #a8492a;
     --hairline: #ddd6c9;
     --pill-border: #c9c1b1;
-    --nav-bg: rgba(247, 244, 238, 0.78);
+    --nav-bg: rgba(247, 244, 238, 0.62);
     --code-bg: #efe9dd;
     --grain-opacity: 0.11;
   }
@@ -78,8 +78,8 @@ body > nav {
   top: 0; left: 0; right: 0;
   z-index: 100;
   background: var(--nav-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
   border-bottom: 1px solid var(--hairline);
 }
 /* with JS the bar hides at the top (the hero already shows these links) and
