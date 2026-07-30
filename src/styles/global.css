@@ -44,11 +44,11 @@
   --grain-opacity: 0.11;
 }
 
-/* mobile Chromium/WebKit often won't render backdrop-filter — make the nav opaque enough
-   that it still looks clean when the blur doesn't apply */
+/* mobile Chromium/WebKit is unreliable with backdrop-filter — keep the nav a bit more
+   opaque here so it looks clean whether or not the blur renders */
 @media (max-width: 640px) {
-  :root { --nav-bg: rgba(20, 18, 15, 0.92); }
-  :root[data-theme="light"] { --nav-bg: rgba(247, 244, 238, 0.94); }
+  :root { --nav-bg: rgba(20, 18, 15, 0.8); }
+  :root[data-theme="light"] { --nav-bg: rgba(247, 244, 238, 0.84); }
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -138,16 +138,13 @@ body > nav {
   opacity: 1;
   pointer-events: auto;
 }
-/* On wider screens, every page except the homepage shows the nav from the top (sticky, in
-   normal flow so it never overlaps the title). On mobile the nav stays hidden-until-scroll
-   everywhere — a persistent bar eats too much of a small screen. */
-@media (min-width: 641px) {
-  .js body.has-topnav > nav {
-    position: sticky;
-    transform: none;
-    opacity: 1;
-    pointer-events: auto;
-  }
+/* Every page except the homepage shows the nav from the top. It stays position:fixed (so
+   the backdrop-filter blur actually renders — Chromium won't blur a sticky element); the
+   inline script reserves matching top padding on the body so it never covers the title. */
+.js body.has-topnav > nav {
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
 }
 .nav-inner {
   max-width: 1040px; margin: 0 auto; padding: 0 24px; min-height: 52px;

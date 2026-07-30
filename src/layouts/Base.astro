@@ -145,15 +145,24 @@ const isHome = Astro.url.pathname === '/';
          the hero's own links, so it stays hidden until you've scrolled past */
       var nav = document.querySelector('body > nav');
       if (nav) {
-        var hero = document.querySelector('header.hero');
-        // measure once (and on resize) — never read layout inside the scroll handler
-        var navThreshold = 300;
-        var measureNav = function () { navThreshold = hero ? Math.max(hero.offsetHeight - 72, 120) : 300; };
-        measureNav();
-        var onNav = function () { nav.classList.toggle('show', window.scrollY > navThreshold); };
-        document.addEventListener('scroll', onNav, { passive: true });
-        window.addEventListener('resize', measureNav);
-        onNav();
+        if (document.body.classList.contains('has-topnav')) {
+          // nav is shown from the top here — reserve matching space so it never overlaps content
+          var pad = function () { document.body.style.paddingTop = nav.offsetHeight + 'px'; };
+          pad();
+          window.addEventListener('resize', pad);
+          window.addEventListener('load', pad);
+        } else {
+          // homepage: reveal the nav only after you scroll past the hero (it duplicates the
+          // hero's own links up top, so it stays hidden until then)
+          var hero = document.querySelector('header.hero');
+          var navThreshold = 300;
+          var measureNav = function () { navThreshold = hero ? Math.max(hero.offsetHeight - 72, 120) : 300; };
+          measureNav();
+          var onNav = function () { nav.classList.toggle('show', window.scrollY > navThreshold); };
+          document.addEventListener('scroll', onNav, { passive: true });
+          window.addEventListener('resize', measureNav);
+          onNav();
+        }
       }
 
       /* reading progress bar (articles) */
