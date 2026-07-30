@@ -289,7 +289,7 @@ a.row { text-decoration: none; color: inherit; }
 .card-meta { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.06em; color: var(--ink-faint); margin-top: 2px; }
 
 /* ══════════ listing pages ══════════ */
-.page-head { padding-top: 96px; padding-bottom: 8px; }
+.page-head { padding-top: 26px; padding-bottom: 8px; }
 .crumb { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-faint); text-decoration: none; }
 .crumb:hover { color: var(--accent); }
 .page-head h1 { font-size: clamp(2.6rem, 8vw, 4.4rem); font-weight: 900; letter-spacing: -0.035em; line-height: 1; margin: 22px 0 14px; }
@@ -315,7 +315,7 @@ a.row { text-decoration: none; color: inherit; }
 
 /* ══════════ article / detail ══════════ */
 article { max-width: 760px; margin: 0 auto; padding: 0 24px; }
-.post-head { padding-top: 88px; }
+.post-head { padding-top: 26px; }
 .eyebrow { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 26px 0 16px; }
 h1.title { font-size: clamp(2rem, 5.6vw, 3.3rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; }
 .subtitle { color: var(--ink-dim); font-size: 1.1rem; margin-top: 14px; max-width: 40em; }
@@ -522,8 +522,8 @@ footer { border-top: 1px solid var(--hairline); padding: 26px 0 34px; margin-top
   .nav-links { gap: 8px 11px; justify-content: center; padding: 2px 0 10px; }
   .nav-links a { font-size: 0.72rem; }
   header.hero { padding-top: 72px; min-height: 0; padding-bottom: 40px; }
-  .page-head { padding-top: 76px; }
-  .post-head { padding-top: 72px; }
+  .page-head { padding-top: 16px; }
+  .post-head { padding-top: 16px; }
   /* pills as an even, aligned grid instead of a ragged wrap */
   .quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.55rem; }
   .quick li { display: flex; }
@@ -533,6 +533,11 @@ footer { border-top: 1px solid var(--hairline); padding: 26px 0 34px; margin-top
   .row-lg .desc { max-width: none; }
   .cards, .cards.three { grid-template-columns: 1fr; gap: 20px; }
   .featured .body { padding: 24px 22px; }
+  /* scale down the big vertical rhythm — 64/72/88px gaps read as dead space on a phone */
+  main.home > section { padding: 44px 0 20px; }
+  .contact-block { padding: 52px 0 60px; }
+  .list-label { margin: 34px 0 20px; }
+  footer { margin-top: 48px; }
   .proj-actions { width: 100%; }
   .proj-actions .btn { flex: 1; text-align: center; }
   .pager { grid-template-columns: 1fr; }
