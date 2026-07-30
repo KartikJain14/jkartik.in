@@ -23,6 +23,9 @@ const {
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const imageUrl = new URL(image, Astro.site).href;
+// homepage hides the nav until you scroll past the hero (it shows the same links);
+// every other page shows the nav from the very top.
+const isHome = Astro.url.pathname === '/';
 ---
 <!DOCTYPE html>
 <html lang="en" id="top">
@@ -67,14 +70,21 @@ const imageUrl = new URL(image, Astro.site).href;
   <meta name="twitter:image" content={imageUrl} />
   <meta name="twitter:site" content="@kartikjain1410" />
 
-  <script is:inline>document.documentElement.classList.add('js')</script>
+  <script is:inline>
+    document.documentElement.classList.add('js');
+    /* set the theme before paint — saved choice, else OS preference — so there's no flash */
+    try {
+      var _t = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.dataset.theme = _t;
+    } catch (e) {}
+  </script>
 
   <slot name="head" />
 
   <!-- Umami analytics -->
   <script defer src="https://cloud.umami.is/script.js" data-website-id="2d866edd-cb4c-4a8e-90b2-f2152ce0a813"></script>
 </head>
-<body>
+<body class={isHome ? undefined : 'has-topnav'}>
   <Nav active={active} />
   {progress && <div class="progress" id="progress"></div>}
 
@@ -120,6 +130,15 @@ const imageUrl = new URL(image, Astro.site).href;
         if (url.host === location.host || url.host === 'jkartik.in') return;
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
+      });
+
+      /* light/dark theme toggle */
+      document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+          document.documentElement.dataset.theme = next;
+          try { localStorage.setItem('theme', next); } catch (e) {}
+        });
       });
 
       /* reveal the fixed navbar only after the hero — up top it just duplicates

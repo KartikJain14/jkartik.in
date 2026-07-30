@@ -27,20 +27,21 @@
   --grain-opacity: 0.05;
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f7f4ee;
-    --bg-lift: #efe9dd;
-    --ink: #211d18;
-    --ink-dim: #6e6659;
-    --ink-faint: #8a8171;
-    --accent: #a8492a;
-    --hairline: #ddd6c9;
-    --pill-border: #c9c1b1;
-    --nav-bg: rgba(247, 244, 238, 0.62);
-    --code-bg: #efe9dd;
-    --grain-opacity: 0.11;
-  }
+/* Light theme. The inline head script sets data-theme (from the saved choice, or the
+   OS preference on first visit) before paint, so there's no flash. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f4ee;
+  --bg-lift: #efe9dd;
+  --ink: #211d18;
+  --ink-dim: #6e6659;
+  --ink-faint: #8a8171;
+  --accent: #a8492a;
+  --hairline: #ddd6c9;
+  --pill-border: #c9c1b1;
+  --nav-bg: rgba(247, 244, 238, 0.62);
+  --code-bg: #efe9dd;
+  --grain-opacity: 0.11;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -82,6 +83,40 @@ body > nav {
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   border-bottom: 1px solid var(--hairline);
 }
+
+/* light/dark toggle — base styles (icon swap, hover), used by the floating button below */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+  line-height: 0;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+.theme-toggle:hover { color: var(--accent); }
+.theme-toggle:active { transform: scale(0.88); }
+.theme-toggle svg { width: 18px; height: 18px; display: block; }
+.theme-toggle .i-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .i-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .i-moon { display: block; }
+
+/* pill variant for the hero's link row (so it's reachable at the very top of the homepage) */
+.quick .theme-toggle {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--pill-border);
+  border-radius: 999px;
+  color: var(--ink);
+}
+.quick .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 640px) {
+  /* center the lone toggle on its own row in the mobile grid */
+  .quick li:last-child { grid-column: 1 / -1; justify-content: center; }
+}
 /* with JS the bar hides at the top (the hero already shows these links) and
    slides in once you've scrolled past the hero */
 .js body > nav {
@@ -92,6 +127,14 @@ body > nav {
 }
 .js body > nav.show {
   transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+/* every page except the homepage: nav is shown from the top, sticky and in normal flow
+   (so it never overlaps the page title) */
+.js body.has-topnav > nav {
+  position: sticky;
+  transform: none;
   opacity: 1;
   pointer-events: auto;
 }
