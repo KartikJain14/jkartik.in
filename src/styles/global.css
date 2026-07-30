@@ -44,6 +44,13 @@
   --grain-opacity: 0.11;
 }
 
+/* mobile Chromium/WebKit often won't render backdrop-filter — make the nav opaque enough
+   that it still looks clean when the blur doesn't apply */
+@media (max-width: 640px) {
+  :root { --nav-bg: rgba(20, 18, 15, 0.92); }
+  :root[data-theme="light"] { --nav-bg: rgba(247, 244, 238, 0.94); }
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
@@ -79,8 +86,8 @@ body > nav {
   top: 0; left: 0; right: 0;
   z-index: 100;
   background: var(--nav-bg);
-  backdrop-filter: blur(18px) saturate(1.4);
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--hairline);
 }
 
@@ -114,8 +121,9 @@ body > nav {
 }
 .quick .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
 @media (max-width: 640px) {
-  /* center the lone toggle on its own row in the mobile grid */
-  .quick li:last-child { grid-column: 1 / -1; justify-content: center; }
+  /* the hero toggle would eat a whole row on a phone — hide it; on mobile the toggle
+     rides in with the navbar on scroll instead */
+  .quick li:has(.theme-toggle) { display: none; }
 }
 /* with JS the bar hides at the top (the hero already shows these links) and
    slides in once you've scrolled past the hero */
@@ -130,13 +138,16 @@ body > nav {
   opacity: 1;
   pointer-events: auto;
 }
-/* every page except the homepage: nav is shown from the top, sticky and in normal flow
-   (so it never overlaps the page title) */
-.js body.has-topnav > nav {
-  position: sticky;
-  transform: none;
-  opacity: 1;
-  pointer-events: auto;
+/* On wider screens, every page except the homepage shows the nav from the top (sticky, in
+   normal flow so it never overlaps the title). On mobile the nav stays hidden-until-scroll
+   everywhere — a persistent bar eats too much of a small screen. */
+@media (min-width: 641px) {
+  .js body.has-topnav > nav {
+    position: sticky;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 .nav-inner {
   max-width: 1040px; margin: 0 auto; padding: 0 24px; min-height: 52px;
