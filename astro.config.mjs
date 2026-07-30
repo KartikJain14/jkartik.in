@@ -18,4 +18,22 @@ export default defineConfig({
       wrap: false,
     },
   },
+  vite: {
+    css: {
+      transformer: 'lightningcss',
+      lightningcss: {
+        // Real browser targets so Lightning CSS keeps modern standard properties
+        // (e.g. unprefixed `backdrop-filter`) AND adds `-webkit-` where needed (Safari),
+        // instead of pruning to just one and silently killing the blur in the build.
+        // Modern targets so Lightning CSS keeps standard properties (like the unprefixed
+        // `backdrop-filter`) in the build instead of pruning them for assumed-old browsers.
+        targets: {
+          chrome: 90 << 16,
+          firefox: 110 << 16,
+          safari: 16 << 16,
+          edge: 90 << 16,
+        },
+      },
+    },
+  },
 });
