@@ -474,12 +474,12 @@ h1.title { font-size: clamp(2rem, 5.6vw, 3.3rem); font-weight: 900; letter-spaci
   padding: 24px;
 }
 .nf-code { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
-.nf-title { font-size: clamp(2.8rem, 12vw, 5.5rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.95; }
-.nf-sub { color: var(--ink-dim); margin: 16px 0 34px; font-size: 1rem; max-width: 28em; }
+.nf-title { font-size: clamp(1.5rem, 7vw, 1rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.95; }
+.nf-sub { color: var(--ink-dim); margin: 16px 0 34px; font-size: 0.8rem; max-width: 28em; }
 .nf-home {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  font-weight: 600; font-size: 0.9rem; color: var(--accent); text-decoration: none;
-  border: 1px solid var(--accent); border-radius: 999px; padding: 0.75rem 1.8rem;
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-weight: 600; font-size: 0.8rem; color: var(--accent); text-decoration: none;
+  border: 1px solid var(--accent); border-radius: 999px; padding: 0.6rem 1.5rem;
   transition: background 0.16s ease, color 0.16s ease;
 }
 .nf-home:hover { background: var(--accent); color: var(--bg); }
@@ -490,6 +490,200 @@ footer { border-top: 1px solid var(--hairline); padding: 26px 0 34px; margin-top
 .foot-inner a { color: var(--ink-faint); text-decoration: none; }
 .foot-inner a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
 .foot-left { display: flex; gap: 20px; flex-wrap: wrap; }
+
+/* ══════════ 404 puzzle ══════════ */
+.nf-puzzle {
+  width: min(520px, 92vw);
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  background: var(--bg-lift);
+  padding: 16px;
+  margin-top: 18px;
+}
+.nf-puzzle h2 {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+.nf-puzzle p {
+  color: var(--ink-dim);
+  margin-top: 8px;
+  font-size: 0.92rem;
+}
+.puz-meta {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin-top: 12px;
+}
+.puz-status {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.puz-actions { display: flex; gap: 8px; }
+.puz-actions button {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.puz-actions button:hover { color: var(--accent); border-color: var(--accent); }
+.nf-puzzle.solved .puz-status { color: var(--accent); }
+
+.maze-wrap {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+  padding: 10px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--bg);
+  overscroll-behavior: contain;
+}
+canvas.maze {
+  display: block;
+  border-radius: 10px;
+  outline: 1px solid var(--hairline);
+  outline-offset: -1px;
+  touch-action: none;
+}
+
+.maze-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+  max-width: 220px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.maze-pad button {
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid var(--hairline);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.maze-pad button:hover { border-color: var(--pill-border); color: var(--accent); }
+.maze-pad button:active { transform: scale(0.98); }
+.maze-pad button[data-dir="up"] { grid-column: 2; }
+.maze-pad button[data-dir="left"] { grid-column: 1; grid-row: 2; }
+.maze-pad button[data-dir="down"] { grid-column: 2; grid-row: 2; }
+.maze-pad button[data-dir="right"] { grid-column: 3; grid-row: 2; }
+@media (min-width: 860px) {
+  /* on desktop, the keyboard is enough; keep the pad but make it smaller */
+  .maze-pad { max-width: 220px; }
+  .maze-pad button { height: 38px; }
+}
+
+@media (max-width: 420px) {
+  .nf-puzzle { padding: 14px; }
+  .puz-meta { gap: 6px; margin-top: 10px; }
+  .puz-actions { gap: 6px; }
+  .puz-actions button { padding: 7px 9px; font-size: 0.62rem; }
+  .maze-wrap { padding: 8px; }
+  .maze-pad { gap: 6px; margin-top: 10px; max-width: 200px; }
+  .maze-pad button { height: 34px; font-size: 0.78rem; }
+}
+
+.maze-win {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  pointer-events: none;
+}
+.maze-win[hidden] { display: none !important; }
+.maze-win::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.42);
+}
+:root[data-theme="light"] .maze-win::before {
+  background: rgba(0, 0, 0, 0.22);
+}
+.maze-win__card {
+  position: relative;
+  width: min(360px, 92%);
+  border: 1px solid var(--pill-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--bg) 92%, var(--accent));
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.35);
+}
+.maze-win__title {
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.maze-win__stats {
+  margin-top: 6px;
+  color: var(--ink-dim);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+
+/* tier styling set by JS (data-tier on #nf-maze) */
+.nf-puzzle[data-tier="win"] .maze-win__card {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--pill-border));
+}
+.nf-puzzle[data-tier="perfect"] .maze-win__card {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--pill-border));
+}
+.nf-puzzle[data-tier="legendary"] .maze-win__card {
+  border-color: var(--accent);
+}
+
+@keyframes mazeGlow {
+  0% { box-shadow: 0 0 0 rgba(0,0,0,0); transform: translateY(2px); opacity: 0; }
+  100% { box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22); transform: none; opacity: 1; }
+}
+.nf-puzzle.solved .maze-win__card { animation: mazeGlow 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes mazeLegend {
+  0%, 100% { box-shadow: 0 18px 70px rgba(0, 0, 0, 0.35); }
+  50% { box-shadow: 0 22px 95px rgba(0, 0, 0, 0.45); }
+}
+.nf-puzzle[data-tier="legendary"] .maze-win__card { animation: mazeGlow 0.55s cubic-bezier(0.22, 1, 0.36, 1) both, mazeLegend 1.3s ease-in-out 0.55s 2; }
+
+@keyframes mazePulse {
+  0%, 100% { border-color: var(--hairline); }
+  50% { border-color: color-mix(in srgb, var(--accent) 55%, var(--hairline)); }
+}
+.nf-puzzle.solved .maze-wrap { animation: mazePulse 1.2s ease-in-out 2; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nf-puzzle.solved .maze-win,
+  .nf-puzzle.solved .maze-wrap { animation: none; }
+}
 
 /* ══════════ motion ══════════ */
 .js .reveal { opacity: 0; transform: translateY(16px); filter: blur(6px); transition: opacity 0.7s ease, transform 0.7s ease, filter 0.7s ease; transition-delay: var(--d, 0s); }

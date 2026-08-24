@@ -12,13 +12,980 @@ import '../styles/global.css';
   <meta name="theme-color" content="#14120f" media="(prefers-color-scheme: dark)" />
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <link rel="preload" href="/fonts/inter-900.woff2" as="font" type="font/woff2" crossorigin />
+
+  <script is:inline>
+    document.documentElement.classList.add('js');
+    try {
+      var _t = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.dataset.theme = _t;
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <main class="nf">
-    <p class="nf-code">Error · 404</p>
-    <h1 class="nf-title">Nothing here.</h1>
-    <p class="nf-sub">This page moved, or it never existed.</p>
+    <p class="nf-code">:/ Error · 404</p>
+    <h1 class="nf-title">Nothing here (but this puzzle).</h1>
+    <p class="nf-sub">This page might have moved, or it never existed.</p>
     <a class="nf-home" href="/">← Back home</a>
+
+    <section class="nf-puzzle" id="nf-maze">
+      <h2>Find the exit</h2>
+      <p>Keyboard: arrows / WASD. Mobile: swipe or use the D-pad.</p>
+
+      <div class="maze-wrap">
+        <canvas class="maze" id="maze" aria-label="Maze game" role="img"></canvas>
+
+        <div class="maze-win" id="maze-win" hidden aria-live="polite">
+          <div class="maze-win__card">
+            <p class="maze-win__title" id="maze-win-title">Escaped.</p>
+            <p class="maze-win__stats" id="maze-win-stats"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="puz-meta">
+        <span class="puz-status" id="maze-status">Moves: 0 · Time: 0:00</span>
+        <div class="puz-actions">
+          <button type="button" id="maze-reset">Reset</button>
+          <button type="button" id="maze-hint" aria-pressed="false">Hint</button>
+          <button type="button" id="maze-new">New</button>
+        </div>
+      </div>
+
+      <div class="maze-pad" role="group" aria-label="Maze controls">
+        <button type="button" data-dir="up" aria-label="Move up">↑</button>
+        <button type="button" data-dir="left" aria-label="Move left">←</button>
+        <button type="button" data-dir="right" aria-label="Move right">→</button>
+        <button type="button" data-dir="down" aria-label="Move down">↓</button>
+      </div>
+    </section>
   </main>
+
+  <script is:inline>
+    (function () {
+      var root = document.getElementById('nf-maze');
+      var canvas = document.getElementById('maze');
+      var statusEl = document.getElementById('maze-status');
+      var resetBtn = document.getElementById('maze-reset');
+      var newBtn = document.getElementById('maze-new');
+      var hintBtn = document.getElementById('maze-hint');
+      if (!root || !canvas || !statusEl || !resetBtn || !newBtn || !hintBtn) return;
+
+      var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      var css = getComputedStyle(document.documentElement);
+      var C_BG = css.getPropertyValue('--bg').trim() || '#14120f';
+      var C_LIFT = css.getPropertyValue('--bg-lift').trim() || '#1d1a15';
+      var C_INK = css.getPropertyValue('--ink').trim() || '#ede8df';
+      var C_DIM = css.getPropertyValue('--ink-dim').trim() || '#a69d8e';
+      var C_HAIR = css.getPropertyValue('--hairline').trim() || 'rgba(237, 232, 223, 0.1)';
+      var C_ACC = css.getPropertyValue('--accent').trim() || '#e0a054';
+
+      var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+
+      var rows = 13;
+      var cols = 13;
+      var cell = 24;
+      var optMoves = 0;
+      var variant = 'dfs';
+      var winAt = 0;
+
+      var N = 0, E = 1, S = 2, W = 3;
+      var dr = [-1, 0, 1, 0];
+      var dc = [0, 1, 0, -1];
+      var opp = [S, W, N, E];
+
+      var grid = [];
+      var start = { r: 0, c: 0 };
+      var end = { r: rows - 1, c: cols - 1 };
+      var player = { r: 0, c: 0 };
+      var moves = 0;
+      var t0 = 0;
+      var solved = false;
+      var hintOn = false;
+      var hintPath = null;
+      var timer = null;
+
+      // animated player position (in cells, not pixels)
+      var pxf = 0;
+      var pyf = 0;
+      var anim = null;
+      var raf = 0;
+      var lastNow = 0;
+
+      // crumbs for a subtle trail
+      var trail = [];
+
+      // confetti
+      var confetti = [];
+      var confettiUntil = 0; // perf.now timestamp
+
+      // cache the static maze layer (walls + start/end) so animations don't redraw it every frame
+      var staticCanvas = null;
+      var sctx = null;
+      var cw = 0;
+      var ch = 0;
+
+      var winBox = document.getElementById('maze-win');
+      var winTitle = document.getElementById('maze-win-title');
+      var winStats = document.getElementById('maze-win-stats');
+
+      var fmtTime = function (ms) {
+        var s = Math.floor(ms / 1000);
+        var m = Math.floor(s / 60);
+        s = s % 60;
+        return m + ':' + (s < 10 ? '0' + s : s);
+      };
+
+      var setStatus = function () {
+        var now = Date.now();
+        var t = (t0 ? (now - t0) : 0);
+        var compact = matchMedia('(max-width: 420px)').matches;
+        if (solved) {
+          statusEl.textContent = compact
+            ? ('Won · M:' + moves + ' T:' + fmtTime(t))
+            : ('Escaped in ' + moves + ' moves · ' + fmtTime(t));
+        } else {
+          statusEl.textContent = compact
+            ? ('M:' + moves + ' · T:' + fmtTime(t))
+            : ('Moves: ' + moves + ' · Time: ' + fmtTime(t));
+        }
+        root.classList.toggle('solved', solved);
+      };
+
+      var resize = function () {
+        var wrap = root.querySelector('.maze-wrap');
+        var w = (wrap ? wrap.clientWidth : 360) || 360;
+        var pad = 18;
+        var target = Math.max(260, Math.min(440, w));
+
+        // choose a cell size that fits; keep a little padding around the maze
+        cell = Math.floor((target - pad) / cols);
+        cell = Math.max(13, Math.min(30, cell));
+
+        cw = cols * cell + 1;
+        ch = rows * cell + 1;
+        canvas.style.width = cw + 'px';
+        canvas.style.height = ch + 'px';
+        canvas.width = Math.floor(cw * DPR);
+        canvas.height = Math.floor(ch * DPR);
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+        if (!staticCanvas) staticCanvas = document.createElement('canvas');
+        staticCanvas.width = canvas.width;
+        staticCanvas.height = canvas.height;
+        sctx = staticCanvas.getContext('2d');
+        if (sctx) {
+          sctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+          renderStatic();
+        }
+        draw();
+      };
+
+      var cellAt = function (r, c) { return grid[r * cols + c]; };
+
+      var renderStatic = function () {
+        if (!sctx) return;
+
+        // background
+        sctx.clearRect(0, 0, cw, ch);
+        sctx.fillStyle = C_LIFT;
+        sctx.fillRect(0, 0, cw, ch);
+
+        // walls (single stroke path; draw N/W, plus S/E borders)
+        sctx.strokeStyle = C_HAIR;
+        sctx.lineWidth = 2;
+        sctx.lineCap = 'square';
+        sctx.beginPath();
+        for (var r = 0; r < rows; r++) {
+          for (var c = 0; c < cols; c++) {
+            var ce = cellAt(r, c);
+            var x0 = c * cell;
+            var y0 = r * cell;
+            var x1 = x0 + cell;
+            var y1 = y0 + cell;
+            if (ce.w[N]) { sctx.moveTo(x0, y0); sctx.lineTo(x1, y0); }
+            if (ce.w[W]) { sctx.moveTo(x0, y0); sctx.lineTo(x0, y1); }
+            if (r === rows - 1 && ce.w[S]) { sctx.moveTo(x0, y1); sctx.lineTo(x1, y1); }
+            if (c === cols - 1 && ce.w[E]) { sctx.moveTo(x1, y0); sctx.lineTo(x1, y1); }
+          }
+        }
+        sctx.stroke();
+
+      };
+
+      var gen = function () {
+        var wrap = root.querySelector('.maze-wrap');
+        var w = (wrap ? wrap.clientWidth : 420) || 420;
+        var isSmall = matchMedia('(max-width: 420px)').matches || w < 360;
+
+        var sizes = isSmall
+          ? [17, 19, 21]
+          : (w < 460 ? [19, 21, 23, 25] : [21, 23, 25, 27]);
+        var pickSize = function () { return sizes[Math.floor(Math.random() * sizes.length)]; };
+
+        // More loops = more choices = harder to solve visually.
+        var braidChance = isSmall ? (0.22 + Math.random() * 0.28) : (0.26 + Math.random() * 0.40);
+        var distMinFor = function (n) {
+          // aim for longer routes; tuned so it doesn't spin forever
+          return Math.floor((n * n) / (isSmall ? 3.15 : 2.85));
+        };
+
+        var initGrid = function () {
+          grid = [];
+          for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+              grid.push({ r: r, c: c, v: false, w: [true, true, true, true] });
+            }
+          }
+        };
+
+        var carveDFS = function () {
+          initGrid();
+
+          var sr = Math.floor(Math.random() * rows);
+          var sc = Math.floor(Math.random() * cols);
+
+          var stack = [];
+          var cur = cellAt(sr, sc);
+          cur.v = true;
+          stack.push(cur);
+
+          while (stack.length) {
+            cur = stack[stack.length - 1];
+            var dirs = [N, E, S, W];
+            for (var i = dirs.length - 1; i > 0; i--) {
+              var j = Math.floor(Math.random() * (i + 1));
+              var tmp = dirs[i]; dirs[i] = dirs[j]; dirs[j] = tmp;
+            }
+
+            var moved = false;
+            for (var di = 0; di < 4; di++) {
+              var d = dirs[di];
+              var rr = cur.r + dr[d];
+              var cc = cur.c + dc[d];
+              if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) continue;
+              var nxt = cellAt(rr, cc);
+              if (nxt.v) continue;
+              cur.w[d] = false;
+              nxt.w[opp[d]] = false;
+              nxt.v = true;
+              stack.push(nxt);
+              moved = true;
+              break;
+            }
+            if (!moved) stack.pop();
+          }
+        };
+
+        var carvePrim = function () {
+          initGrid();
+          var sr = Math.floor(Math.random() * rows);
+          var sc = Math.floor(Math.random() * cols);
+          var startCell = cellAt(sr, sc);
+          startCell.v = true;
+
+          var frontier = [];
+          var pushEdges = function (ce) {
+            for (var d = 0; d < 4; d++) {
+              var rr = ce.r + dr[d];
+              var cc = ce.c + dc[d];
+              if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) continue;
+              var nx = cellAt(rr, cc);
+              if (nx.v) continue;
+              frontier.push({ r: ce.r, c: ce.c, d: d });
+            }
+          };
+          pushEdges(startCell);
+
+          while (frontier.length) {
+            var ei = Math.floor(Math.random() * frontier.length);
+            var e = frontier[ei];
+            frontier[ei] = frontier[frontier.length - 1];
+            frontier.pop();
+
+            var ce = cellAt(e.r, e.c);
+            var rr = e.r + dr[e.d];
+            var cc = e.c + dc[e.d];
+            if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) continue;
+            var nx = cellAt(rr, cc);
+            if (nx.v) continue;
+
+            ce.w[e.d] = false;
+            nx.w[opp[e.d]] = false;
+            nx.v = true;
+            pushEdges(nx);
+          }
+        };
+
+        var degree = function (ce) {
+          var d = 0;
+          for (var k = 0; k < 4; k++) if (!ce.w[k]) d++;
+          return d;
+        };
+
+        var braid = function (chance) {
+          // add loops by removing walls at some dead ends
+          for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+              var ce = cellAt(r, c);
+              if (degree(ce) !== 1) continue;
+              if (Math.random() > chance) continue;
+
+              var closed = [];
+              for (var d = 0; d < 4; d++) {
+                if (!ce.w[d]) continue;
+                var rr = r + dr[d];
+                var cc = c + dc[d];
+                if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) continue;
+                closed.push(d);
+              }
+              if (!closed.length) continue;
+              var pick = closed[Math.floor(Math.random() * closed.length)];
+              var rr2 = r + dr[pick];
+              var cc2 = c + dc[pick];
+              var nx = cellAt(rr2, cc2);
+              ce.w[pick] = false;
+              nx.w[opp[pick]] = false;
+            }
+          }
+        };
+
+        var punch = function (count) {
+          // extra random loops for variety (avoid outer border)
+          for (var i = 0; i < count; i++) {
+            var r = 1 + Math.floor(Math.random() * (rows - 2));
+            var c = 1 + Math.floor(Math.random() * (cols - 2));
+            var ce = cellAt(r, c);
+            var tries = 0;
+            while (tries++ < 6) {
+              var d = Math.floor(Math.random() * 4);
+              var rr = r + dr[d];
+              var cc = c + dc[d];
+              if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) continue;
+              if (!ce.w[d]) continue;
+              var nx = cellAt(rr, cc);
+              ce.w[d] = false;
+              nx.w[opp[d]] = false;
+              break;
+            }
+          }
+        };
+
+        var rooms = function () {
+          // carve a couple of 2x2 "rooms" for visual variety
+          if (rows < 9) return;
+          var k = Math.random() < 0.45 ? (1 + Math.floor(Math.random() * 3)) : 0;
+          for (var i = 0; i < k; i++) {
+            var r = 1 + Math.floor(Math.random() * (rows - 3));
+            var c = 1 + Math.floor(Math.random() * (cols - 3));
+            var a = cellAt(r, c);
+            var b = cellAt(r, c + 1);
+            var d = cellAt(r + 1, c);
+            var e = cellAt(r + 1, c + 1);
+            // open internal walls
+            a.w[E] = false; b.w[W] = false;
+            a.w[S] = false; d.w[N] = false;
+            b.w[S] = false; e.w[N] = false;
+            d.w[E] = false; e.w[W] = false;
+          }
+        };
+
+        var perimCells = function () {
+          var out = [];
+          for (var c = 0; c < cols; c++) { out.push({ r: 0, c: c }); out.push({ r: rows - 1, c: c }); }
+          for (var r = 1; r < rows - 1; r++) { out.push({ r: r, c: 0 }); out.push({ r: r, c: cols - 1 }); }
+          return out;
+        };
+
+        var shuffle = function (arr) {
+          for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+          }
+          return arr;
+        };
+
+        var bfsDistMap = function (sr, sc) {
+          var dist = new Int16Array(rows * cols);
+          dist.fill(-1);
+          var q = new Int16Array(rows * cols);
+          var head = 0, tail = 0;
+          var s = sr * cols + sc;
+          dist[s] = 0;
+          q[tail++] = s;
+          while (head < tail) {
+            var cur = q[head++];
+            var r = (cur / cols) | 0;
+            var c = cur % cols;
+            var ce = cellAt(r, c);
+            for (var d = 0; d < 4; d++) {
+              if (ce.w[d]) continue;
+              var rr = r + dr[d];
+              var cc = c + dc[d];
+              if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) continue;
+              var ni = rr * cols + cc;
+              if (dist[ni] !== -1) continue;
+              dist[ni] = dist[cur] + 1;
+              q[tail++] = ni;
+            }
+          }
+          return dist;
+        };
+
+        var pickEndpoints = function () {
+          var perim = perimCells();
+          shuffle(perim);
+          var sampleSize = Math.min(perim.length, isSmall ? 34 : 48);
+          var sample = perim.slice(0, sampleSize);
+
+          var best = [];
+          var bestD = -1;
+          for (var i = 0; i < sample.length; i++) {
+            var a = sample[i];
+            var dist = bfsDistMap(a.r, a.c);
+            for (var j = i + 1; j < sample.length; j++) {
+              var b = sample[j];
+              var d = dist[b.r * cols + b.c];
+              if (d < 0) continue;
+              if (d > bestD) { bestD = d; best = [{ a: a, b: b, d: d }]; }
+              else if (d === bestD) best.push({ a: a, b: b, d: d });
+            }
+          }
+
+          if (!best.length) return null;
+          // add variety: pick from near-best too
+          var near = [];
+          for (var k = 0; k < best.length; k++) near.push(best[k]);
+          // also sample a few random pairs to avoid always picking the absolute max
+          for (var t = 0; t < 16; t++) {
+            var aa = sample[Math.floor(Math.random() * sample.length)];
+            var bb = sample[Math.floor(Math.random() * sample.length)];
+            if (aa.r === bb.r && aa.c === bb.c) continue;
+            var dm = bfsDistMap(aa.r, aa.c);
+            var dd = dm[bb.r * cols + bb.c];
+            if (dd < 0) continue;
+            near.push({ a: aa, b: bb, d: dd });
+          }
+          near.sort(function (x, y) { return y.d - x.d; });
+          var top = near.slice(0, Math.min(8, near.length));
+          var pick = top[Math.floor(Math.random() * top.length)];
+          if (Math.random() < 0.5) return { start: pick.a, end: pick.b, d: pick.d };
+          return { start: pick.b, end: pick.a, d: pick.d };
+        };
+
+        var attempt = 0;
+        var chosen = null;
+        while (attempt++ < 24) {
+          rows = cols = pickSize();
+
+          variant = Math.random() < 0.55 ? 'dfs' : 'prim';
+          if (variant === 'prim') carvePrim();
+          else carveDFS();
+
+          // post-processing: add loops and occasional rooms
+          braid(braidChance);
+          punch(Math.floor(rows * cols * (isSmall ? 0.018 : 0.028)));
+          rooms();
+
+          chosen = pickEndpoints();
+          if (!chosen) continue;
+          var minD = distMinFor(rows);
+          if (chosen.d >= minD) break;
+          chosen = null;
+        }
+
+        // fallback if we didn't hit thresholds
+        if (!chosen) {
+          rows = cols = pickSize();
+          variant = Math.random() < 0.55 ? 'dfs' : 'prim';
+          if (variant === 'prim') carvePrim();
+          else carveDFS();
+          braid(braidChance);
+          punch(Math.floor(rows * cols * (isSmall ? 0.018 : 0.028)));
+          rooms();
+          chosen = pickEndpoints() || { start: { r: 0, c: 0 }, end: { r: rows - 1, c: cols - 1 }, d: 0 };
+        }
+
+        start = { r: chosen.start.r, c: chosen.start.c };
+        end = { r: chosen.end.r, c: chosen.end.c };
+        optMoves = Math.max(0, chosen.d);
+
+        player = { r: start.r, c: start.c };
+        pxf = player.c;
+        pyf = player.r;
+        moves = 0;
+        solved = false;
+        winAt = 0;
+        hintPath = null;
+        trail = [{ r: player.r, c: player.c }];
+        confetti = [];
+        confettiUntil = 0;
+        hintOn = false;
+        if (hintBtn) hintBtn.setAttribute('aria-pressed', 'false');
+        t0 = Date.now();
+        if (winBox) winBox.hidden = true;
+        root.removeAttribute('data-tier');
+        resize();
+        setStatus();
+        draw();
+      };
+
+      var bfsPathFrom = function (sr, sc, tr, tc) {
+        var q = [];
+        var prev = new Array(rows * cols);
+        var seen = new Array(rows * cols);
+        for (var i = 0; i < prev.length; i++) { prev[i] = -1; seen[i] = false; }
+
+        var s = sr * cols + sc;
+        var t = tr * cols + tc;
+        q.push(s);
+        seen[s] = true;
+
+        while (q.length) {
+          var cur = q.shift();
+          if (cur === t) break;
+          var r = Math.floor(cur / cols);
+          var c = cur % cols;
+          var ce = cellAt(r, c);
+          for (var d = 0; d < 4; d++) {
+            if (ce.w[d]) continue;
+            var rr = r + dr[d];
+            var cc = c + dc[d];
+            if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) continue;
+            var ni = rr * cols + cc;
+            if (seen[ni]) continue;
+            seen[ni] = true;
+            prev[ni] = cur;
+            q.push(ni);
+          }
+        }
+
+        if (!seen[t]) return null;
+        var path = [];
+        var cur2 = t;
+        while (cur2 !== -1) {
+          path.push({ r: Math.floor(cur2 / cols), c: cur2 % cols });
+          cur2 = prev[cur2];
+        }
+        path.reverse();
+        return path;
+      };
+
+      var optimalMoves = function () {
+        return optMoves || 0;
+      };
+
+      var updateHint = function () {
+        if (!hintOn) { hintPath = null; return; }
+        hintPath = bfsPathFrom(player.r, player.c, end.r, end.c);
+      };
+
+      var rand = function () { return Math.random(); };
+
+      var spawnConfetti = function (tier) {
+        if (reduced) return;
+        confetti = [];
+        var small = matchMedia('(max-width: 420px)').matches;
+        var count = tier === 'legendary' ? (small ? 95 : 130) : tier === 'perfect' ? (small ? 65 : 85) : (small ? 40 : 55);
+        confettiUntil = performance.now() + (tier === 'legendary' ? 2200 : 1500);
+        // spawn from around the win box region
+        var w = cols * cell + 1;
+        var h = rows * cell + 1;
+        var cx = w * 0.5;
+        var cy = h * 0.22;
+        for (var i = 0; i < count; i++) {
+          confetti.push({
+            x: cx + (rand() - 0.5) * cell * 2,
+            y: cy + (rand() - 0.5) * cell * 1.5,
+            vx: (rand() - 0.5) * (tier === 'legendary' ? 5.8 : 4.2),
+            vy: -rand() * (tier === 'legendary' ? 6.8 : 5.2) - 2,
+            g: 0.22 + rand() * 0.12,
+            r: rand() * Math.PI,
+            vr: (rand() - 0.5) * 0.25,
+            s: 3 + rand() * (tier === 'legendary' ? 5 : 3.2),
+            life: 1,
+            c: (rand() < 0.65 ? C_ACC : (rand() < 0.5 ? C_INK : C_DIM)),
+          });
+        }
+      };
+
+      var tick = function () {
+        raf = 0;
+        var now = performance.now();
+        var dt = now - (lastNow || now);
+        lastNow = now;
+        if (dt > 50) dt = 50;
+        var stepDt = dt / 16.666;
+        if (anim) {
+          var t = Math.min(1, (now - anim.t0) / anim.d);
+          var u = 1 - Math.pow(1 - t, 3);
+          pxf = anim.x0 + (anim.x1 - anim.x0) * u;
+          pyf = anim.y0 + (anim.y1 - anim.y0) * u;
+          if (t >= 1) {
+            pxf = anim.x1;
+            pyf = anim.y1;
+            anim = null;
+          }
+        }
+
+        var stillCelebrating = (confetti.length > 0);
+        if (confetti.length) {
+          // update particles
+          var fading = (now > confettiUntil);
+          for (var i = confetti.length - 1; i >= 0; i--) {
+            var p = confetti[i];
+            p.vy += p.g * stepDt;
+            p.x += p.vx * stepDt;
+            p.y += p.vy * stepDt;
+            p.r += p.vr * stepDt;
+            p.life -= (fading ? 0.03 : 0.012) * stepDt;
+            if (fading) { p.vx *= 0.985; p.vy *= 0.985; }
+            if (p.life <= 0 || p.y > (rows * cell + 40)) confetti.splice(i, 1);
+          }
+          // after the celebration window, make sure we finish and clear everything
+          if (now > (confettiUntil + 700) && confetti.length) confetti.length = 0;
+        }
+
+        draw();
+
+        var winPulse = (solved && winAt && !reduced && (now - winAt) < 1800);
+        if (anim || stillCelebrating || winPulse) raf = requestAnimationFrame(tick);
+      };
+
+      var ensureTicking = function () {
+        if (reduced) { draw(); return; }
+        if (!raf) raf = requestAnimationFrame(tick);
+      };
+
+      var draw = function () {
+        var w = cols * cell + 1;
+        var h = rows * cell + 1;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // blur the board after a win so the overlay reads like a "modal" without changing layout.
+        ctx.filter = (solved && !reduced) ? 'blur(1.8px)' : 'none';
+
+        if (staticCanvas) {
+          ctx.drawImage(staticCanvas, 0, 0, w, h);
+        } else {
+          ctx.fillStyle = C_LIFT;
+          ctx.fillRect(0, 0, w, h);
+        }
+
+        var drawStart = function () {
+          // Solid start marker (bigger than the player token).
+          var cx = start.c * cell + cell / 2;
+          var cy = start.r * cell + cell / 2;
+          var r = Math.max(7, Math.floor(cell * 0.26));
+          ctx.save();
+          ctx.globalAlpha = 0.98;
+          ctx.fillStyle = C_ACC || '#e0a054';
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        };
+
+        var drawGoal = function () {
+          var x = end.c * cell;
+          var y = end.r * cell;
+          var cx = x + cell / 2;
+          var cy = y + cell / 2;
+          var r0 = Math.max(7, Math.floor(cell * 0.32));
+
+          // Soft beacon (no text) so it's obvious where the token should go.
+          ctx.save();
+          ctx.globalAlpha = 0.16;
+          ctx.fillStyle = C_ACC;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r0 * 1.85, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Target rings
+          ctx.globalAlpha = 0.55;
+          ctx.strokeStyle = C_ACC;
+          ctx.lineWidth = Math.max(2, Math.floor(cell * 0.10));
+          ctx.beginPath();
+          ctx.arc(cx, cy, r0 * 1.08, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.globalAlpha = 0.75;
+          ctx.strokeStyle = C_INK;
+          ctx.lineWidth = Math.max(2, Math.floor(cell * 0.08));
+          ctx.beginPath();
+          ctx.arc(cx, cy, r0 * 0.62, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        };
+
+        // hint overlay (toggle)
+        if (hintPath && hintOn) {
+          ctx.strokeStyle = C_ACC;
+          ctx.globalAlpha = solved ? 0.18 : 0.24;
+          ctx.lineWidth = Math.max(4, Math.floor(cell * 0.22));
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          for (var i = 0; i < hintPath.length; i++) {
+            var p = hintPath[i];
+            var x = p.c * cell + cell / 2;
+            var y = p.r * cell + cell / 2;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+
+        // trail
+        if (trail.length > 1) {
+          ctx.strokeStyle = C_ACC;
+          ctx.globalAlpha = solved ? 0.3 : 0.22;
+          ctx.lineWidth = Math.max(3, Math.floor(cell * 0.16));
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          for (var ti = 0; ti < trail.length; ti++) {
+            var tp = trail[ti];
+            var tx = tp.c * cell + cell / 2;
+            var ty = tp.r * cell + cell / 2;
+            if (ti === 0) ctx.moveTo(tx, ty);
+            else ctx.lineTo(tx, ty);
+          }
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+
+        drawGoal();
+        drawStart();
+
+        // from here on: no blur (player + celebration stay crisp)
+        ctx.filter = 'none';
+
+        // win pulse around the exit
+        if (solved && winAt && !reduced) {
+          var tt = (performance.now() - winAt) / 1000;
+          if (tt < 1.8) {
+            var ex = end.c * cell + cell / 2;
+            var ey = end.r * cell + cell / 2;
+            ctx.globalAlpha = Math.max(0, 0.35 - tt * 0.18);
+            ctx.strokeStyle = C_ACC;
+            ctx.lineWidth = Math.max(2, Math.floor(cell * 0.09));
+            ctx.beginPath();
+            ctx.arc(ex, ey, cell * (0.45 + tt * 1.6), 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+
+        // player (animated)
+        var px = pxf * cell + cell / 2;
+        var py = pyf * cell + cell / 2;
+        var baseR = Math.max(4, Math.floor(cell * 0.18));
+        // tiny squash while moving
+        var bounce = 0;
+        if (anim && !reduced) {
+          var t = Math.min(1, (performance.now() - anim.t0) / anim.d);
+          bounce = Math.sin(Math.PI * t) * 0.18;
+        }
+        var idlePulse = 1;
+        if (!solved && !anim && !reduced) {
+          idlePulse = 0.25 + 0.75 * (0.5 + 0.5 * Math.sin(performance.now() / 420));
+        }
+
+        ctx.globalAlpha = solved ? 1 : (anim ? 1 : idlePulse);
+        ctx.fillStyle = solved ? C_ACC : C_INK;
+        ctx.beginPath();
+        ctx.arc(px, py, baseR * (1 + bounce), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = C_DIM;
+        ctx.globalAlpha = solved ? 0.8 : (anim ? 0.65 : Math.max(0.35, idlePulse * 0.8));
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        // confetti (above everything)
+        if (confetti.length) {
+          ctx.globalAlpha = 0.95;
+          for (var ci = 0; ci < confetti.length; ci++) {
+            var cf = confetti[ci];
+            ctx.save();
+            ctx.translate(cf.x, cf.y);
+            ctx.rotate(cf.r);
+            ctx.fillStyle = cf.c;
+            ctx.globalAlpha = Math.max(0, Math.min(1, cf.life));
+            ctx.fillRect(-cf.s, -cf.s * 0.6, cf.s * 2, cf.s * 1.2);
+            ctx.restore();
+          }
+          ctx.globalAlpha = 1;
+        }
+      };
+
+      var canMove = function (dir) {
+        if (solved) return false;
+        var ce = cellAt(player.r, player.c);
+        if (ce.w[dir]) return false;
+        var rr = player.r + dr[dir];
+        var cc = player.c + dc[dir];
+        if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) return false;
+        return true;
+      };
+
+      var step = function (dir) {
+        if (!canMove(dir)) return;
+
+        var pr0 = player.r;
+        var pc0 = player.c;
+        var pr1 = pr0 + dr[dir];
+        var pc1 = pc0 + dc[dir];
+
+        player.r = pr1;
+        player.c = pc1;
+        moves++;
+
+        trail.push({ r: player.r, c: player.c });
+        if (trail.length > 120) trail.shift();
+
+        anim = {
+          x0: pxf,
+          y0: pyf,
+          x1: pc1,
+          y1: pr1,
+          t0: performance.now(),
+          d: reduced ? 1 : 140,
+        };
+
+        if (player.r === end.r && player.c === end.c) {
+          solved = true;
+          winAt = performance.now();
+
+          var tms = Date.now() - t0;
+          var opt = optimalMoves();
+          var isPerfect = (moves === opt);
+          var goodTime = tms <= (opt * 380 + 2200);
+          var tier = isPerfect && goodTime ? 'legendary' : (isPerfect ? 'perfect' : 'win');
+
+          if (winBox && winStats && winTitle) {
+            root.setAttribute('data-tier', tier);
+            winBox.hidden = false;
+            // restart the CSS animation
+            winBox.style.animation = 'none';
+            winBox.offsetHeight;
+            winBox.style.animation = '';
+            winTitle.textContent = tier === 'legendary'
+              ? 'Perfect escape.'
+              : (tier === 'perfect' ? 'Optimal route.' : 'Escaped.');
+            winStats.textContent = 'Time: ' + fmtTime(tms) + ' · Moves: ' + moves + ' · Least possible: ' + opt;
+          }
+
+          spawnConfetti(tier);
+        }
+
+        updateHint();
+        setStatus();
+        ensureTicking();
+      };
+
+      var reset = function () {
+        player = { r: start.r, c: start.c };
+        pxf = player.c;
+        pyf = player.r;
+        moves = 0;
+        solved = false;
+        winAt = 0;
+        anim = null;
+        trail = [{ r: player.r, c: player.c }];
+        confetti = [];
+        confettiUntil = 0;
+        updateHint();
+        t0 = Date.now();
+        if (winBox) winBox.hidden = true;
+        root.removeAttribute('data-tier');
+        setStatus();
+        draw();
+      };
+
+      var onKey = function (e) {
+        var k = e.key;
+        var d = null;
+        if (k === 'ArrowUp' || k === 'w' || k === 'W') d = N;
+        if (k === 'ArrowRight' || k === 'd' || k === 'D') d = E;
+        if (k === 'ArrowDown' || k === 's' || k === 'S') d = S;
+        if (k === 'ArrowLeft' || k === 'a' || k === 'A') d = W;
+        if (d == null) return;
+        e.preventDefault();
+        step(d);
+      };
+
+      var x0 = null, y0 = null;
+      var onTouchStart = function (e) {
+        if (!e.touches || e.touches.length !== 1) return;
+        x0 = e.touches[0].clientX;
+        y0 = e.touches[0].clientY;
+      };
+      var onTouchMove = function (e) {
+        // prevent page scroll while interacting with the maze
+        if (x0 == null || y0 == null) return;
+        e.preventDefault();
+      };
+      var onTouchEnd = function (e) {
+        if (x0 == null || y0 == null) return;
+        var t = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0] : null;
+        if (!t) return;
+        var dx = t.clientX - x0;
+        var dy = t.clientY - y0;
+        x0 = null; y0 = null;
+
+        var adx = Math.abs(dx);
+        var ady = Math.abs(dy);
+        if (Math.max(adx, ady) < 24) return;
+        if (adx > ady) step(dx > 0 ? E : W);
+        else step(dy > 0 ? S : N);
+      };
+
+      root.addEventListener('click', function (e) {
+        var t = e.target;
+        if (!t) return;
+        var btn = t.closest && t.closest('.maze-pad button[data-dir]');
+        if (!btn) return;
+        var dir = btn.getAttribute('data-dir');
+        if (dir === 'up') step(N);
+        if (dir === 'right') step(E);
+        if (dir === 'down') step(S);
+        if (dir === 'left') step(W);
+      });
+
+      // tap the canvas to focus the page for keyboard users
+      canvas.addEventListener('click', function () { canvas.focus && canvas.focus(); });
+
+      document.addEventListener('keydown', onKey);
+      canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+      canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+      canvas.addEventListener('touchend', onTouchEnd, { passive: true });
+
+      resetBtn.addEventListener('click', reset);
+      newBtn.addEventListener('click', function () { gen(); });
+      hintBtn.addEventListener('click', function () {
+        hintOn = !hintOn;
+        hintBtn.setAttribute('aria-pressed', hintOn ? 'true' : 'false');
+        updateHint();
+        draw();
+      });
+
+      window.addEventListener('resize', resize);
+      window.addEventListener('load', resize);
+
+      timer = setInterval(function () {
+        if (solved) return;
+        setStatus();
+      }, 250);
+
+      gen();
+      resize();
+    })();
+  </script>
 </body>
 </html>
