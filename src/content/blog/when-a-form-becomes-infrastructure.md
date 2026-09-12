@@ -10,7 +10,7 @@ The first version of the MPSTME Railway Concession system looked like a form. St
 
 It was not finished. It was becoming official.
 
-The system was built by [NeuroTechh](https://neurotechh.mpst.me), a team I am part of, and is used by MPSTME students for the railway concession process. I am now maintaining it and continuing to add features. That changed the nature of the work completely. A personal project can fail privately. An official college system fails in front of students, administrators, and a process that still has to happen that day.
+The system was built by [NeuroTechh](https://neurotechh.mpst.me), a team I am part of, and is used by MPSTME students for the railway concession process. I am now maintaining it and continuing to add features. That changed the nature of the work completely. A personal project can fail privately. An official college system backs a process students and administrators rely on, and the work of that day does not wait for the software.
 
 The current system is documented on the [Railway Concession project page](/projects/railway-concession/).
 
@@ -34,7 +34,7 @@ For an unofficial tool, the conversation usually ends at: does the demo work? Fo
 - How does an administrator find one student's record quickly?
 - What happens when a collection date changes?
 - Who gets notified when something goes wrong?
-- Who will answer when somebody says, "I submitted it, but what do I do now?"
+- Who helps a student when they ask, "I submitted it, but what do I do now?"
 
 Those are not all software questions. They belong partly to the administration department, partly to the students using the system, and partly to the person maintaining it.
 
@@ -55,7 +55,7 @@ Once a system is in use, development stops being a straight line from requiremen
 
 That last step matters more than it sounds. A feature is not complete just because the pull request is merged. It is complete when the person operating it understands it, the student can use it, and the next unexpected case has somewhere to go.
 
-I had to stay in the loop with the administration department because the software was modelling a real process, not inventing one. Booking windows, holidays, collection dates, blocked records, and out-of-schedule collections all came from operational needs. My job was to make those needs clear and enforceable without turning every small change into a code change and redeploy.
+I stayed in regular contact with the administration department because the software was modelling a real process, not inventing one. Booking windows, holidays, collection dates, blocked records, and out-of-schedule collections all came from operational needs. Anjali Barmukh and Omkar Gholap Sir, who coordinate the process on the college side, helped me understand not just what the rules are but why they exist, and their feedback was central to how I translated those requirements into the system. My job was to make those needs clear and enforceable without turning every small change into a code change and redeploy.
 
 ## Turning administrative rules into one source of truth
 
@@ -158,11 +158,11 @@ The maintainer has to understand the difference.
 
 That means answering questions, checking the data, reproducing the issue, explaining the current behavior, and deciding whether the fix belongs in the UI, the API, the database, the process, or the documentation. It also means being honest when a change needs coordination before it can be shipped.
 
-There is no clean boundary where the software ends and responsibility begins. If the system is official, the boundary is yours to carry.
+There is no clean boundary where the software ends and responsibility begins. If the system is official, that boundary is something the administration team and I carry together.
 
-## The happy path is not the real process
+## Designing for the whole process
 
-The documented process is straightforward: a student submits the form, chooses a collection slot, and arrives at the selected time. Real life does not follow documentation that neatly.
+The documented process is straightforward: a student submits the form, chooses a collection slot, and arrives at the selected time. In practice, the process also has room for legitimate exceptions that documentation does not spell out.
 
 Someone forgets to submit the form. Someone submits it but does not show up on the scheduled day. Someone comes back two or three days later with a reasonable explanation and still needs the slip. An administrator may need to help without pretending that the original schedule never existed.
 
@@ -176,7 +176,7 @@ This is a small operational distinction with a large effect: exceptions are hand
 
 The daily report is designed around the same reality. It separates students scheduled for the day from students actually marked collected that day, then calls out the out-of-schedule cases explicitly. A report that only counts the original schedule would be technically consistent and operationally misleading.
 
-That is what I value most about maintaining this project. I did not just get to build a form and move on. I had to learn how a software system earns the right to become official: by fitting the process around it, by making its rules explicit, by giving administrators the tools to operate it, and by showing up when the requirements change.
+That is what I value most about maintaining this project. I did not just get to build a form and move on. I learned how a software system earns the right to become official: by fitting the process around it, by making its rules explicit, by giving administrators the tools to operate it, and by staying available when the requirements change.
 
 The public system is [concession.mpst.me](https://concession.mpst.me). The screenshots and email examples in this post use synthetic development data.
 
