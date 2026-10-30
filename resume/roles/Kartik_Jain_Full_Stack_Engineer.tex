@@ -1,0 +1,128 @@
+% Kartik Jain — full-stack / SDE / product engineering (archetype C, borrowing from E). Facts come from resume/CAREER.md only; strategy in resume/MARKET.md.
+% Layout copied from resume/Kartik_Resume.tex. Build: npm run resume -- Kartik_Jain_Full_Stack_Engineer
+% ATS check: node scripts/ats-check.mjs public/resume/Kartik_Jain_Full_Stack_Engineer.pdf --role fullstack
+\documentclass[10pt, a4paper]{article}
+
+% ---------- page ----------
+\usepackage[top=0.95cm, bottom=0.8cm, left=1.35cm, right=1.35cm]{geometry}
+\usepackage{fontspec}
+% XCharter: a readable serif with real Unicode maps (ATS-safe text extraction).
+% Common ligatures are off so parsers never see "ﬁ"/"ﬂ" glyphs.
+\setmainfont{XCharter}[
+  Extension=.otf, UprightFont=*-Roman, BoldFont=*-Bold,
+  ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic, Ligatures={TeX,NoCommon}]
+\usepackage[dvipsnames]{xcolor}
+\definecolor{ink}{HTML}{1A1A1A}
+\definecolor{rule}{HTML}{8A8A8A}
+\definecolor{linkc}{HTML}{1F4E9A}
+\color{ink}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks, pdfusetitle]{hyperref}
+\hypersetup{
+  pdftitle={Kartik Jain - Resume - Full-Stack Engineer},
+  pdfauthor={Kartik Jain},
+  pdfsubject={Resume},
+  pdfkeywords={Kartik Jain, Full-Stack Engineer, Software Engineer, SDE, React, Next.js, React Native, Expo, Node.js, TypeScript, PostgreSQL, REST APIs, Mumbai},
+}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\raggedright
+\linespread{1.0}
+
+% ---------- sections & lists ----------
+\titleformat{\section}{\bfseries\large\scshape}{}{0pt}{}[\vspace{-6pt}{\color{rule}\rule{\linewidth}{0.5pt}}]
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\setlist[itemize]{label={\small\textbullet}, leftmargin=11pt, labelsep=5pt, topsep=1pt, itemsep=0.3pt, parsep=0pt, partopsep=0pt}
+
+% \role{Organisation}{Title}{Dates}            -> one line, dates right-aligned
+% \proj{Name}{what it is}{stack}{links}        -> one line, links right-aligned
+\newcommand{\role}[3]{\par\vspace{2.5pt}\textbf{#1} \textbar{} \textit{#2}\hfill #3\par}
+\newcommand{\proj}[4]{\par\vspace{2.5pt}\textbf{#1} \textbar{} #2 \textbar{} \textit{\small #3}\hfill{\small #4}\par}
+\newcommand{\lnk}[2]{\href{#1}{\color{linkc}#2}}
+\newcommand{\sep}{\enspace\textbar\enspace}
+
+\begin{document}
+
+% ---------- header ----------
+\begin{center}
+  {\fontsize{22pt}{24pt}\selectfont\bfseries Kartik Jain}\par\vspace{3pt}
+  {\normalsize Full-Stack Engineer \textbar{} Web, Mobile \& Backend}\par\vspace{3pt}
+  {\small Mumbai, India\sep
+  \lnk{mailto:career@jkartik.in}{career@jkartik.in}\sep
+  \lnk{https://jkartik.in/}{jkartik.in}\sep
+  \lnk{https://linkedin.com/in/kartikjain1410}{linkedin.com/in/kartikjain1410}\sep
+  \lnk{https://github.com/KartikJain14}{github.com/KartikJain14}}
+\end{center}
+
+\section{Summary}
+Full-stack engineer who takes products from database to app store: a cross-platform learning platform on Google Play, an
+end-to-end-encrypted sharing app, and a live-auction platform used at a \textasciitilde{}200-player tournament.
+
+\section{Education \& Leadership}
+\role{B.Tech, Information Technology}{SVKM's NMIMS MPSTME, Mumbai \textbar{} \textup{\textbf{CGPA: 8.34/10.0}}}{Expected Apr 2028}
+\begin{itemize}
+  \item \textbf{Chairperson}, ACM MPSTME (\textasciitilde{}250 members); ex-Technical Head: Taqneeq, Mumbai MUN, Social Conclave, Sattva.
+  \item Headed Taqneeq's technical department: led the fest-app revamp, including facial-recognition photo discovery.
+\end{itemize}
+
+\section{Experience}
+\role{VisionRise Technosoft Pvt. Ltd.}{Software Engineer Intern}{Apr 2026 -- Oct 2026}
+\begin{itemize}
+  \item Built a white-label learning platform: a Node.js/Express/TypeScript REST API (276 routes, PostgreSQL) and one React Native/Expo codebase for Android, iOS and web, shipped as two Google Play apps (\lnk{https://play.google.com/store/apps/details?id=tech.riseinstitute.app}{Rise Academy}, \lnk{https://play.google.com/store/apps/details?id=app.eguru.lms}{eGuru}).
+  \item Shipped courses, quizzes, assignments, UPI payment verification, push and email notifications
+  and OTA app updates.
+  \item Integrated Zoom live classes (signature-verified webhooks, attendance, recordings) and generated quizzes with Gemini;
+  built JWT authentication with Google Sign-In and role-based access control.
+  \item Developed a government procurement prototype (FastAPI + React) for a client demo and the eguru.app site (Next.js).
+\end{itemize}
+
+\role{R.U.D.R.A Cybersecurity Pvt. Ltd.}{Security Engineer Intern}{May 2025 -- Jul 2025}
+\begin{itemize}
+  \item Found 2 high-severity vulnerabilities (Local File Inclusion, broken access control) in a banking client's web
+  portal through manual code review, then wrote custom Nuclei templates to detect them automatically.
+  \item Automated external attack-surface monitoring with BBOT, saving \textasciitilde{}\$20,000/year of manual reconnaissance.
+\end{itemize}
+
+\role{Freelance}{Backend \& Security Engineer}{May 2025 -- Oct 2026}
+\begin{itemize}
+  \item Led ransomware incident response for a 16,000+ user platform: restored it from backups and hardened its servers.
+  \item Built the platform behind ELEV8, a \textasciitilde{}200-player, 8-team pickleball tournament: player registration and verification, a live
+  auction with a projector board, fixtures, live scoring and standings (Next.js, Supabase Postgres + Realtime), with an offline write queue for unreliable venue Wi-Fi.
+\end{itemize}
+
+\section{Projects}
+\proj{GhostShare}{end-to-end-encrypted file sharing}{TypeScript, Next.js, Fastify, PostgreSQL, Redis, Docker}{\lnk{https://share.jkartik.in}{Live}}
+\begin{itemize}
+  \item Zero-knowledge sharing: keys derive in-browser (Argon2id), AES-256-GCM seals the data, 5 MiB chunks upload in parallel to
+  Cloudflare R2 and resume after failures, and an IndexedDB queue keeps it working offline.
+\end{itemize}
+\proj{Railway Concession System}{MPSTME's official portal}{Next.js, PostgreSQL, Drizzle}{\lnk{https://concession.mpst.me}{Live}}
+\begin{itemize}
+  \item Took over and maintain the system \textasciitilde{}4,000 students use: migrated it to PostgreSQL, enforced an
+  IST-aware booking window server-side, and built admin tools and automated daily reports for the college office.
+\end{itemize}
+\proj{conc-qr}{QR event access control}{TypeScript, Express, Next.js, PostgreSQL, Docker}{\lnk{https://github.com/Social-Conclave/conc-qr}{Source}}
+\begin{itemize}
+  \item Built QR access control for 500+ delegates: phone-camera scanning, race-free check-ins through a Postgres unique
+  constraint, and role permissions editable live mid-event.
+\end{itemize}
+\par\vspace{2.5pt}\textbf{bad-db} \textbar{} storage engine from scratch: custom file format, B-Tree index, compaction, own query language \textbar{} \textit{\small Java}\hfill{\small\lnk{https://github.com/KartikJain14/bad-db}{Source}}\par
+
+\section{Security Research \& Awards}
+\begin{itemize}
+  \item Awarded a \textbf{\$1,500 bug bounty by Meta} for a privilege-escalation vulnerability in WhatsApp.
+  \item Reported access-control and information-disclosure flaws in Microsoft Intune and Exchange Admin to MSRC;
+  responsibly disclosed a stored XSS on the Mumbai Police website through CERT-In.
+  \item \textbf{1st place} (global), chat.win AI Jailbreakathon (LLM red teaming); \textbf{1st place}, CodeForge 2026 team hackathon.
+\end{itemize}
+
+\section{Skills}
+\textbf{Languages:} TypeScript, JavaScript, HTML, CSS, Python, Java, SQL, Go, C++\par
+\textbf{Frameworks:} React, Next.js, React Native (Expo), Tailwind CSS, Node.js, Express, Fastify, FastAPI, Flask\par
+\textbf{Data \& Infra:} PostgreSQL, Redis, MongoDB, Supabase, Firebase, Docker, Linux, Git, CI/CD (GitHub Actions), Deployment (Coolify, Vercel)\par
+\textbf{Concepts:} REST APIs, WebSockets (Socket.IO), Authentication (JWT, OAuth 2.0), Data Structures \& Algorithms, System Design basics, Unit Testing
+
+\end{document}

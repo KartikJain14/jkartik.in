@@ -1,0 +1,80 @@
+% ---------------------------------------------------------------- skills, with evidence
+\section{Skills, with evidence}\label{sec:skills}
+
+Every skill below points to where it was used. \textbf{Strong} means used in production;
+\textbf{working} means used in a project; \textbf{light} means occasional use.
+
+{\footnotesize
+\renewcommand{\arraystretch}{1.12}%
+\newcommand{\sk}[3]{#1 & \leavevmode{\sffamily\scriptsize\color{muted}#2} & #3 \\}
+\newenvironment{skillgroup}[1]{%
+  \roomfor{6\baselineskip}\vspace{5pt}\noindent\lbl{#1}\par\nopagebreak\vspace{-2pt}\noindent
+  \tabularx{\linewidth}{@{}>{\raggedright\arraybackslash}p{69mm}>{\raggedright\arraybackslash}p{11mm}>{\raggedright\arraybackslash}X@{}}\toprule[0.4pt]}
+  {\endtabularx\par}
+\begin{skillgroup}{Languages}
+\sk{TypeScript, JavaScript}{Strong}{VisionRise LMS, GhostShare, meven, GrouPay, conc-qr}
+\sk{Python}{Strong}{Delego (FastAPI), Taqneeq (Flask), ballast, captr, hindcribe, usb-ai, bots}
+\sk{SQL}{Strong}{PostgreSQL across projects}
+\sk{Java, Go}{Working}{bad-db (Java), flap (Go)}
+\sk{C, C++}{Working}{Taught C++ at PFE-24; mentored C at PFE}
+\sk{Bash}{Working}{Backup and restore scripts, server operations}
+\sk{Dart / Flutter}{Light}{Delego and Taqneeq app integration and fixes}
+\end{skillgroup}
+\begin{skillgroup}{Backend}
+\sk{Node.js, Express}{Strong}{LMS, meven, conc-qr, GrouPay, Fool The LLM}
+\sk{FastAPI, Flask}{Strong}{Delego backend (FastAPI); Taqneeq backend, hindcribe (Flask)}
+\sk{Next.js}{Strong}{GhostShare, Railway Concession, conc-qr, sports-live, meven, PFE registration}
+\sk{REST API design}{Strong}{276-route LMS backend}
+\sk{Fastify, WebSockets / Socket.IO}{Working}{GhostShare}
+\sk{Auth: JWT, OAuth 2.0 / Google Sign-In, OTP, magic links}{Strong}{LMS, Delego, Fool The LLM, PFE registration}
+\sk{RBAC and access control}{Strong}{LMS, conc-qr, GrouPay, Taqneeq}
+\sk{Payments: Cashfree HMAC webhooks, UPI verification}{Working}{PFE registration, LMS}
+\sk{Queues and background workers: BullMQ}{Working}{GhostShare, meven}
+\sk{ORM: Drizzle}{Strong}{LMS, GhostShare, GrouPay}
+\sk{ORMs: Prisma, Sequelize}{Working}{Fool The LLM (Prisma), conc-qr (Sequelize)}
+\sk{Validation: Zod}{Strong}{LMS, GhostShare}
+\sk{Testing: unit and integration tests, Vitest}{Working}{LMS, ballast (52 tests), sports-live}
+\end{skillgroup}
+\begin{skillgroup}{Data and cloud}
+\sk{PostgreSQL}{Strong}{Most projects; SQLite to PostgreSQL migration for the MUN Society}
+\sk{Redis}{Working}{GhostShare (pub/sub, presence, queues), meven}
+\sk{MongoDB}{Working}{captr, freelance work}
+\sk{Firebase / Firestore, FCM}{Working}{Taqneeq backend; LMS push notifications}
+\sk{Supabase, Neo4j}{Working}{sports-live (Supabase); Semgrep visualisation at R.U.D.R.A (Neo4j)}
+\sk{Google Cloud Storage: signed URLs, backups}{Strong}{LMS media; VisionRise server backups}
+\sk{Cloudflare R2, Vercel}{Working}{GhostShare and meven (R2); Taqneeq backend (Vercel)}
+\end{skillgroup}
+\begin{skillgroup}{DevOps and operations}
+\sk{Docker, Docker Compose}{Strong}{Most projects}
+\sk{Linux server administration (Ubuntu 24.04 LTS), hardening}{Strong}{VisionRise server, ACM infrastructure, freelance}
+\sk{Coolify (self-hosted PaaS)}{Strong}{VisionRise, ACM, GhostShare, meven}
+\sk{CI/CD: GitHub Actions, GHCR, Watchtower}{Strong}{jkartik.in, mpstme.pics, ACM GitHub organisation}
+\sk{Nginx, Caddy, reverse proxies, TLS (certbot)}{Working}{jkartik.in, LMS deployment configs}
+\sk{Email infrastructure: Mailcow, SMTP, SPF/DKIM/DMARC}{Working}{ACM mail server shared by 7--9 committees}
+\sk{Backups and disaster recovery}{Strong}{VisionRise GCS backups, freelance ransomware recovery, Delego scheduled backups}
+\sk{Logging and observability: Pino, Sentry}{Working}{GhostShare, VisionRise}
+\sk{Git, GitHub organisation administration}{Strong}{ACM, VisionRise}
+\sk{Google Workspace administration}{Working}{VisionRise (35+ accounts)}
+\end{skillgroup}
+\begin{skillgroup}{Mobile}
+\sk{React Native, Expo (EAS, OTA updates), Google Play publishing}{Strong}{VisionRise: two apps from one codebase}
+\end{skillgroup}
+\begin{skillgroup}{Security}
+\sk{Web application penetration testing, VAPT}{Strong}{R.U.D.R.A, disclosures (\pref{sec:research})}
+\sk{OWASP Top 10: XSS, broken access control, LFI, information disclosure}{Strong}{Disclosures and the banking-client findings}
+\sk{Manual code review}{Strong}{R.U.D.R.A banking-client findings}
+\sk{Semgrep (custom module), Nuclei (custom templates), BBOT}{Strong}{R.U.D.R.A}
+\sk{Burp Suite}{Strong}{Web-app testing and bug bounty work}
+\sk{Nmap}{Working}{Reconnaissance and network scanning}
+\sk{Red and purple teaming: Sliver C2}{Working}{R.U.D.R.A}
+\sk{Responsible and coordinated disclosure}{Strong}{Meta, MSRC, CERT-In}
+\sk{Incident response}{Working}{Freelance ransomware recovery}
+\sk{Applied cryptography: AES-GCM, Argon2id, AES-128 HLS, HMAC, signed URLs, SHA-256}{Strong}{GhostShare, LMS, PFE registration}
+\sk{CTF design}{Working}{ACM freshers' CTF}
+\end{skillgroup}
+\begin{skillgroup}{AI and LLMs}
+\sk{LLM red teaming, prompt injection}{Strong}{chat.win win, Fool The LLM, CSAW LLMAC '25}
+\sk{Gemini API}{Strong}{LMS auto-quiz, Fool The LLM, captr, ballast}
+\sk{llama.cpp, local LLMs (GGUF); Vosk, Argos Translate}{Working}{usb-ai; hindcribe}
+\end{skillgroup}
+}

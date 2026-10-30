@@ -1,0 +1,47 @@
+% ---------------------------------------------------------------- security research
+\section{Security research}\label{sec:research}
+
+Kartik reports vulnerabilities to the affected organisation or through its disclosure program, and
+the technical detail below goes no further than what is published at
+\href{https://jkartik.in/research/}{jkartik.in/research}. The work starts by hand, with manual code
+review, Burp Suite and Nmap; what is learned is then automated with Nuclei, Semgrep and BBOT.
+
+\vspace{2pt}
+{\small
+\renewcommand{\arraystretch}{1.3}%
+\noindent\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{27mm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{41mm}@{}}
+\toprule[0.4pt]
+\lbl{Organisation} & \lbl{Finding} & \lbl{Channel and status} \\
+\midrule[0.4pt]
+WhatsApp (Meta) & Privilege-escalation vulnerability in WhatsApp. & Meta bug bounty program; \$1,500 bounty awarded (2022) \\
+Microsoft & Access-control and information-disclosure issues in Intune, Entra/Azure and the Exchange
+  Admin Center. Organisation member data was served before the authorization check completed, a
+  time-of-check/time-of-use gap spanning Intune, Entra and Azure. Standard users could bypass
+  ``restricted'' policies through the Exchange admin portal to edit directory name fields and join
+  closed groups. & Reported to the Microsoft Security Response Center (MSRC) \\
+Mumbai Police & Stored cross-site scripting on the official website. & Disclosed responsibly, in coordination with CERT-In \\
+The Souled Store & Exposed staging infrastructure that could have allowed a full system compromise. & Reported \\
+Belgian Waffle Co. & Source-code and credential leak that opened the door to a potential CRM takeover. & Reported \\
+Banking client & Local file inclusion and broken access control, both high severity, found through
+  manual code review; detection then automated with custom Nuclei templates (\pref{exp:rudra}). & Reported to the client during a R.U.D.R.A engagement \\
+\bottomrule[0.4pt]
+\end{tabularx}}
+
+\subsection{Defensive work}
+
+\minientry{Ransomware response and infrastructure hardening}{Freelance · May -- Jun 2025}
+Hardened the server infrastructure of a web platform with 16,000+ users and, when ransomware hit
+it, led the response that contained the attack and restored service through rapid backup and
+recovery (\pref{exp:freelance}).
+
+\subsection{Adversarial AI}
+
+\begin{itemize}
+  \item \textbf{1st place, global leaderboard}, AI Jailbreakathon by chat.win: an LLM prompt
+        attack-and-defence contest, won with the fewest tokens (\$250 prize).
+  \item \textbf{Fool The LLM}: built and ran a prompt-injection contest platform (\pref{proj:ftl}).
+  \item \textbf{CSAW LLM Attack Challenge (LLMAC) '25}, NYU: participated.
+  \item \textbf{Writing}: \href{https://jkartik.in/blog/where-llm-guardrails-break/}{``Where LLM
+        guardrails break''}, a field report from the contest on what cracks guardrail prompts and
+        how to design systems that do not depend on them.
+\end{itemize}

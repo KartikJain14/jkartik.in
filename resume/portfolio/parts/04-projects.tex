@@ -1,0 +1,276 @@
+% ---------------------------------------------------------------- selected projects
+\section{Selected projects}\label{sec:projects}
+
+Case studies first, then shorter entries. Ownership uses five fixed words: \emph{solo} (all
+Kartik's work), \emph{lead} (majority author), \emph{co-lead} (a major share), \emph{maintainer}
+(took over an existing system) and \emph{contributor} (a minority share). Source links appear
+where the repository is public.
+
+% ............................................................ GhostShare
+\entry[proj:ghostshare]{GhostShare}{Solo · 2026}
+\dek{End-to-end-encrypted, ephemeral, real-time sharing: anonymous rooms, no accounts, and a server that only ever sees ciphertext.}
+
+\begin{facts}
+\fact{Stack}{TypeScript (strict), Next.js 15, React 19, Fastify 5, Socket.IO 4 with the Redis adapter,
+  PostgreSQL 16 and Drizzle, BullMQ, Redis 7, Cloudflare R2, Web Crypto AES-256-GCM, Argon2id
+  (hash-wasm), pnpm and Turborepo, Docker Compose behind Coolify, Pino, Sentry}
+\fact{Links}{Live at \href{https://share.jkartik.in}{share.jkartik.in} \,·\, write-up:
+  \href{https://jkartik.in/blog/zero-knowledge-sharing/}{``The server can't read this''} \,·\,
+  \href{https://jkartik.in/projects/ghostshare/}{project page} \,·\, source is private}
+\end{facts}
+
+\runin{Problem} Most ``private'' sharing tools still hold plaintext and promise not to read it.
+GhostShare is designed so that the server cannot.
+
+\runin{Threat model} The design assumes the server is hostile: the database leaks, object storage
+is public, and the operator reads the logs. Each room's secret lives in the URL fragment, which
+browsers do not send to the server. The browser derives an AES-256 key from that secret with
+Argon2id, a memory-hard function that makes offline guessing of a weak secret expensive, and seals
+every note and file with AES-256-GCM, whose authentication tag also exposes tampering by a hostile
+server.
+
+\begin{center}
+\vspace{2pt}
+\begin{tikzpicture}[
+  font=\sffamily\footnotesize,
+  box/.style={draw=hair, line width=0.5pt, rounded corners=2pt, fill=wash, text=ink,
+              align=center, inner xsep=3pt, inner ysep=4pt, minimum width=27mm, minimum height=10mm},
+  arrow/.style={-{Stealth[length=4pt,width=3.5pt]}, draw=muted, line width=0.55pt},
+  tag/.style={font=\sffamily\scriptsize, text=muted},
+  zone/.style={font=\trackedfont\scriptsize, text=muted}]
+  \node[box] (sec) at (0,0)   {Room secret in\\URL fragment};
+  \node[box] (kdf) at (3.3,0) {Argon2id\\key derivation};
+  \node[box] (enc) at (6.6,0) {AES-256-GCM\\encryption};
+  \node[box, minimum width=31mm] (api) at (13.3,0.8)  {Fastify + Socket.IO\\ciphertext and room id};
+  \node[box, minimum width=31mm] (r2)  at (13.3,-0.8) {Cloudflare R2\\encrypted 5 MiB chunks};
+  \draw[arrow] (sec) -- (kdf);
+  \draw[arrow] (kdf) -- (enc);
+  \draw[arrow] (enc.east) -- (9.3,0) |- (api.west);
+  \draw[arrow] (enc.east) -- (9.3,0) |- (r2.west);
+  \node[tag, above] at (10.5,0.8) {notes, sync};
+  \node[tag, below] at (10.5,-0.8) {signed upload};
+  \draw[accent, dashed, line width=0.7pt] (8.65,1.55) -- (8.65,-1.55);
+  \node[zone, anchor=south] at (3.3,0.62) {BROWSER: KEY AND PLAINTEXT STAY HERE};
+  \node[zone, anchor=south] at (13.3,1.32) {SERVER: ASSUMED HOSTILE};
+\end{tikzpicture}\par
+\vspace{3pt}
+{\footnotesize\itshape\color{muted}Encryption happens before anything reaches the network; the dashed line is the trust boundary.}
+\end{center}
+
+\runin{Large files} Files are split into 5 MiB chunks, encrypted in the browser and uploaded straight
+to Cloudflare R2 with four parallel uploads, exponential-backoff retry and resume. The app server
+hands out short-lived signed upload URLs and never touches the bytes.
+
+\runin{Real time and expiry} Collaboration runs over Socket.IO with a Redis adapter, so it scales
+horizontally while relaying only ciphertext. Edits made offline queue in IndexedDB and drain on
+reconnect. Every room has a lifetime chosen at creation (1 day, 3 days, 1 week or 1 month), and an
+hourly job purges expired rooms and orphaned storage. Helmet and rate limiting guard the API, and
+backup and restore scripts cover the data that does persist.
+
+\runin{Limits, stated in the write-up} Metadata such as timing and blob sizes stays visible to the
+server, the client code that is served must be trusted, and a room keeps one key for its lifetime;
+per-room key rotation is the planned next step.
+
+% ............................................................ Railway Concession
+\entry[proj:concession]{Railway Concession}{Maintainer · Jul 2026 -- present}
+\dek{MPSTME's official online railway-concession system: student submissions, collection-slot booking and tools for the college office.}
+
+\begin{facts}
+\fact{Ownership}{The original 2025 version was built by the NeuroTechh team. Kartik took it over in
+  July 2026 and now maintains it solo, working with the college administration as its rules change.}
+\fact{Scale}{Used by \tld4,000 students}
+\fact{Stack}{Next.js, PostgreSQL, Drizzle ORM, Nodemailer}
+\fact{Links}{Live at \href{https://concession.mpst.me}{concession.mpst.me} \,·\, write-up:
+  \href{https://jkartik.in/blog/when-a-form-becomes-infrastructure/}{``When a form becomes infrastructure''}}
+\end{facts}
+
+\runin{Data layer} Migrated the system to PostgreSQL with Drizzle ORM.
+
+\runin{Booking rules on the server} A collection date is not accepted just because the browser's date
+picker allowed it. One shared module validates every date against the lead time, weekends,
+holidays, the configured end date and a rolling window of open dates, computed in Indian Standard
+Time whatever the server's own timezone. The client asks the server for the current window only to
+guide the student; the submission endpoint validates again before writing. The window slides forward
+on its own, so opening a new day needs no deployment.
+
+\runin{Tools for the office} Search by SAP ID with the student's full profile and submission history;
+mark a form collected for any date; block SAP IDs; manage holidays; tune the booking window; and
+export to Excel. Students get confirmation emails, and the office gets an automated daily
+collection-report email. Kartik also patched vulnerable dependencies and improved SEO.
+
+\runin{Outcome} A process that \tld4,000 students depend on, with rules the office can change from a
+settings panel rather than waiting on a code change.
+
+% ............................................................ Event & payment backends
+\entry[proj:events]{Event and payment backends}{2024 -- 2026}
+\dek{Four backends for NMIMS student events, each with one decision that has to be right: whether money changed hands, or whether a badge was already used.}
+
+{\small
+\renewcommand{\arraystretch}{1.25}%
+\noindent\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{33mm}>{\raggedright\arraybackslash}p{30mm}>{\raggedright\arraybackslash}p{24mm}>{\raggedright\arraybackslash}X@{}}
+\toprule[0.4pt]
+\lbl{System} & \lbl{Event} & \lbl{Ownership} & \lbl{Stack and source} \\
+\midrule[0.4pt]
+Credits and loyalty & Taqneeq 17.0 & Lead author & Flask, Firestore, JWT, Vercel \,·\, \href{https://github.com/KartikJain14/qrshooter-backend}{qrshooter-backend} \\
+Delego backend & Mumbai MUN, 2024--25 editions & Lead backend author & FastAPI, PostgreSQL, JWT \,·\, \href{https://github.com/munsoc-mpstme/mundra}{mundra} \\
+Paid registration & Programming For Everyone & Co-led & Next.js/Node, PostgreSQL, Cashfree \,·\, \href{https://github.com/MPSTME-ACM/pfe-regi}{pfe-regi} \\
+conc-qr & Social Conclave 2026 & Solo & TypeScript, Express, Next.js, PostgreSQL, Sequelize, Docker \,·\, \href{https://github.com/Social-Conclave/conc-qr}{conc-qr} \\
+\bottomrule[0.4pt]
+\end{tabularx}}
+
+\minientry{Taqneeq 17.0 credits and loyalty backend}{Lead author · 2025}
+Taqneeq, the NMIMS MPSTME tech fest, draws thousands of attendees and runs a fest-wide game in which
+they earn and spend credits. The backend provides phone-OTP login; a role-based (\code{SALES} /
+\code{ADMIN}) credits ledger that records every transaction; referral codes with abuse handling; an
+admin portal; and a leaderboard cached with a short TTL, so a crowd refreshing at once reads the
+cache instead of the database.
+
+\minientry{Delego backend, Mumbai MUN}{Lead backend author · 2024--25 editions}
+The FastAPI and PostgreSQL service behind Delego, the delegate app for Mumbai MUN: passwordless
+sign-in with JWT magic links and one-time codes, a QR code per delegate for check-in and meals,
+organizer CSV import and export, rate limiting for the morning check-in rush, and scheduled database
+backups. The app shipped on the App Store and Play Store for 600+ delegates; those listings have
+since been taken down.
+
+\minientry{Paid event registration}{Co-led · 2025}
+Paid registration for Programming For Everyone. A registration is confirmed only when Cashfree's
+HMAC-verified webhook says the payment cleared, never on a browser redirect, so a closed tab cannot
+leave someone charged without a ticket. QR tickets are emailed on confirmation, and gate check-ins
+are idempotent, so a re-scan cannot admit someone twice. An admin sales dashboard, Google Sheets
+sync, magic-link login and role-based access complete it.
+
+\minientry{conc-qr}{Solo · used 25 Jan 2026}
+QR access control for 500+ delegates across Social Conclave's checkpoints, built solo in under two
+weeks. Whether a scan is new is decided by a PostgreSQL \code{UNIQUE(participant, access\_type, day)}
+constraint: the endpoint attempts the insert and reads the result, so two simultaneous scans cannot
+both succeed. Which roles may scan at which checkpoint lives in an access matrix (day \arr
+checkpoint \arr roles) that admins edit mid-event without a redeploy. Staff scan with their phone
+cameras, with manual entry as a fallback for damaged badges. Write-up:
+\href{https://jkartik.in/blog/what-conc-qr-taught-me-about-myself/}{``What conc-qr taught me about myself''}.
+
+% ............................................................ Fool The LLM
+\entry[proj:ftl]{Fool The LLM}{Solo · 2026}
+\dek{A prompt-injection contest platform: each level is a Gemini model guarding a secret codeword, and players try to talk it into leaking.}
+
+\begin{facts}
+\fact{Event}{Started by Kartik as ACM Webmaster; run by ACM and GDG MPSTME. \tld70 participants in
+  the most recent edition.}
+\fact{Stack}{TypeScript, Next.js, Express, Prisma, PostgreSQL, Gemini}
+\fact{Links}{Write-up: \href{https://jkartik.in/blog/where-llm-guardrails-break/}{``Where LLM
+  guardrails break''} \,·\, source is private}
+\end{facts}
+
+\runin{Design} Levels wrap the model in progressively tighter instructions. The model's own safety
+filters are deliberately off, because the guardrail prompt is the game, and that is the surface real
+prompt injection attacks. Responses stream token by token; an organizer console manages levels and
+participants, shows chat logs live, and can force-unlock or reset a stuck level. Sign-in uses JWT
+and magic links, and per-player token rate limits stop one player from spending the event's model
+budget.
+
+\runin{What it taught} The write-up draws the defensive lessons: keep secrets out of the model's
+context, treat model output as untrusted input, and put the model behind an authorization boundary
+rather than asking it to be one.
+
+% ............................................................ bad-db
+\entry[proj:baddb]{bad-db}{Solo · 2026}
+\dek{A database storage engine written from scratch in Java, to understand what happens between INSERT and the disk.}
+
+\begin{facts}
+\fact{Stack}{Java, \code{RandomAccessFile}, a hand-written B-Tree, its own query language (BQL)}
+\fact{Links}{Source: \href{https://github.com/KartikJain14/bad-db}{github.com/KartikJain14/bad-db}
+  \,·\, write-up: \href{https://jkartik.in/blog/btree-storage-engine/}{``A B-Tree on disk''}}
+\end{facts}
+
+Records live in a binary file addressed by byte offset. A hand-written B-Tree, with node splitting
+and \code{insertNonFull}, maps primary keys to offsets and is rebuilt from the file on open, so the
+file stays the source of truth. Insert, read, update, delete and upsert are supported; deletes write
+tombstones, and compaction copies live records into a fresh file to reclaim the space. Older file
+formats upgrade automatically. On top sits BQL, a small query language with its own tokenizer,
+parser and interactive CLI. The write-up is explicit that the engine is single-threaded and has no
+write-ahead log yet.
+
+% ............................................................ ACM infrastructure
+\entry[proj:infra]{Self-hosted infrastructure for ACM MPSTME}{Solo · 2025 -- present}
+\dek{Infrastructure Kartik set up and runs for the ACM student chapter and other college committees, first as Webmaster and now as Chairperson.}
+
+\begin{itemize}
+  \item \textbf{Platform.} Coolify as a self-hosted deployment platform. It hosts
+        \href{https://mpstmeacm.com}{mpstmeacm.com}, \href{https://concession.mpst.me}{concession.mpst.me}
+        and \href{https://share.jkartik.in}{share.jkartik.in}.
+  \item \textbf{Mail.} A Mailcow mail server with SPF, DKIM and DMARC configured by Kartik, shared by
+        7--9 college committees with good deliverability. Every ACM member gets an
+        \code{@mpstmeacm.com} mailbox on it, at no licence cost.
+  \item \textbf{Code.} The chapter's GitHub organisation, GitHub Apps and CI/CD.
+  \item \textbf{Community.} An ACM Discord server with custom bots that onboard members and grant
+        channel access by position and department.
+  \item \textbf{Members-only Minecraft server (2026--27)}, gated by Discord linking through the
+        ACM-only bot.
+\end{itemize}
+
+% ............................................................ More projects
+\subsection{More projects}
+
+\minientry{sports-live: tournament auction and scoring platform}{Solo · freelance · Aug -- Oct 2026}
+Used at ELEV8; covered with the freelance work on \pref{proj:sports}.
+
+\minientry[proj:meven]{meven: event and facility requisition portal}{Solo · in development}
+A portal for MPSTME that replaces a paper approval chain (faculty mentor \arr institutional
+approver \arr admin allotment \arr Joint Registrar escalation) with numbered permission documents
+and a full audit trail. One application covers rooms, refuge areas, canopies, guests and
+participants, each decided separately. A pnpm monorepo: Next.js, an Express 5 API with a background
+worker, PostgreSQL, Redis for queues and rate limiting, Cloudflare R2, SMTP, and Docker with Coolify
+on Ubuntu.
+
+\minientry[proj:groupay]{GrouPay: multi-tenant billing for housing societies}{Solo · 2025}
+Three tiers of tenancy (super-admin \arr channel admin \arr residents) with the tenancy checks in
+middleware, so one society cannot read another's ledger. Invoices with public invoice links, an
+audit log, and OTP plus password sign-in. About 15,000 lines in a pnpm monorepo with 8 migrations;
+Next.js, Express, Drizzle and PostgreSQL.
+Source: \href{https://github.com/KartikJain14/groupay}{github.com/KartikJain14/groupay}.
+
+\minientry[proj:ballast]{ballast: treasury engine for a digital bank}{Solo · hackathon build · Oct 2026}
+A ``reserve juggler'' built during a hackathon. Each hour it decides how much cash a bank moving
+\tld\$20M an hour should keep liquid and how much to sweep into yield tiers, with a cost-ordered
+fallback funding waterfall. It replays 5 policies and runs stress tests, including an SVB-style
+bank run; 52 tests check that no decision looks ahead and that the ledger reconciles. Python, with a
+web app, a Streamlit console and optional Gemini summaries.
+Source: \href{https://github.com/KartikJain14/ballast}{github.com/KartikJain14/ballast}.
+
+\minientry[proj:flap]{flap: an arcade game played over SSH}{Solo · 2026}
+A Flappy-style game that runs in the terminal: \code{ssh jkartik.in} and play. Written in Go. The
+game state lives on the server, so clients cannot submit scores; the terminal receives a cell-diffed
+stream of updates, sprites are half-block pixel art, and a leaderboard ranks players.
+Source: \href{https://github.com/KartikJain14/flap}{github.com/KartikJain14/flap}.
+
+\minientry[proj:ai]{captr, usb-ai and hindcribe}{Solo · 2024 -- 2026}
+\textbf{captr} (2025) turns a topic into a research document: Gemini writes YouTube search queries,
+yt-dlp and transcripts locate the highlights, FFmpeg pulls key frames at those timestamps, and the
+result is a Markdown document the user can chat with (FastAPI, MongoDB, JWT and bcrypt, Resend,
+Next.js). \textbf{usb-ai} (2026) is a fully offline coding assistant in one Windows executable: a
+quantized Gemma-2-2B model embedded in a PyInstaller one-file build and run with llama.cpp, with a
+streaming Markdown terminal UI and no network code at all
+(\href{https://github.com/KartikJain14/usb-ai}{source}). \textbf{hindcribe} (2024) does offline
+Hindi speech recognition and Hindi-to-English translation for the DARPG 2024 public-grievances
+hackathon, where citizen audio could not go to a cloud API: FFmpeg, Vosk, Argos Translate and Flask,
+with unit tests for each stage (\href{https://github.com/KartikJain14/hindcribe}{source}).
+
+\minientry[proj:bots]{Discord automation bots}{Solo · 2024 -- 2026}
+A Taqneeq bot that onboarded 1,100+ hackathon participants with unique invites, real-name renaming
+and automatic team channels; an ACM onboarding bot with automatic roles and acceptance emails; a
+custom bot for the MUN Society; and the ACM server bots that grant channel access by position and
+department.
+
+\minientry[proj:site]{jkartik.in build and deploy pipeline}{Solo · 2026}
+An Astro static site shipped as a multi-stage Docker image (Node build \arr nginx-alpine,
+\tld97 MB). GitHub Actions with a buildx cache pushes \code{:sha} and \code{:latest} tags to GHCR,
+and Watchtower pulls new images to deploy, so CI holds no SSH secrets. nginx with certbot TLS, an
+RFC 9116 \code{security.txt}, JSON-LD, and Lighthouse scores of 96 / 100 / 100 / 100.
+Source: \href{https://github.com/KartikJain14/jkartik.in}{github.com/KartikJain14/jkartik.in}.
+
+\minientry{Smaller contributions}{}
+An adaptive AI department-classifier quiz for Sattva, Taqneeq and Social Conclave, whose questions
+adapt to earlier answers (solo or lead). Contributed to a certificate portal: Docker and Coolify
+deployment, email sending and fixes. Set up and deployed mpstme.pics: repository scaffold, Docker,
+CI/CD with GitHub Actions and Watchtower, and several access-control endpoints.
+\href{https://github.com/KartikJain14/template-portfolio}{template-portfolio} (lead), a fill-one-file
+portfolio template used by PFE participants.

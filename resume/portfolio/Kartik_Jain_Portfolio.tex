@@ -1,0 +1,164 @@
+% Kartik Jain: portfolio and work record (long-form, public).
+% Source of truth: resume/CAREER.md. Every claim here must trace back to it.
+% Build:  npm run resume -- Kartik_Jain_Portfolio   ->  public/resume/Kartik_Jain_Portfolio.pdf
+% Engine: tectonic (XeTeX). Body font XCharter; labels Source Sans Pro; code Source Code Pro.
+% Section bodies live in parts/ so only this top-level file is compiled.
+
+\documentclass[10pt,a4paper]{article}
+\usepackage[fontsize=10.25pt]{scrextend}
+
+% ---------------------------------------------------------------- page
+\usepackage[
+  a4paper,
+  top=25mm, bottom=26mm, left=22mm, right=22mm,
+  headheight=14pt, headsep=8mm, footskip=12mm,
+]{geometry}
+
+% ---------------------------------------------------------------- fonts
+\usepackage{XCharter}   % loads fontspec under XeTeX
+\setsansfont{SourceSansPro}[
+  Extension=.otf, UprightFont=*-Regular, BoldFont=*-Semibold,
+  ItalicFont=*-RegularIt, BoldItalicFont=*-SemiboldIt]
+\setmonofont{SourceCodePro}[
+  Extension=.otf, UprightFont=*-Regular, BoldFont=*-Semibold, Scale=0.84]
+% Tracked caps for labels. LetterSpace above 6 breaks pdftotext word detection.
+\newfontfamily\trackedfont{SourceSansPro}[
+  Extension=.otf, UprightFont=*-Semibold, LetterSpace=6]
+\newfontfamily\labelfont{SourceSansPro}[
+  Extension=.otf, UprightFont=*-Semibold, BoldFont=*-Bold]
+
+% ---------------------------------------------------------------- colour
+\usepackage[table]{xcolor}
+\definecolor{ink}{HTML}{1E1B17}
+\definecolor{muted}{HTML}{6D655B}
+\definecolor{hair}{HTML}{D8D0C2}
+\definecolor{accent}{HTML}{A8492A}   % "Ember" accent from jkartik.in (light theme)
+\definecolor{wash}{HTML}{F6F2EB}     % faint paper tint for a few panels
+
+% ---------------------------------------------------------------- packages
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{calc}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, calc}
+\usepackage[
+  pdftitle={Kartik Jain - Portfolio and Work Record},
+  pdfauthor={Kartik Jain},
+  pdfsubject={Security and backend engineering: experience, security research, projects, leadership},
+  pdfkeywords={Kartik Jain, security engineer, backend engineer, portfolio, Mumbai, NMIMS MPSTME},
+  pdfcreator={Kartik Jain},
+  colorlinks=true, linkcolor=ink, urlcolor=accent, citecolor=ink,
+  bookmarksnumbered=false, pdfdisplaydoctitle=true,
+]{hyperref}
+\usepackage{bookmark}
+
+% ---------------------------------------------------------------- text block
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4.8pt plus 1pt minus 1pt}
+\linespread{1.07}
+\frenchspacing
+\widowpenalty=10000
+\clubpenalty=10000
+\emergencystretch=1.5em
+\arrayrulecolor{hair}
+\setlength{\arrayrulewidth}{0.4pt}
+
+\setlist{nosep}
+\setlist[itemize]{leftmargin=1.1em, itemsep=2.5pt, topsep=3pt, label={\color{muted}\raisebox{0.15ex}{\footnotesize\textbullet}}}
+
+% ---------------------------------------------------------------- small macros
+% Break only if the room is really not there. (needspace adds a stretchable, cheap break point
+% that TeX prefers over a fuller page, which leaves half-empty pages. A negative remainder means the
+% page builder is about to fire on its own, so forcing a break then would strand the leftover lines.)
+\newcommand{\roomfor}[1]{\par\begingroup\dimen0=#1\relax\dimen2=\pagegoal\advance\dimen2 by -\pagetotal
+  \ifdim\dimen2>0pt \ifdim\dimen0>\dimen2 \newpage\fi\fi\endgroup}
+\newcommand{\tld}{{\sffamily\textasciitilde}}                     % approx. sign that sits on the baseline
+\newcommand{\arr}{\,{\sffamily\color{muted}→}\,}                  % flow arrow in prose
+\newcommand{\kicker}[1]{{\trackedfont\footnotesize\color{accent}\MakeUppercase{#1}}}
+% \leavevmode first: a colour special at the top of a p-cell would shift the cell's baseline.
+\newcommand{\lbl}[1]{\leavevmode{\trackedfont\scriptsize\color{muted}\MakeUppercase{#1}}}
+\newcommand{\meta}[1]{{\sffamily\small\color{muted}#1}}
+\newcommand{\runin}[1]{{\labelfont\small\color{ink}#1.}\enspace}
+\newcommand{\code}[1]{{\ttfamily #1}}
+\newcommand{\pref}[1]{p.\,\pageref{#1}}
+\newcommand{\weblink}[2]{\href{#1}{#2}}
+
+% Entry heading: title left, meta right, bookmarked.
+\newcommand{\entry}[3][]{%
+  \roomfor{7\baselineskip}\vspace{9pt}%
+  \noindent\phantomsection\pdfbookmark[2]{#2}{bm:#2}%
+  \ifx\relax#1\relax\else\label{#1}\fi
+  {\fontsize{13.2}{16}\selectfont\bfseries #2}\hfill{\sffamily\small\color{muted}#3}\par
+  \nopagebreak\vspace{1pt}}
+
+% Smaller entry heading for compact lists.
+\newcommand{\minientry}[3][]{%
+  \roomfor{4\baselineskip}\vspace{5pt}%
+  \noindent\phantomsection\pdfbookmark[3]{#2}{bm:mini:#2}%
+  \ifx\relax#1\relax\else\label{#1}\fi
+  {\bfseries #2}\hfill{\sffamily\footnotesize\color{muted}#3}\par\nopagebreak\vspace{0.5pt}}
+
+% One-line summary under an entry heading.
+\newcommand{\dek}[1]{\noindent{\itshape\color{ink}#1}\par\nopagebreak}
+
+% Fact strip: label column + value column, hairlines above and below.
+\newenvironment{facts}{%
+  \par\vspace{3pt}\noindent\small
+  \renewcommand{\arraystretch}{1.22}%
+  \tabularx{\linewidth}{@{}>{\raggedright\arraybackslash}p{23mm}>{\raggedright\arraybackslash}X@{}}\toprule[0.4pt]}
+  {\bottomrule[0.4pt]\endtabularx\par\vspace{4pt}}
+\newcommand{\fact}[2]{\lbl{#1} & #2 \\}
+
+% Sections: two-digit accent number, large serif title, hairline.
+\renewcommand{\thesection}{\ifnum\value{section}<10 0\fi\arabic{section}}
+\titleformat{\section}[display]
+  {\normalfont\fontsize{21}{25}\selectfont\color{ink}}
+  {{\trackedfont\small\color{accent}\thesection}}
+  {5pt}
+  {}
+  [\vspace{3pt}{\color{hair}\titlerule[0.5pt]}]
+\titlespacing*{\section}{0pt}{0pt}{9pt}
+% Sections flow on, but never open in the last third of a page.
+\newcommand{\sectionbreak}{\roomfor{0.22\textheight}\vspace{20pt}}
+
+\titleformat{\subsection}[block]
+  {\normalfont\labelfont\small\color{accent}}
+  {}{0pt}{\MakeUppercase}
+\titlespacing*{\subsection}{0pt}{14pt}{3pt}
+
+% ---------------------------------------------------------------- running head / foot
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[L]{{\trackedfont\scriptsize\color{muted}KARTIK JAIN \,·\, PORTFOLIO AND WORK RECORD}}
+\fancyhead[R]{{\sffamily\footnotesize\color{muted}\nouppercase{\rightmark}}}
+\fancyfoot[L]{{\sffamily\footnotesize\color{muted}jkartik.in}}
+\fancyfoot[R]{{\sffamily\footnotesize\color{muted}\thepage\ / \pageref*{LastPage}}}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\renewcommand{\subsectionmark}[1]{}
+\setcounter{secnumdepth}{1}
+\fancypagestyle{cover}{%
+  \fancyhf{}%
+  \fancyfoot[L]{{\sffamily\footnotesize\color{muted}jkartik.in}}%
+  \fancyfoot[R]{{\sffamily\footnotesize\color{muted}\thepage\ / \pageref*{LastPage}}}}
+
+% ---------------------------------------------------------------- document
+\begin{document}
+\color{ink}
+
+\input{parts/01-glance}
+\input{parts/02-experience}
+\input{parts/03-research}
+\input{parts/04-projects}
+\input{parts/05-leadership}
+\input{parts/06-skills}
+\input{parts/07-education-links}
+
+\end{document}

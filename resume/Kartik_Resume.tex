@@ -1,173 +1,132 @@
-\documentclass[10pt, letterpaper]{article}
-\newenvironment{header}{}{}
+% Kartik Jain — general résumé (backend + security). Facts come from resume/CAREER.md only.
+% Build: npm run resume   ·   ATS check: node scripts/ats-check.mjs public/Kartik_Resume.pdf --role general
+\documentclass[10pt, a4paper]{article}
 
-% Packages and configuration remain the same as user provided with minimal additions and formatting fixes
-
-\usepackage[
-    ignoreheadfoot,
-    top=1 cm,
-    bottom=1 cm,
-    left=2 cm,
-    right=2 cm,
-    footskip=1.0 cm,
-]{geometry}
-\usepackage{titlesec}
-\usepackage{tabularx}
-\usepackage{array}
+% ---------- page ----------
+\usepackage[top=0.95cm, bottom=0.8cm, left=1.35cm, right=1.35cm]{geometry}
+\usepackage{fontspec}
+% XCharter: a readable serif with real Unicode maps (ATS-safe text extraction).
+% Common ligatures are off so parsers never see "ﬁ"/"ﬂ" glyphs.
+\setmainfont{XCharter}[
+  Extension=.otf, UprightFont=*-Roman, BoldFont=*-Bold,
+  ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic, Ligatures={TeX,NoCommon}]
 \usepackage[dvipsnames]{xcolor}
-\definecolor{primaryColor}{RGB}{0, 0, 0}
+\definecolor{ink}{HTML}{1A1A1A}
+\definecolor{rule}{HTML}{8A8A8A}
+\definecolor{linkc}{HTML}{1F4E9A}
+\color{ink}
+\usepackage{titlesec}
 \usepackage{enumitem}
-\usepackage{amsmath}
-\usepackage[
-    pdftitle={Kartik Jain's Resume},
-    pdfauthor={Kartik Jain},
-    pdfcreator={Kartik Jain},
-    colorlinks=true,
-    urlcolor=blue,
-    linkcolor=blue,
-    citecolor=blue
-]{hyperref}
-\usepackage[pscoord]{eso-pic}
-\usepackage{calc}
-\usepackage{bookmark}
-\usepackage{lastpage}
-\usepackage{changepage}
-\usepackage{paracol}
-\usepackage{ifthen}
-\usepackage{needspace}
-\usepackage{iftex}
-\ifPDFTeX
-    \input{glyphtounicode}
-    \pdfgentounicode=1
-    \usepackage[T1]{fontenc}
-    \usepackage[utf8]{inputenc}
-    \usepackage{lmodern}
-\fi
-\usepackage{charter}
-
-\raggedright
-\AtBeginEnvironment{adjustwidth}{\partopsep0pt}
-\pagestyle{empty}
-\setcounter{secnumdepth}{0}
-\setlength{\parindent}{0pt}
-\setlength{\topskip}{0pt}
-\setlength{\columnsep}{0.15cm}
-\pagenumbering{gobble}
-
-\titleformat{\section}{\needspace{4\baselineskip}\bfseries\large}{}{0pt}{}[\vspace{1pt}\titlerule]
-\titlespacing{\section}{-1pt}{0.14 cm}{0.08 cm}
-
-\renewcommand\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}
-\newenvironment{highlights}{\begin{itemize}[topsep=2pt,parsep=0pt,partopsep=0pt,itemsep=1pt,leftmargin=10pt]}{\end{itemize}}
-\newenvironment{onecolentry}{\begin{adjustwidth}{0cm}{0cm}}{\end{adjustwidth}}
-\newenvironment{twocolentry}[2][]{
-    \onecolentry
-    \def\secondColumn{#2}
-    \setcolumnwidth{\fill, 4.5 cm}
-    \begin{paracol}{2}
-}{
-    \switchcolumn \raggedleft \secondColumn
-    \end{paracol}
-    \endonecolentry
+\usepackage[hidelinks, pdfusetitle]{hyperref}
+\hypersetup{
+  pdftitle={Kartik Jain - Resume - Software Engineer (Backend and Security)},
+  pdfauthor={Kartik Jain},
+  pdfsubject={Resume},
+  pdfkeywords={Kartik Jain, Software Engineer, Backend Engineer, Security Engineer, Node.js, TypeScript, Python, PostgreSQL, Docker, Penetration Testing, Mumbai},
 }
-\newcommand{\AND}{\unskip\cleaders\copy\ANDbox\hskip\wd\ANDbox\ignorespaces}
-\newsavebox\ANDbox
-\sbox\ANDbox{$|$}
-\let\hrefWithoutArrow\href
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\raggedright
+\linespread{1.0}
+
+% ---------- sections & lists ----------
+\titleformat{\section}{\bfseries\large\scshape}{}{0pt}{}[\vspace{-6pt}{\color{rule}\rule{\linewidth}{0.5pt}}]
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\setlist[itemize]{label={\small\textbullet}, leftmargin=11pt, labelsep=5pt, topsep=1pt, itemsep=0.3pt, parsep=0pt, partopsep=0pt}
+
+% \role{Organisation}{Title}{Dates}            -> one line, dates right-aligned
+% \proj{Name}{what it is}{stack}{links}        -> one line, links right-aligned
+\newcommand{\role}[3]{\par\vspace{2.5pt}\textbf{#1} \textbar{} \textit{#2}\hfill #3\par}
+\newcommand{\proj}[4]{\par\vspace{2.5pt}\textbf{#1} \textbar{} #2 \textbar{} \textit{\small #3}\hfill{\small #4}\par}
+\newcommand{\lnk}[2]{\href{#1}{\color{linkc}#2}}
+\newcommand{\sep}{\enspace\textbar\enspace}
 
 \begin{document}
 
-    \begin{center}
-        \fontsize{25 pt}{25 pt}\selectfont Kartik Jain
-
-        \vspace{3 pt}
-        {\large Backend Engineer $\cdot$ Security Researcher}
-
-        \vspace{3 pt}
-        \begin{header}
-        \normalsize
-        \mbox{Mumbai, India}%
-        \kern 5.0 pt%
-        \AND%
-        \kern 5.0 pt%
-        \mbox{\hrefWithoutArrow{mailto:career@jkartik.in}{career@jkartik.in}}%
-        \kern 5.0 pt%
-        \AND%
-        \kern 5.0 pt%
-        \mbox{\hrefWithoutArrow{https://jkartik.in/}{jkartik.in}}%
-        \kern 5.0 pt%
-        \AND%
-        \kern 5.0 pt%
-        \mbox{\hrefWithoutArrow{https://linkedin.com/in/KartikJain1410}{linkedin.com/in/KartikJain1410}}%
-        \kern 5.0 pt%
-        \AND%
-        \kern 5.0 pt%
-        \mbox{\hrefWithoutArrow{https://github.com/KartikJain14}{github.com/KartikJain14}}%
-        \end{header}
-    \end{center}
+% ---------- header ----------
+\begin{center}
+  {\fontsize{22pt}{24pt}\selectfont\bfseries Kartik Jain}\par\vspace{3pt}
+  {\normalsize Software Engineer \textbar{} Backend \& Security}\par\vspace{3pt}
+  {\small Mumbai, India\sep
+  \lnk{mailto:career@jkartik.in}{career@jkartik.in}\sep
+  \lnk{https://jkartik.in/}{jkartik.in}\sep
+  \lnk{https://linkedin.com/in/kartikjain1410}{linkedin.com/in/kartikjain1410}\sep
+  \lnk{https://github.com/KartikJain14}{github.com/KartikJain14}}
+\end{center}
 
 \section{Summary}
-\begin{onecolentry}
-    Backend engineer and security researcher. I ship production REST API systems --- payment, event, and media backends serving thousands of users --- and report vulnerabilities to Meta, Microsoft, and CERT-In. Strong in Node.js, FastAPI, PostgreSQL, and application security.
-\end{onecolentry}
-
-\section{Experience}
-\begin{onecolentry}
-    \textbf{R.U.D.R.A Cybersecurity} --- Security Engineer Intern, Mumbai \hfill May--Jul 2025
-\end{onecolentry}
-\begin{onecolentry}
-    \begin{highlights}
-        \item Automated recurring external attack-surface monitoring with \textbf{BBOT}, reducing manual effort and saving approximately \textbf{\$20,000/year}.
-        \item Single-handedly built a custom \textbf{Semgrep} (SAST) module with \textbf{Neo4j}-based visualization to improve large-scale code analysis.
-        \item Discovered and reported \textbf{2 high-severity vulnerabilities} (LFI, broken access control) in a banking client's web portal via manual code review; automated detection with dozens of custom \textbf{Nuclei} templates.
-        \item Ran red-team / purple-team exercises with the \textbf{Sliver C2} framework to emulate real-world intrusions.
-    \end{highlights}
-\end{onecolentry}
-
-\section{Security Research}
-\begin{onecolentry}
-    \begin{highlights}
-        \item Reported a \textbf{privilege-escalation} vulnerability in \textbf{Meta's WhatsApp} through its coordinated disclosure program.
-        \item Reported access-control and information-disclosure flaws in \textbf{Microsoft Intune} and \textbf{Exchange Admin} to \textbf{MSRC} (VULN-150984).
-        \item Responsibly disclosed a \textbf{stored XSS} on the \textbf{Mumbai Police} website in coordination with \textbf{CERT-In}.
-        \item Reported critical exposures at \textbf{The Souled Store} (staging infrastructure) and \textbf{Belgian Waffle Co.} (source-code and credential leak).
-        \item \textbf{Defensive:} hardened infrastructure protecting \textbf{16,000+ users'} data and led \textbf{incident response} to contain a ransomware attack via rapid backup-and-recovery.
-    \end{highlights}
-\end{onecolentry}
-
-\section{Projects}
-\begin{onecolentry}
-    \begin{highlights}
-        \item \textbf{GhostShare} --- end-to-end-encrypted, zero-knowledge file sharing. Keys are derived in-browser with \textbf{Argon2id} so the server only ever stores ciphertext, with realtime sync and chunked direct-to-\textbf{Cloudflare R2} uploads. \textit{TypeScript, Next.js, Fastify, PostgreSQL, Redis.} \href{https://share.jkartik.in}{[Live]}
-
-        \item \textbf{bad-db} --- a database storage engine written from scratch in \textbf{Java}: a custom on-disk format, a hand-rolled \textbf{B-Tree} index, tombstone deletes with compaction, and its own SQL-like query language (tokenizer, parser, and REPL). \href{https://github.com/KartikJain14/bad-db}{[Source]}
-
-        \item \textbf{Event App Backends} --- lead author of \textbf{Python (FastAPI / Flask)} backends for NMIMS's largest events: the \textit{Taqneeq} credits/loyalty system (OTP-based authentication, referrals, cached live leaderboard) and the \textit{Mumbai MUN} (\textit{Delego}) backend, which shipped to the App Store for \textbf{600+ delegates}. \href{https://apps.apple.com/us/app/taqneeq-fest/id6741360884}{[Taqneeq App]} \href{https://github.com/munsoc-mpstme/mundra}{[Source]}
-
-        \item \textbf{Event Registration Platform} --- full-stack paid registration with \textbf{Cashfree} payments, HMAC-verified webhooks, QR ticket validation, and an admin analytics dashboard, plus role-scoped \textbf{authorization (RBAC)}. \href{https://github.com/MPSTME-ACM/pfe-regi}{[Source]}
-    \end{highlights}
-\end{onecolentry}
-
-\section{Achievements}
-\begin{onecolentry}
-    \begin{highlights}
-        \item \textbf{1st place} (global leaderboard), AI Jailbreakathon by chat.win --- LLM prompt attack \& defense, won with the fewest tokens.
-        \item \textbf{1st place}, CodeForge 2026 hackathon (Taqneeq \& FOSS MPSTME) --- 3-person team; NIFTY options-analytics platform.
-    \end{highlights}
-\end{onecolentry}
-
-\section{Skills}
-\begin{onecolentry}
-\textbf{Languages:} Python, TypeScript, JavaScript, Java, C++, SQL \\
-\textbf{Backend \& DevOps:} Node.js, Express, FastAPI, Flask, REST APIs, JWT, PostgreSQL, Redis, Drizzle ORM, MongoDB, Docker, Nginx, CI/CD, AWS, GCP, Linux \\
-\textbf{Security:} Penetration testing, vulnerability assessment, SAST/DAST, OWASP Top 10, Burp Suite, Nmap, Semgrep, Nuclei, BBOT, Sliver C2, Metasploit, Wireshark, OWASP ZAP, Neo4j
-\end{onecolentry}
+Software engineer who builds and secures production systems: shipped a white-label learning platform as two Google
+Play apps, maintains a college system for \textasciitilde{}4,000 students, and earned a \$1,500 bug bounty from Meta.
 
 \section{Education \& Leadership}
-\begin{onecolentry}
-    \begin{highlights}
-        \item \textbf{B.Tech, Information Technology} --- NMIMS MPSTME, Mumbai \hfill 2024--2028
-        \item \textbf{Chairperson}, \href{https://mpstmeacm.com/}{ACM MPSTME} (Jun 2026--present); previously Head of Technical Department at \textbf{Taqneeq}, \textbf{Mumbai MUN}, \textbf{Social Conclave}, and \textbf{Sattva} (2025--26).
-    \end{highlights}
-\end{onecolentry}
+\role{B.Tech, Information Technology}{SVKM's NMIMS MPSTME, Mumbai \textbar{} \textup{\textbf{CGPA: 8.34/10.0}}}{Expected Apr 2028}
+\begin{itemize}
+  \item \textbf{Chairperson}, ACM MPSTME (\textasciitilde{}250 members); ex-Technical Head: Taqneeq, Mumbai MUN, Social Conclave, Sattva.
+  \item Built ACM's Coolify + Mailcow servers: @mpstmeacm.com mail for all members and 7+ committees.
+\end{itemize}
+
+\section{Experience}
+\role{VisionRise Technosoft Pvt. Ltd.}{Software Engineer Intern}{Apr 2026 -- Oct 2026}
+\begin{itemize}
+  \item Built a white-label learning platform end to end: a Node.js/Express/TypeScript REST API (276 routes, 20 modules,
+  PostgreSQL + Drizzle ORM) and a React Native/Expo app shipped as two Google Play apps (\lnk{https://play.google.com/store/apps/details?id=tech.riseinstitute.app}{Rise Academy},
+  \lnk{https://play.google.com/store/apps/details?id=app.eguru.lms}{eGuru}).
+  \item Secured paid video with AES-128-encrypted HLS (FFmpeg), per-session playback tokens and signed Google Cloud
+  Storage URLs; built JWT authentication with refresh tokens, Google Sign-In, role-based access control and audit logs.
+  \item Provisioned and hardened the production Linux server (Ubuntu 24.04 LTS: key-only SSH, firewall, auto security
+  updates); deployed Docker apps and PostgreSQL via Coolify CI/CD with automated backups to GCS.
+  \item Integrated Zoom live classes (signature-verified webhooks, attendance, recordings) and Gemini quiz generation; administered the GitHub org (15 repos) and Google Workspace (35+ accounts).
+\end{itemize}
+
+\role{R.U.D.R.A Cybersecurity Pvt. Ltd.}{Security Engineer Intern}{May 2025 -- Jul 2025}
+\begin{itemize}
+  \item Found 2 high-severity vulnerabilities (Local File Inclusion, broken access control) in a banking client's web
+  portal through manual code review, then wrote custom Nuclei templates to detect them automatically.
+  \item Automated external attack-surface monitoring with BBOT, saving \textasciitilde{}\$20,000/year of manual reconnaissance.
+  \item Developed a custom Semgrep (SAST) module with Neo4j graph visualization for large-scale code analysis; ran
+  purple-team exercises on the Sliver C2 framework.
+\end{itemize}
+
+\role{Freelance}{Backend \& Security Engineer}{May 2025 -- Oct 2026}
+\begin{itemize}
+  \item Led ransomware incident response for a 16,000+ user platform: restored it from backups and hardened its servers.
+  \item Delivered a live player-auction and scoring platform (Next.js, Supabase Postgres + Realtime) used at ELEV8, a
+  \textasciitilde{}200-player, 8-team pickleball tournament, with an offline write queue for unreliable venue Wi-Fi.
+\end{itemize}
+
+\section{Projects}
+\proj{GhostShare}{end-to-end-encrypted file sharing}{TypeScript, Next.js, Fastify, PostgreSQL, Redis, Docker}{\lnk{https://share.jkartik.in}{Live}}
+\begin{itemize}
+  \item Zero-knowledge design: keys are derived in-browser (Argon2id) and data is sealed with AES-256-GCM, so the server
+  stores only ciphertext; encrypted 5 MiB chunks upload in parallel to Cloudflare R2 and resume after failures.
+\end{itemize}
+\proj{Railway Concession System}{MPSTME's official portal}{Next.js, PostgreSQL, Drizzle}{\lnk{https://concession.mpst.me}{Live}}
+\begin{itemize}
+  \item Took over and maintain the system \textasciitilde{}4,000 students use: migrated it to PostgreSQL, enforced an
+  IST-aware booking window server-side, and automated daily collection reports for the college office.
+\end{itemize}
+\proj{Event \& Payment Backends}{NMIMS student events}{Python, FastAPI, Flask, PostgreSQL}{\lnk{https://github.com/munsoc-mpstme/mundra}{Delego API}\,\textbar\,\lnk{https://github.com/MPSTME-ACM/pfe-regi}{Payments}}
+\begin{itemize}
+  \item Lead backend author of Mumbai MUN's Delego app (600+ delegates, 2024--25) and Taqneeq's credits engine (OTP
+  auth, referrals, cached leaderboard); co-led paid registration with HMAC-verified Cashfree payment webhooks.
+\end{itemize}
+\par\vspace{2.5pt}\textbf{bad-db} \textbar{} storage engine from scratch: custom file format, B-Tree index, compaction, own query language \textbar{} \textit{\small Java}\hfill{\small\lnk{https://github.com/KartikJain14/bad-db}{Source}}\par
+
+\section{Security Research \& Awards}
+\begin{itemize}
+  \item Awarded a \textbf{\$1,500 bug bounty by Meta} for a privilege-escalation vulnerability in WhatsApp.
+  \item Reported access-control and information-disclosure flaws in Microsoft Intune and Exchange Admin to MSRC;
+  responsibly disclosed a stored XSS on the Mumbai Police website through CERT-In.
+  \item \textbf{1st place} (global), chat.win AI Jailbreakathon (LLM red teaming); \textbf{1st place}, CodeForge 2026 team hackathon.
+\end{itemize}
+
+\section{Skills}
+\textbf{Languages:} Python, TypeScript, JavaScript, Java, Go, Bash, C++; Data Structures \& Algorithms, Unit Testing\par
+\textbf{Backend \& Mobile:} Node.js, Express, FastAPI, Flask, Next.js, React, React Native (Expo), REST APIs, JWT/OAuth 2.0\par
+\textbf{Data \& Cloud:} SQL, PostgreSQL, Redis, MongoDB, Drizzle ORM, Firebase, Google Cloud Storage, Cloudflare R2\par
+\textbf{DevOps:} Docker, Docker Compose, Linux, Git, GitHub Actions, CI/CD, Coolify, Nginx, TLS, Backups \& Disaster Recovery\par
+\textbf{Security:} Web Application Security, Penetration Testing, VAPT, OWASP Top 10, Burp Suite, Nmap, SAST/DAST (Semgrep, Nuclei), SCA, Secure Code Review, Incident Response, Responsible Disclosure, SPF/DKIM/DMARC
+
 \end{document}

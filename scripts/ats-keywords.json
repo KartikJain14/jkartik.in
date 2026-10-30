@@ -1,0 +1,77 @@
+{
+  "_comment": "Keyword lists for scripts/ats-check.mjs. Each role has 'core' (asked for in most entry-level JDs for that role) and 'bonus' (common, nice to have) terms. A term is a string or an array of spelling variants (first = canonical). Only add terms seen repeatedly in real JDs. Never add a term to a résumé just because it is listed here: it must be backed by resume/CAREER.md §9.",
+  "general": {
+    "core": [
+      "Python", "TypeScript", "JavaScript", "SQL", "Java",
+      ["Node.js", "NodeJS"], ["REST APIs", "REST API", "RESTful"], ["PostgreSQL", "Postgres"], "Redis", "MongoDB",
+      "Docker", "Linux", "Git", ["CI/CD", "CI-CD"], "GitHub Actions",
+      "Express", "FastAPI", "React", "Next.js",
+      ["JWT", "OAuth"], ["OWASP Top 10", "OWASP"], ["Penetration Testing", "Pentesting"], ["Vulnerability Assessment", "VAPT"],
+      ["Data Structures", "DSA"], ["Unit Testing", "unit tests", "automated tests", "integration tests"]
+    ],
+    "bonus": ["Burp Suite", "Nmap", "Nginx", "Google Cloud", "Microservices", "AWS", "Kubernetes", "System Design", "Agile", "GraphQL", "Bash", "C++", "Go", "React Native", "WebSockets", "Incident Response", "SAST"]
+  },
+  "backend": {
+    "core": [
+      "Python", "Java", "TypeScript", "JavaScript", ["Node.js", "NodeJS"], "Express", "FastAPI",
+      ["REST APIs", "REST API", "RESTful"], ["PostgreSQL", "Postgres"], "SQL", "Redis", "MongoDB",
+      "Docker", "Linux", "Git", ["CI/CD", "CI-CD"], ["Unit Testing", "unit tests", "automated tests", "integration tests"],
+      ["Authentication", "JWT", "OAuth"], ["Caching", "cache", "cached"], ["Queues", "queue", "BullMQ", "message queue"],
+      ["ORM", "Drizzle", "Prisma", "Sequelize"], ["Data Structures", "DSA"], ["System Design", "scalab*"], "API"
+    ],
+    "bonus": ["Microservices", "AWS", "Kubernetes", "GraphQL", "MySQL", "Kafka", "Go", "Spring Boot", "Django", "Flask", "Fastify", "WebSockets", "gRPC", "Nginx", "Agile"]
+  },
+  "security": {
+    "core": [
+      ["Penetration Testing", "Pentesting", "Pentest"], ["Vulnerability Assessment", "VAPT"], ["Web Application Security", "web application penetration testing", "web app pentesting"],
+      ["OWASP Top 10", "OWASP"], "Burp Suite", "Nmap", ["SAST", "static analysis"], "DAST", ["Code Review", "secure code review"],
+      "Python", "Bash", "Linux", ["Vulnerability", "vulnerabilities"], ["Incident Response"],
+      ["XSS", "cross-site scripting"], ["Access Control", "broken access control"], ["Authentication", "authorization"],
+      ["Cryptography", "encryption", "AES"], ["Bug Bounty", "bug bounty"], ["Responsible Disclosure", "coordinated disclosure", "responsibly disclosed"],
+      "Nuclei", "Semgrep", ["API Security", "API"]
+    ],
+    "bonus": ["Threat Modeling", "CVSS", "SIEM", "MITRE ATT&CK", "Metasploit", "Wireshark", "OSCP", "CEH", "Security+", "Cloud Security", "AWS", "DevSecOps", "Red Team", "Recon", "Attack Surface", "Docker", "CI/CD"]
+  },
+  "appsec": {
+    "core": [
+      ["Application Security", "AppSec", "web application security", "web application penetration testing"], ["OWASP Top 10", "OWASP"],
+      ["Secure Code Review", "code review"], ["SAST", "static analysis"], "DAST", ["Penetration Testing", "Pentesting"], "Burp Suite",
+      "Semgrep", ["Vulnerability", "vulnerabilities"], ["Authentication", "authorization", "OAuth", "JWT"], ["Access Control", "RBAC"],
+      ["Cryptography", "encryption"], ["API Security", "API"], "Python", "TypeScript", "JavaScript", ["Node.js", "NodeJS"], "SQL",
+      ["CI/CD", "CI-CD"], "Docker", ["Bug Bounty"], ["Responsible Disclosure", "coordinated disclosure", "responsibly disclosed"]
+    ],
+    "bonus": ["Threat Modeling", "SCA", "DevSecOps", "CVSS", "Secure SDLC", "Nuclei", "GitHub Actions", "AWS", "Kubernetes", "Java", "Go", "XSS", "SSRF"]
+  },
+  "devops": {
+    "core": [
+      "Linux", "Docker", ["Docker Compose"], ["CI/CD", "CI-CD"], "GitHub Actions", "Bash", "Python", "Git",
+      "Nginx", ["TLS", "SSL", "HTTPS"], ["Monitoring", "observability"], ["Logging", "logs"], ["Backups", "backup", "disaster recovery"],
+      ["Server Hardening", "hardening", "hardened"], ["Cloud", "Google Cloud", "GCP", "GCS"], "PostgreSQL", ["DNS", "SPF", "DKIM"],
+      ["Automation", "automated"], ["Deployment", "deployments", "deploy"], ["Containers", "containerized", "container"]
+    ],
+    "bonus": ["Kubernetes", "Terraform", "Ansible", "AWS", "Azure", "Jenkins", "Prometheus", "Grafana", "Helm", "Infrastructure as Code", "SRE", "Coolify", "GHCR", "Redis", "YAML"]
+  },
+  "fullstack": {
+    "core": [
+      "JavaScript", "TypeScript", "React", "Next.js", ["Node.js", "NodeJS"], "Express", ["REST APIs", "REST API", "RESTful"],
+      ["PostgreSQL", "Postgres"], "SQL", "MongoDB", "Redis", "Git", "Docker", ["CI/CD", "CI-CD"], "HTML", "CSS",
+      ["Authentication", "JWT", "OAuth"], ["Unit Testing", "unit tests", "automated tests", "integration tests"], ["React Native", "Expo"], ["Deployment", "deploy", "deployed"], "Python"
+    ],
+    "bonus": ["Tailwind", "GraphQL", "AWS", "Firebase", "Supabase", "WebSockets", "Socket.IO", "Vercel", "Figma", "Redux", "Java", "System Design", "Agile"]
+  },
+  "mobile": {
+    "core": [
+      "React Native", "Expo", "JavaScript", "TypeScript", "Android", "iOS", ["Google Play", "Play Store"], ["REST APIs", "REST API", "RESTful"],
+      ["Push Notifications", "push notifications", "FCM"], ["OTA", "over-the-air"], "Firebase", ["Node.js", "NodeJS"], "Git", ["PostgreSQL", "Postgres"]
+    ],
+    "bonus": ["Flutter", "Dart", "Kotlin", "Swift", "Redux", "App Store", "EAS", "Jest"]
+  },
+  "ai-security": {
+    "core": [
+      ["LLM", "LLMs", "large language model"], ["Prompt Injection"], ["Red Teaming", "red team", "red-team"], ["Jailbreak", "Jailbreakathon"],
+      ["Guardrails", "guardrail"], "Python", ["Gemini", "OpenAI", "Claude"], ["Adversarial", "attack & defence", "attack and defense"],
+      ["OWASP Top 10", "OWASP"], ["Penetration Testing", "Pentesting"]
+    ],
+    "bonus": ["RAG", "LangChain", "Evaluation", "OWASP LLM Top 10", "PyTorch", "llama.cpp", "Hugging Face"]
+  }
+}

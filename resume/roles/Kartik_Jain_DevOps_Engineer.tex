@@ -1,0 +1,129 @@
+% Kartik Jain — DevOps / SRE / platform / DevSecOps (archetype D). Facts come from resume/CAREER.md only; strategy in resume/MARKET.md.
+% Layout copied from resume/Kartik_Resume.tex. Build: npm run resume -- Kartik_Jain_DevOps_Engineer
+% ATS check: node scripts/ats-check.mjs public/resume/Kartik_Jain_DevOps_Engineer.pdf --role devops
+\documentclass[10pt, a4paper]{article}
+
+% ---------- page ----------
+\usepackage[top=0.95cm, bottom=0.8cm, left=1.35cm, right=1.35cm]{geometry}
+\usepackage{fontspec}
+% XCharter: a readable serif with real Unicode maps (ATS-safe text extraction).
+% Common ligatures are off so parsers never see "ﬁ"/"ﬂ" glyphs.
+\setmainfont{XCharter}[
+  Extension=.otf, UprightFont=*-Roman, BoldFont=*-Bold,
+  ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic, Ligatures={TeX,NoCommon}]
+\usepackage[dvipsnames]{xcolor}
+\definecolor{ink}{HTML}{1A1A1A}
+\definecolor{rule}{HTML}{8A8A8A}
+\definecolor{linkc}{HTML}{1F4E9A}
+\color{ink}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks, pdfusetitle]{hyperref}
+\hypersetup{
+  pdftitle={Kartik Jain - Resume - DevOps Engineer},
+  pdfauthor={Kartik Jain},
+  pdfsubject={Resume},
+  pdfkeywords={Kartik Jain, DevOps Engineer, SRE, Platform Engineer, DevSecOps, Docker, Linux, CI/CD, GitHub Actions, Coolify, Nginx, Server Hardening, Backups, Mumbai},
+}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\raggedright
+\linespread{1.0}
+
+% ---------- sections & lists ----------
+\titleformat{\section}{\bfseries\large\scshape}{}{0pt}{}[\vspace{-6pt}{\color{rule}\rule{\linewidth}{0.5pt}}]
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\setlist[itemize]{label={\small\textbullet}, leftmargin=11pt, labelsep=5pt, topsep=1pt, itemsep=0.3pt, parsep=0pt, partopsep=0pt}
+
+% \role{Organisation}{Title}{Dates}            -> one line, dates right-aligned
+% \proj{Name}{what it is}{stack}{links}        -> one line, links right-aligned
+\newcommand{\role}[3]{\par\vspace{2.5pt}\textbf{#1} \textbar{} \textit{#2}\hfill #3\par}
+\newcommand{\proj}[4]{\par\vspace{2.5pt}\textbf{#1} \textbar{} #2 \textbar{} \textit{\small #3}\hfill{\small #4}\par}
+\newcommand{\lnk}[2]{\href{#1}{\color{linkc}#2}}
+\newcommand{\sep}{\enspace\textbar\enspace}
+
+\begin{document}
+
+% ---------- header ----------
+\begin{center}
+  {\fontsize{22pt}{24pt}\selectfont\bfseries Kartik Jain}\par\vspace{3pt}
+  {\normalsize DevOps \& Backend Engineer}\par\vspace{3pt}
+  {\small Mumbai, India\sep
+  \lnk{mailto:career@jkartik.in}{career@jkartik.in}\sep
+  \lnk{https://jkartik.in/}{jkartik.in}\sep
+  \lnk{https://linkedin.com/in/kartikjain1410}{linkedin.com/in/kartikjain1410}\sep
+  \lnk{https://github.com/KartikJain14}{github.com/KartikJain14}}
+\end{center}
+
+\section{Summary}
+DevOps-minded backend engineer with an offensive-security background: hardened and ran a production server, led ransomware
+recovery for a 16,000+ user platform, and built self-hosted infrastructure shared by 7+ college committees.
+
+\section{Education \& Leadership}
+\role{B.Tech, Information Technology}{SVKM's NMIMS MPSTME, Mumbai \textbar{} \textup{\textbf{CGPA: 8.34/10.0}}}{Expected Apr 2028}
+\begin{itemize}
+  \item \textbf{Chairperson}, ACM MPSTME (\textasciitilde{}250 members); ex-Technical Head: Taqneeq, Mumbai MUN, Social Conclave, Sattva.
+  \item Mentored web hosting, C and cybersecurity at Programming For Everyone, ACM's record \textasciitilde{}500-learner program.
+\end{itemize}
+
+\section{Experience}
+\role{VisionRise Technosoft Pvt. Ltd.}{Software Engineer Intern}{Apr 2026 -- Oct 2026}
+\begin{itemize}
+  \item Provisioned and hardened the company's production Linux server (Ubuntu 24.04 LTS: key-only SSH, firewall, auto security
+  updates); deployed Docker containers and PostgreSQL via Coolify CI/CD.
+  \item Automated backups to Google Cloud Storage and served media through short-lived signed URLs.
+  \item Administered the GitHub org (15 repos) and Google Workspace (35+ accounts), including access and permissions.
+  \item Built the white-label LMS running on it: a Node.js/TypeScript REST API (276 routes, 20 modules) behind two Google Play apps
+  (\lnk{https://play.google.com/store/apps/details?id=tech.riseinstitute.app}{Rise Academy}, \lnk{https://play.google.com/store/apps/details?id=app.eguru.lms}{eGuru}), with over-the-air app updates.
+\end{itemize}
+
+\role{R.U.D.R.A Cybersecurity Pvt. Ltd.}{Security Engineer Intern}{May 2025 -- Jul 2025}
+\begin{itemize}
+  \item Automated external attack-surface monitoring with BBOT, saving \textasciitilde{}\$20,000/year of manual reconnaissance.
+  \item Deployed and operated the Sliver C2 framework for purple-team exercises emulating real-world intrusions.
+  \item Found 2 high-severity vulnerabilities (Local File Inclusion, broken access control) in a banking client's web
+  portal, then wrote custom Nuclei templates to detect them automatically.
+\end{itemize}
+
+\role{Freelance}{Backend \& Security Engineer}{May 2025 -- Jun 2025}
+\begin{itemize}
+  \item Led ransomware incident response for a 16,000+ user platform: restored it from backups and hardened its servers.
+\end{itemize}
+
+\section{Projects}
+\proj{Self-Hosted Infrastructure}{ACM MPSTME and 7+ committees}{Coolify, Docker, Mailcow, GitHub Actions}{\lnk{https://mpstmeacm.com}{Live}}
+\begin{itemize}
+  \item Built the chapter's Coolify platform and Mailcow mail server (SPF, DKIM, DMARC): an @mpstmeacm.com mailbox for all
+  \textasciitilde{}250 members, shared by 7+ college committees; set up the GitHub organization, GitHub Apps and CI/CD.
+  \item Run Discord bots that onboard members and assign channel access by position and department, and a members-only
+  Minecraft server that verifies ACM membership at login.
+\end{itemize}
+\proj{jkartik.in Pipeline}{pull-based deployment}{Docker, GitHub Actions, GHCR, Watchtower, Nginx}{\lnk{https://github.com/KartikJain14/jkartik.in}{Source}}
+\begin{itemize}
+  \item Multi-stage Docker build pushed to GHCR by GitHub Actions with build caching; Watchtower pulls and deploys new images, so CI
+  holds no SSH secrets; Nginx and certbot terminate TLS.
+\end{itemize}
+\proj{GhostShare}{end-to-end-encrypted file sharing}{TypeScript, Next.js, Fastify, PostgreSQL, Redis, Docker}{\lnk{https://share.jkartik.in}{Live}}
+\begin{itemize}
+  \item Runs on Docker Compose behind Coolify; Socket.IO scales horizontally through a Redis adapter; includes backup and restore
+  scripts, structured logging (Pino) and error monitoring (Sentry).
+\end{itemize}
+\proj{Railway Concession System}{MPSTME's official portal}{Next.js, PostgreSQL, Drizzle}{\lnk{https://concession.mpst.me}{Live}}
+\begin{itemize}
+  \item Took over and maintain the system \textasciitilde{}4,000 students use: migrated it to PostgreSQL and automated daily reports.
+\end{itemize}
+
+\section{Security Research \& Awards}
+\begin{itemize}
+  \item Earned a \textbf{\$1,500 Meta bug bounty}; reported vulnerabilities to Microsoft (MSRC) and the Mumbai Police (CERT-In).
+\end{itemize}
+
+\section{Skills}
+\textbf{DevOps:} Docker, Docker Compose, Linux (Ubuntu) Server Administration, CI/CD (GitHub Actions), GHCR, Coolify, Nginx, TLS, Backups \& Disaster Recovery, Logging (Pino, Sentry), Git\par
+\textbf{Cloud:} Google Cloud Storage, Cloudflare R2, Vercel\par
+\textbf{Languages:} Bash, Python, TypeScript, SQL, Go\par
+\textbf{Security:} Server Hardening, Vulnerability Assessment, Dependency Scanning (SCA), Incident Response, Email (Mailcow, SPF/DKIM/DMARC)
+
+\end{document}

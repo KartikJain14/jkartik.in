@@ -1,0 +1,136 @@
+% ---------------------------------------------------------------- experience
+\section{Experience}\label{sec:exp}
+
+% ............................................................ VisionRise
+\entry[exp:visionrise]{VisionRise Technosoft Pvt.\ Ltd.}{Apr 2026 -- Oct 2026 · Mumbai}
+\dek{Software Engineer Intern. Built the company's white-label learning platform and ran its production server.}
+
+\begin{facts}
+\fact{Company}{Edtech and software company behind the Rise Academy / Rise Institute and eGuru brands
+  (\href{https://risetechnosoft.com}{risetechnosoft.com})}
+\fact{Ownership}{Created and wrote nearly all of the LMS v2 codebase and the eGuru fork; contributed to
+  the earlier, team-built LMS v1}
+\fact{Stack}{TypeScript, Node.js, Express, PostgreSQL, Drizzle ORM, Zod, JWT, React Native, Expo,
+  FFmpeg, Google Cloud Storage, Gemini, Zoom, Docker, Coolify, Ubuntu 24.04 LTS}
+\fact{Live}{\href{https://play.google.com/store/apps/details?id=tech.riseinstitute.app}{Rise Academy}
+  and \href{https://play.google.com/store/apps/details?id=app.eguru.lms}{eGuru} on Google Play
+  \,·\, \href{https://riseinstitute.tech}{riseinstitute.tech} \,·\, \href{https://eguru.app}{eguru.app}}
+\end{facts}
+
+\runin{Context} LMS v2 is a white-label learning platform: one backend and one app codebase that
+ship under more than one brand, covering courses, live classes, assessments and paid video for
+students on Android, iOS and the web. Kartik built it from the database schema to the store
+listing, then forked it into eGuru, a second branded app.
+
+\runin{Backend architecture} A Node.js/Express API in TypeScript (\tld40,000 lines), organised into
+20 domain modules that together expose 276 REST routes: admin, AI, analytics, assignments, audit,
+auth, calendar, certificates, courses, enrollments, lessons, live classes, media, modules,
+notifications, payments, quizzes, reports, settings and users. Inputs are validated with Zod at the
+boundary, data lives in PostgreSQL with schema changes tracked as Drizzle migrations, and the
+repository carries 25 test files.
+
+\runin{One app, three platforms} The client is a single React Native/Expo codebase (\tld45,000
+lines) that builds for Android, iOS and the web, with push notifications and over-the-air updates
+through Expo, so fixes reach installed apps without waiting on a store release.
+
+\runin{Protecting paid content} Paid video is the asset most worth protecting. Uploads go through an
+FFmpeg transcoding pipeline that produces AES-128-encrypted HLS. Playback needs a per-session token
+that the API validates on every segment request, and media is fetched through short-lived signed
+Google Cloud Storage URLs, so a copied link expires quickly and does not work outside the session
+that requested it. PDFs stream inside the app with no download surface, and course certificates
+can be verified through a SHA-256 hash.
+
+\begin{center}
+\vspace{2pt}
+\begin{tikzpicture}[
+  font=\sffamily\footnotesize,
+  box/.style={draw=hair, line width=0.5pt, rounded corners=2pt, fill=wash, text=ink,
+              align=center, inner xsep=5pt, inner ysep=4pt, minimum width=36mm, minimum height=10mm},
+  arrow/.style={-{Stealth[length=4pt,width=3.5pt]}, draw=muted, line width=0.55pt},
+  tag/.style={font=\sffamily\scriptsize, text=muted}]
+  \node[box] (up)  at (0,0)      {Course video\\uploaded by staff};
+  \node[box] (ff)  at (5.1,0)    {FFmpeg transcode\\to AES-128 HLS};
+  \node[box] (gcs) at (10.2,0)   {Google Cloud Storage\\encrypted segments};
+  \node[box] (app) at (0,-1.75)  {Student app\\React Native / Expo};
+  \node[box] (api) at (5.1,-1.75){API checks per-session\\token on every segment};
+  \node[box] (url) at (10.2,-1.75){Short-lived\\signed URL};
+  \draw[arrow] (up) -- (ff);
+  \draw[arrow] (ff) -- (gcs);
+  \draw[arrow] (app) -- node[tag, above]{request} (api);
+  \draw[arrow] (api) -- node[tag, above]{issue} (url);
+  \draw[arrow] (url) -- (gcs);
+\end{tikzpicture}\par
+\vspace{3pt}
+{\footnotesize\itshape\color{muted}Paid-video path: content is encrypted when it is transcoded and is reachable only with a session token and an expiring URL.}
+\end{center}
+
+\runin{Authentication and access} Students sign in with Google or with a PIN tied to a phone number
+verified over WhatsApp. Sessions use JWT access and refresh tokens, role-based access separates
+admins, instructors and students, and admin actions are written to an audit log.
+
+\runin{Features and integrations} Kartik built Live Classes v1 on Zoom: classes are orchestrated from
+the platform, Zoom's webhooks are signature-verified before they are trusted, attendance and
+recordings are captured, and Gemini then generates a quiz from the class content. Around this core
+Kartik shipped courses, quizzes and assignments, UPI payment verification, push and email
+notifications, and bulk enrollment.
+
+\runin{Production server} Kartik provisioned and hardened the company's primary production server on
+Ubuntu 24.04 LTS with a standard baseline: SSH key-only access, a firewall, unattended security
+upgrades and fail2ban. The apps and PostgreSQL run behind Coolify, which handles CI/CD and
+deployments; container and application logs are collected through Coolify and Docker; and automated
+backups go to Google Cloud Storage.
+
+\runin{IT administration} Kartik administered the company's GitHub organisation (15 repositories,
+about 5--10 members) and its Google Workspace directory of 35+ accounts, covering accounts, access
+and permissions.
+
+\runin{Other work} Contributed to the earlier, team-built LMS v1: CI/CD, timezone-safe class
+scheduling with the PostgreSQL session pinned to IST, course-invite and access-request flows, and
+Zoom fixes. Built a government procurement-management prototype (FastAPI and React) for a client
+demo, and the eguru.app marketing site as a Next.js static export.
+
+\runin{Outcome} Two apps live on Google Play, Rise Academy and eGuru, built from one codebase and one
+backend, and deployed through a pipeline onto a server that Kartik set up and maintained.
+
+% ............................................................ R.U.D.R.A
+\entry[exp:rudra]{R.U.D.R.A Cybersecurity Pvt.\ Ltd.}{May 2025 -- Jul 2025 · Mumbai}
+\dek{Security Engineer Intern for three months at a Mumbai-based VAPT and offensive-security firm: client testing, internal tooling and purple-team exercises, using BBOT, Semgrep, Neo4j, Nuclei and Sliver C2.}
+
+\runin{Attack-surface monitoring} Kartik automated recurring external attack-surface monitoring with
+BBOT, cutting manual reconnaissance and saving \tld\$20,000 a year.
+
+\runin{Static analysis at scale} Kartik single-handedly built a custom Semgrep (SAST) module with
+Neo4j-based graph visualisation, for analysing large codebases.
+
+\runin{Banking client} Manual code review of a banking client's web portal found two high-severity
+vulnerabilities: a local file inclusion, and broken access control that exposed restricted
+functionality to unauthorised users. Both were reported to the client, and Kartik then automated
+their detection with custom Nuclei templates.
+
+\runin{Purple teaming} Deployed and operated the Sliver C2 framework for purple-team exercises that
+emulated real-world intrusions.
+
+\runin{Outcome} Two high-severity findings for a client, a recurring recon task automated with a
+\tld\$20,000-a-year saving, and an in-house SAST module.
+
+% ............................................................ Freelance
+\entry[exp:freelance]{Freelance}{May 2025 -- Oct 2026}
+\dek{Self-employed Backend \& Security Engineer. Two separate engagements, not continuous; clients are not named.}
+
+\minientry{Incident response and hardening}{May -- Jun 2025 · about one month}
+A freelance client ran a web platform with 16,000+ users. Kartik hardened its server
+infrastructure, and when the platform was hit by ransomware, led the incident response: contained
+the attack and restored service through rapid backup and recovery.
+
+\minientry[proj:sports]{sports-live: tournament auction and scoring platform}{Aug 2026 -- Oct 2026}
+Built for a client and used at ELEV8, a pickleball tournament in which \tld200 players were
+auctioned into 8 teams. The platform covers player registration and verification, a purse-based
+live player auction with a board for the projector, fixtures, live scoring and standings. Venue
+Wi-Fi is unreliable, so writes go into an offline queue in IndexedDB and are sent when the
+connection returns.
+
+\begin{facts}
+\fact{Ownership}{Solo}
+\fact{Stack}{Next.js 16, Supabase (PostgreSQL with row-level security, Realtime, Storage),
+  server-side image processing, IndexedDB, Vitest}
+\end{facts}

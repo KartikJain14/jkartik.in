@@ -1,0 +1,128 @@
+% Kartik Jain — application security / product security (archetype A). Facts come from resume/CAREER.md only; strategy in resume/MARKET.md.
+% Layout copied from resume/Kartik_Resume.tex. Build: npm run resume -- Kartik_Jain_AppSec_Engineer
+% ATS check: node scripts/ats-check.mjs public/resume/Kartik_Jain_AppSec_Engineer.pdf --role appsec
+\documentclass[10pt, a4paper]{article}
+
+% ---------- page ----------
+\usepackage[top=0.95cm, bottom=0.8cm, left=1.35cm, right=1.35cm]{geometry}
+\usepackage{fontspec}
+% XCharter: a readable serif with real Unicode maps (ATS-safe text extraction).
+% Common ligatures are off so parsers never see "ﬁ"/"ﬂ" glyphs.
+\setmainfont{XCharter}[
+  Extension=.otf, UprightFont=*-Roman, BoldFont=*-Bold,
+  ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic, Ligatures={TeX,NoCommon}]
+\usepackage[dvipsnames]{xcolor}
+\definecolor{ink}{HTML}{1A1A1A}
+\definecolor{rule}{HTML}{8A8A8A}
+\definecolor{linkc}{HTML}{1F4E9A}
+\color{ink}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks, pdfusetitle]{hyperref}
+\hypersetup{
+  pdftitle={Kartik Jain - Resume - Application Security Engineer},
+  pdfauthor={Kartik Jain},
+  pdfsubject={Resume},
+  pdfkeywords={Kartik Jain, Application Security Engineer, Product Security, AppSec, SAST, DAST, Semgrep, Secure Code Review, OWASP Top 10, Burp Suite, Python, TypeScript, Mumbai},
+}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\raggedright
+\linespread{1.0}
+
+% ---------- sections & lists ----------
+\titleformat{\section}{\bfseries\large\scshape}{}{0pt}{}[\vspace{-6pt}{\color{rule}\rule{\linewidth}{0.5pt}}]
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\setlist[itemize]{label={\small\textbullet}, leftmargin=11pt, labelsep=5pt, topsep=1pt, itemsep=0.3pt, parsep=0pt, partopsep=0pt}
+
+% \role{Organisation}{Title}{Dates}            -> one line, dates right-aligned
+% \proj{Name}{what it is}{stack}{links}        -> one line, links right-aligned
+\newcommand{\role}[3]{\par\vspace{2.5pt}\textbf{#1} \textbar{} \textit{#2}\hfill #3\par}
+\newcommand{\proj}[4]{\par\vspace{2.5pt}\textbf{#1} \textbar{} #2 \textbar{} \textit{\small #3}\hfill{\small #4}\par}
+\newcommand{\lnk}[2]{\href{#1}{\color{linkc}#2}}
+\newcommand{\sep}{\enspace\textbar\enspace}
+
+\begin{document}
+
+% ---------- header ----------
+\begin{center}
+  {\fontsize{22pt}{24pt}\selectfont\bfseries Kartik Jain}\par\vspace{3pt}
+  {\normalsize Application Security Engineer \textbar{} Secure Code Review, SAST \& Backend}\par\vspace{3pt}
+  {\small Mumbai, India\sep
+  \lnk{mailto:career@jkartik.in}{career@jkartik.in}\sep
+  \lnk{https://jkartik.in/}{jkartik.in}\sep
+  \lnk{https://linkedin.com/in/kartikjain1410}{linkedin.com/in/kartikjain1410}\sep
+  \lnk{https://github.com/KartikJain14}{github.com/KartikJain14}}
+\end{center}
+
+\section{Summary}
+Application security engineer who also ships production backends: wrote a custom Semgrep (SAST) module and Nuclei
+templates, found 2 high-severity flaws in a banking portal through code review, and earned a \$1,500 Meta bug bounty.
+
+\section{Education \& Leadership}
+\role{B.Tech, Information Technology}{SVKM's NMIMS MPSTME, Mumbai \textbar{} \textup{\textbf{CGPA: 8.34/10.0}}}{Expected Apr 2028}
+\begin{itemize}
+  \item \textbf{Chairperson}, ACM MPSTME (\textasciitilde{}250 members); ex-Technical Head: Taqneeq, Mumbai MUN, Social Conclave, Sattva.
+  \item Set problems for and mentored at CyberCypher, Taqneeq's cybersecurity hackathon; designed a CTF for freshers.
+\end{itemize}
+
+\section{Experience}
+\role{VisionRise Technosoft Pvt. Ltd.}{Software Engineer Intern}{Apr 2026 -- Oct 2026}
+\begin{itemize}
+  \item Shipped a white-label learning platform as two Google Play apps (\lnk{https://play.google.com/store/apps/details?id=tech.riseinstitute.app}{Rise Academy}, \lnk{https://play.google.com/store/apps/details?id=app.eguru.lms}{eGuru}), on a
+  Node.js/TypeScript REST API (276 routes, 20 modules, PostgreSQL) built end to end.
+  \item Secured paid video with AES-128-encrypted HLS (FFmpeg), per-session playback tokens validated on every segment and
+  signed Google Cloud Storage URLs; issued SHA-256-verifiable certificates.
+  \item Built JWT authentication with refresh tokens, Google Sign-In, role-based access control, Zod input validation and audit logs on admin actions.
+  \item Hardened the production Linux server (Ubuntu 24.04 LTS: key-only SSH, firewall, auto security updates) running Docker
+  apps via Coolify CI/CD; administered the GitHub org (15 repos) and Google Workspace (35+ accounts).
+\end{itemize}
+
+\role{R.U.D.R.A Cybersecurity Pvt. Ltd.}{Security Engineer Intern}{May 2025 -- Jul 2025}
+\begin{itemize}
+  \item Found 2 high-severity vulnerabilities (Local File Inclusion, broken access control) in a banking client's web
+  portal through manual code review, then wrote custom Nuclei templates to detect them automatically.
+  \item Developed a custom Semgrep (SAST) module with Neo4j graph visualization for large-scale code analysis.
+  \item Automated external attack-surface monitoring with BBOT, saving \textasciitilde{}\$20,000/year of manual reconnaissance.
+  \item Deployed and operated the Sliver C2 framework for purple-team exercises emulating real-world intrusions.
+\end{itemize}
+
+\role{Freelance}{Backend \& Security Engineer}{May 2025 -- Jun 2025}
+\begin{itemize}
+  \item Led ransomware incident response for a 16,000+ user platform: restored it from backups and hardened its servers.
+\end{itemize}
+
+\section{Security Research}
+\begin{itemize}
+  \item Awarded a \textbf{\$1,500 bug bounty by Meta} for a privilege-escalation vulnerability in WhatsApp.
+  \item Reported access-control and information-disclosure flaws in Microsoft Intune and Exchange Admin to MSRC;
+  responsibly disclosed a stored XSS on the Mumbai Police website through CERT-In.
+  \item Reported exposed staging infrastructure (The Souled Store) and a code and credential leak (Belgian Waffle Co.).
+  \item \textbf{1st place} (global), chat.win AI Jailbreakathon: LLM prompt attack and defense, won with the fewest tokens.
+\end{itemize}
+
+\section{Projects}
+\proj{GhostShare}{end-to-end-encrypted file sharing}{TypeScript, Next.js, Fastify, PostgreSQL, Redis, Docker}{\lnk{https://share.jkartik.in}{Live}}
+\begin{itemize}
+  \item Zero-knowledge design: keys are derived in-browser (Argon2id) and data is sealed with AES-256-GCM, so the server
+  stores only ciphertext; the API adds rate limiting and security headers (helmet).
+\end{itemize}
+\proj{Event \& Payment Backends}{NMIMS student events}{TypeScript, Python, PostgreSQL}{\lnk{https://github.com/Social-Conclave/conc-qr}{Check-in}\,\textbar\,\lnk{https://github.com/MPSTME-ACM/pfe-regi}{Payments}}
+\begin{itemize}
+  \item Co-led paid registration on Cashfree where tickets issue only on HMAC-verified webhooks; built QR access control for
+  500+ delegates, with check-ins made race-free by a Postgres unique constraint.
+\end{itemize}
+\proj{Fool The LLM}{prompt-injection contest}{TypeScript, Next.js, Express, PostgreSQL, Gemini}{\lnk{https://jkartik.in/blog/where-llm-guardrails-break/}{Write-up}}
+\begin{itemize}
+  \item Built and ran a contest for \textasciitilde{}70 participants: guarded Gemini levels, token-streamed chat, an organizer console with
+  live logs, and per-player token budgets.
+\end{itemize}
+
+\section{Skills}
+\textbf{Security:} Web Application Security, Penetration Testing, VAPT, OWASP Top 10, Burp Suite, Nmap, SAST/DAST (Semgrep, Nuclei), Dependency Scanning (SCA), Secure Code Review, BBOT, Sliver C2, Applied Cryptography (AES-GCM, Argon2id, HMAC), Incident Response, Responsible Disclosure, LLM Red Teaming\par
+\textbf{Languages:} Python, TypeScript, JavaScript, SQL, Bash, Java\par
+\textbf{Backend \& Infra:} Node.js, Express, FastAPI, Flask, REST APIs, JWT/OAuth 2.0, RBAC, PostgreSQL, Redis, Docker, Linux, Nginx, CI/CD (GitHub Actions)
+
+\end{document}

@@ -1,0 +1,295 @@
+---
+// /resume/ — pick a résumé. Data: src/data/resumes.ts.
+// Build-time only (prerendered): checks which PDFs exist and reads their git dates. Not a server component.
+import Base from '../../layouts/Base.astro';
+import { resumes, type ResumeEntry } from '../../data/resumes';
+import { SITE, WEBSITE_ID, PERSON_ID, breadcrumbs } from '../../lib/seo';
+import { existsSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { execSync } from 'node:child_process';
+
+const today = new Date().toISOString().slice(0, 10);
+
+// Last commit date (YYYY-MM-DD) of a file, like src/pages/sitemap.xml.ts. Falls back to the
+// build date for files that aren't committed yet.
+const gitDate = (path: string): string => {
+  try {
+    const out = execSync(`git log -1 --format=%cs -- "${path}"`, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    return out || today;
+  } catch {
+    return today;
+  }
+};
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const pretty = (iso: string) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${d} ${MONTHS[m - 1]} ${y}`;
+};
+const kb = (bytes: number) => `${Math.max(1, Math.round(bytes / 1024))} KB`;
+
+type Shown = ResumeEntry & { updated: string; updatedLabel: string; size: string; download: string };
+
+// Only list PDFs that actually exist in public/, so no card ever links to a missing file.
+const shown: Shown[] = resumes.flatMap((r) => {
+  const rel = join('public', r.file);
+  const abs = join(process.cwd(), rel);
+  if (!existsSync(abs)) return [];
+  const updated = gitDate(rel);
+  return [{
+    ...r,
+    updated,
+    updatedLabel: pretty(updated),
+    size: kb(statSync(abs).size),
+    download: r.downloadName ?? r.file.split('/').pop()!,
+  }];
+});
+
+const featured = shown.find((r) => r.featured) ?? shown[0];
+const roles = shown.filter((r) => r.kind === 'role');
+const longform = shown.filter((r) => r.kind === 'portfolio');
+
+const pageUrl = `${SITE}/resume/`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      '@id': `${pageUrl}#page`,
+      url: pageUrl,
+      name: 'Résumés of Kartik Jain',
+      inLanguage: 'en',
+      isPartOf: { '@id': WEBSITE_ID },
+      about: { '@id': PERSON_ID },
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: shown.map((r, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: r.title,
+          url: new URL(r.file, SITE).href,
+        })),
+      },
+    },
+    breadcrumbs([['Home', '/'], ['Résumé', '/resume/']]),
+  ],
+};
+
+// lines of the little paper sketch: [width %, kind] — h = heading bar, a = accent rule, t = text
+const sheet: [number, string][] = [
+  [46, 'name'], [70, 't'], [100, 'rule'],
+  [30, 'h'], [92, 't'], [84, 't'],
+  [34, 'h'], [96, 't'], [88, 't'], [93, 't'], [62, 't'],
+  [28, 'h'], [90, 't'], [78, 't'],
+  [24, 'h'], [86, 't'], [70, 't'],
+];
+---
+<Base
+  title="Résumé — Kartik Jain"
+  description="Kartik Jain's one-page résumés: a general backend + security résumé, plus versions for AppSec, penetration testing, backend, DevOps and full-stack roles."
+  active="resume"
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <header class="wrap-wide page-head">
+    <a class="crumb hero-in" href="/">← Home</a>
+    <h1 class="hero-in" style="--d:.06s"><em>Résumé</em></h1>
+    <p class="intro hero-in" style="--d:.12s">
+      B.Tech IT at NMIMS MPSTME, Mumbai (CGPA 8.34/10.0, graduating 2028). One page each: the general
+      résumé covers backend and security together, and the others reorder the same work for a specific kind of role.
+    </p>
+  </header>
+
+  <main class="wrap-wide">
+    {featured && (
+      <section class="rz-feature hero-in" style="--d:.18s" aria-labelledby={`rz-${featured.slug}`}>
+        <div class="rz-paper" aria-hidden="true">
+          <div class="sheet">
+            {sheet.map(([w, k], i) => <span class={`ln ${k}`} style={`--w:${w}%;--i:${i}`}></span>)}
+          </div>
+        </div>
+        <div class="rz-body">
+          <span class="rz-flag">{featured.tag}</span>
+          <h2 id={`rz-${featured.slug}`}>{featured.title}</h2>
+          <p class="rz-for">{featured.forWhom}</p>
+          <ul class="rz-points">
+            {featured.highlights.map((h) => <li>{h}</li>)}
+          </ul>
+          <p class="rz-meta">
+            PDF · {featured.length} · {featured.size} · Updated <time datetime={featured.updated}>{featured.updatedLabel}</time>
+          </p>
+          <div class="rz-actions">
+            <a class="btn primary" href={featured.file} target="_blank" rel="noopener" aria-label={`View ${featured.title} (PDF, opens in a new tab)`}>View ↗</a>
+            <a class="btn ghost" href={featured.file} download={featured.download} aria-label={`Download ${featured.title} (PDF)`}>Download ↓</a>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {roles.length > 0 && (
+      <>
+        <h2 class="list-label reveal">By role</h2>
+        <ul class="rz-list" role="list">
+          {roles.map((r, i) => (
+            <li class="rz-row reveal" style={`--d:${Math.min(i * 0.05, 0.25)}s`}>
+              <div class="rz-mini" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              <div class="rz-text">
+                <span class="rz-tag">{r.tag}</span>
+                <h3 id={`rz-${r.slug}`}>{r.title}</h3>
+                <p class="rz-for">{r.forWhom}</p>
+                <ul class="rz-points small">
+                  {r.highlights.map((h) => <li>{h}</li>)}
+                </ul>
+              </div>
+              <div class="rz-side">
+                <p class="rz-meta">
+                  {r.length} · {r.size}<br />Updated <time datetime={r.updated}>{r.updatedLabel}</time>
+                </p>
+                <div class="rz-actions">
+                  <a class="btn primary" href={r.file} target="_blank" rel="noopener" aria-label={`View ${r.title} résumé (PDF, opens in a new tab)`}>View ↗</a>
+                  <a class="btn ghost" href={r.file} download={r.download} aria-label={`Download ${r.title} résumé (PDF)`}>Download ↓</a>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </>
+    )}
+
+    {longform.length > 0 && (
+      <>
+        <h2 class="list-label reveal">Long form</h2>
+        <ul class="rz-list" role="list">
+          {longform.map((r) => (
+            <li class="rz-row reveal">
+              <div class="rz-mini long" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              <div class="rz-text">
+                <span class="rz-tag">{r.tag}</span>
+                <h3 id={`rz-${r.slug}`}>{r.title}</h3>
+                <p class="rz-for">{r.forWhom}</p>
+                <ul class="rz-points small">
+                  {r.highlights.map((h) => <li>{h}</li>)}
+                </ul>
+              </div>
+              <div class="rz-side">
+                <p class="rz-meta">
+                  {r.length} · {r.size}<br />Updated <time datetime={r.updated}>{r.updatedLabel}</time>
+                </p>
+                <div class="rz-actions">
+                  <a class="btn primary" href={r.file} target="_blank" rel="noopener" aria-label={`View ${r.title} (PDF, opens in a new tab)`}>View ↗</a>
+                  <a class="btn ghost" href={r.file} download={r.download} aria-label={`Download ${r.title} (PDF)`}>Download ↓</a>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </>
+    )}
+
+    <p class="aside reveal" style="margin-top:40px">
+      Hiring for something these don't cover, or need a different format? Write to{' '}
+      <a href="mailto:career@jkartik.in" style="color:var(--accent)">career@jkartik.in</a>.
+      For freelance work, see <a href="/hire/" style="color:var(--accent)">how to hire me</a>.
+      The longer story is on <a href="/projects/" style="color:var(--accent)">projects</a> and{' '}
+      <a href="/research/" style="color:var(--accent)">security research</a>.
+    </p>
+  </main>
+</Base>
+
+<style>
+  /* ── featured: paper sketch + details ── */
+  .rz-feature {
+    display: grid; grid-template-columns: minmax(220px, 0.8fr) 1.2fr;
+    border: 1px solid var(--hairline); border-radius: 14px; overflow: hidden;
+    margin-top: 26px; transition: border-color 0.2s ease;
+  }
+  .rz-feature:hover { border-color: var(--pill-border); }
+  .rz-paper {
+    background: var(--bg-lift); border-right: 1px solid var(--hairline);
+    display: flex; align-items: center; justify-content: center; padding: 34px 28px;
+  }
+  .sheet {
+    width: min(100%, 230px); aspect-ratio: 210 / 297; /* A4 */
+    background: var(--bg); border: 1px solid var(--pill-border); border-radius: 4px;
+    padding: 9% 10%; display: flex; flex-direction: column; gap: 5.2%;
+    transform: rotate(-1.5deg); transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .rz-feature:hover .sheet { transform: rotate(0deg) translateY(-4px); }
+  .ln { display: block; width: var(--w); height: 3px; border-radius: 2px; background: var(--hairline); transform-origin: left; }
+  .ln.name { height: 9px; background: var(--ink); align-self: center; width: var(--w); }
+  .ln.t:nth-child(2) { align-self: center; }
+  .ln.rule { height: 1px; background: var(--pill-border); }
+  .ln.h { height: 5px; background: var(--ink-dim); margin-top: 3%; }
+  .ln.h:nth-child(4) { background: var(--accent); }
+  /* lines draw themselves in once, CSS-only (decorative, never gates content) */
+  @keyframes drawLn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  :global(.js) .ln { animation: drawLn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(0.3s + var(--i) * 0.045s); }
+
+  .rz-body { padding: 34px 36px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+  .rz-flag, .rz-tag { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .rz-body h2 { font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+  .rz-for { color: var(--ink-dim); font-size: 0.98rem; max-width: 36em; }
+  .rz-points { list-style: none; margin: 2px 0 0; }
+  .rz-points li { position: relative; padding: 4px 0 4px 22px; font-size: 0.93rem; color: var(--ink); }
+  .rz-points li::before { content: "—"; position: absolute; left: 0; color: var(--accent); }
+  .rz-points.small li { font-size: 0.88rem; color: var(--ink-dim); padding: 3px 0 3px 20px; }
+  .rz-meta { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.05em; color: var(--ink-faint); line-height: 1.7; }
+  .rz-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .rz-actions .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ── role rows: full-width hover rows, like research ── */
+  .rz-list { list-style: none; }
+  .rz-row {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 22px; align-items: start;
+    padding: 24px 16px; margin: 0 -16px;
+    border-bottom: 1px solid var(--hairline); border-left: 2px solid transparent;
+    transition: background 0.18s ease, border-left-color 0.18s ease;
+  }
+  .rz-row:first-child { border-top: 1px solid var(--hairline); }
+  .rz-row:hover, .rz-row:focus-within { background: var(--bg-lift); border-left-color: var(--accent); }
+  .rz-row h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; margin: 4px 0 4px; }
+  .rz-row:hover h3 { color: var(--accent); }
+  .rz-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .rz-text .rz-for { font-size: 0.93rem; }
+  .rz-side { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; text-align: right; padding-top: 2px; }
+
+  /* tiny page icon that leans in on hover */
+  .rz-mini {
+    width: 34px; aspect-ratio: 210 / 297; margin-top: 4px;
+    border: 1px solid var(--pill-border); border-radius: 3px; background: var(--bg);
+    padding: 6px 5px; display: flex; flex-direction: column; gap: 4px;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease;
+  }
+  .rz-mini span { height: 2px; border-radius: 1px; background: var(--hairline); }
+  .rz-mini span:first-child { width: 60%; background: var(--accent); }
+  .rz-mini span:nth-child(3) { width: 80%; }
+  .rz-mini.long { box-shadow: 3px 3px 0 -1px var(--bg), 3px 3px 0 0 var(--pill-border); }
+  .rz-row:hover .rz-mini { transform: rotate(-4deg) translateY(-2px); border-color: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .ln { animation: none; }
+    .sheet, .rz-mini, .rz-row, .rz-feature { transition: none; }
+    .rz-feature:hover .sheet, .rz-row:hover .rz-mini { transform: none; }
+    .sheet { transform: none; }
+  }
+
+  @media (max-width: 860px) {
+    .rz-feature { grid-template-columns: 1fr; }
+    .rz-paper { border-right: none; border-bottom: 1px solid var(--hairline); padding: 26px; }
+    .sheet { width: 150px; }
+    .rz-row { grid-template-columns: auto 1fr; }
+    .rz-side { grid-column: 2; align-items: flex-start; text-align: left; }
+  }
+  @media (max-width: 640px) {
+    .rz-body { padding: 24px 22px; }
+    .rz-row { grid-template-columns: 1fr; gap: 12px; padding: 22px 16px; }
+    .rz-mini { display: none; }
+    .rz-paper { padding: 20px; }
+    .sheet { width: 112px; }
+    .rz-side { grid-column: 1; width: 100%; }
+    .rz-actions { width: 100%; }
+    .rz-actions .btn { flex: 1; text-align: center; }
+  }
+</style>
