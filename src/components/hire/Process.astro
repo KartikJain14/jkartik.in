@@ -1,0 +1,25 @@
+---
+// How a project runs: five steps on a hairline that draws itself in. Horizontal on desktop,
+// vertical on phones. Ends with the pricing + ownership notes (no prices, by Kartik's decision).
+import { process, ownership } from '../../data/hire';
+---
+<ol class="ps reveal" role="list">
+  {process.map((p, i) => (
+    <li class="ps-step" style={`--i:${i}`}>
+      <span class="ps-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+      <h3 class="ps-name">{p.name}</h3>
+      <p class="ps-text">{p.text}</p>
+    </li>
+  ))}
+</ol>
+
+<div class="ps-notes">
+  <div class="ps-note reveal">
+    <p class="ps-note-k">Pricing</p>
+    <p class="ps-note-v">One fixed price for the agreed scope, quoted after a 15-minute call and put in writing before any work starts.</p>
+  </div>
+  <div class="ps-note reveal" style="--d:.06s">
+    <p class="ps-note-k">Ownership</p>
+    <p class="ps-note-v">{ownership.long}</p>
+  </div>
+</div>

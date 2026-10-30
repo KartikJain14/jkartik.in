@@ -1,0 +1,182 @@
+---
+// Above the fold: the offer, the A-to-Z line, two CTAs, and a slideshow of real sites in device
+// frames. Uses .hero-in (CSS-only, opacity stays 1) so nothing here delays FCP/LCP.
+import BrowserFrame from './BrowserFrame.astro';
+import PhoneFrame from './PhoneFrame.astro';
+import type { ResolvedItem } from './shots';
+import { aToZ, CONTACT_EMAIL, ownership, replyTime } from '../../data/hire';
+
+interface Props {
+  slides: ResolvedItem[];
+}
+const { slides } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<header class:list={['h-hero', 'wrap-wide', { 'no-vis': slides.length === 0 }]}>
+  <div class="h-copy">
+    <p class="kicker hero-in"><span id="kicker">FREELANCE WEB DEVELOPER · MUMBAI</span></p>
+    <h1 class="h-title hero-in" style="--d:.06s">
+      Websites, online stores and the systems <em>behind&nbsp;them.</em>
+    </h1>
+    <p class="h-sub hero-in" style="--d:.12s">
+      Designed, built, launched and looked after, all by one developer.
+    </p>
+
+    <div class="h-ctas hero-in" style="--d:.2s">
+      <a class="h-btn primary" href="#start" data-umami-event="hire-cta-start">Start a project <svg class="arr" aria-hidden="true" viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a class="h-btn ghost" href="#work" data-umami-event="hire-cta-work">See the work <svg class="arr" aria-hidden="true" viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10M4 9l4 4 4-4"/></svg></a>
+    </div>
+    <p class="h-alt hero-in" style="--d:.24s">
+      Or write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+      <button type="button" class="copy-mail" data-copy={CONTACT_EMAIL} data-umami-event="hire-copy-email" aria-label={`Copy ${CONTACT_EMAIL}`}>copy</button>
+    </p>
+    <ul class="h-trust hero-in" style="--d:.28s">
+      <li>{replyTime}</li>
+      <li>{ownership.short}</li>
+    </ul>
+  </div>
+
+  {slides.length > 0 && (
+    <div class="h-vis hero-in" style="--d:.14s">
+      <div class="h-stack" data-slides={slides.length}>
+        <div class="h-ghost" aria-hidden="true"><span></span></div>
+        {slides.map((s, i) => (
+          <div class:list={['h-slide', { on: i === 0 }]} data-i={i} aria-hidden={i === 0 ? undefined : 'true'}>
+            <BrowserFrame shot={s.desktopShot} domain={s.domain} alt={s.images.alt} eager={i === 0} deferred={i > 0} />
+            <PhoneFrame shot={s.mobileShot} alt={`${s.name} on a phone`} deferred={i > 0} class="h-phone" />
+          </div>
+        ))}
+      </div>
+      <div class="h-cap">
+        <span class="h-cap-n" aria-hidden="true"><b>{pad(1)}</b> / {pad(slides.length)}</span>
+        <a class="h-cap-name" href={`#w-${slides[0].slug}`}>{slides[0].name}</a>
+        <span class="h-cap-client">{slides[0].client}</span>
+        {slides.length > 1 && (
+          <button type="button" class="h-cap-pause" aria-pressed="false" aria-label="Pause the slideshow">
+            <span class="t-pause">Pause</span><span class="t-play">Play</span>
+          </button>
+        )}
+        <span class="h-cap-bar" aria-hidden="true"><i></i></span>
+      </div>
+      <script type="application/json" id="h-slides" set:html={JSON.stringify(slides.map((s) => ({ slug: s.slug, name: s.name, client: s.client })))} />
+    </div>
+  )}
+
+  <div class="h-az hero-in" style="--d:.2s">
+    <span class="az-end" aria-hidden="true">A</span>
+    <ol class="az-list" aria-label="Everything handled, A to Z">
+      {aToZ.map((s, i) => <li style={`--i:${i}`}>{s}</li>)}
+    </ol>
+    <span class="az-end" aria-hidden="true">Z</span>
+  </div>
+</header>
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stack = document.querySelector<HTMLElement>('.h-stack');
+  const data = JSON.parse(document.getElementById('h-slides')?.textContent || '[]') as { slug: string; name: string; client: string }[];
+
+  if (stack && data.length > 1) {
+    const slides = [...stack.querySelectorAll<HTMLElement>('.h-slide')];
+    const cap = document.querySelector<HTMLElement>('.h-cap')!;
+    const num = cap.querySelector('.h-cap-n b')!;
+    const name = cap.querySelector<HTMLAnchorElement>('.h-cap-name')!;
+    const client = cap.querySelector('.h-cap-client')!;
+    const pauseBtn = cap.querySelector<HTMLButtonElement>('.h-cap-pause');
+    const DURATION = 5200;
+    let i = 0;
+    let timer = 0;
+    let userPaused = reduced; // reduced motion: start paused, the button still steps through
+    let hovering = false;
+    let inView = true;
+    let warmTimer = 0;
+
+    // later slides load just before they're shown, and only while the hero is on screen, so a
+    // lead on mobile data never pays for slides they won't see
+    const load = (n: number) => {
+      slides[n].querySelectorAll<HTMLImageElement>('img[data-src]').forEach((img) => {
+        img.src = img.dataset.src!;
+        img.removeAttribute('data-src');
+      });
+    };
+
+    const show = (n: number) => {
+      slides[i].classList.remove('on');
+      slides[i].setAttribute('aria-hidden', 'true');
+      i = (n + slides.length) % slides.length;
+      load(i);
+      slides[i].classList.add('on');
+      slides[i].removeAttribute('aria-hidden');
+      num.textContent = String(i + 1).padStart(2, '0');
+      name.textContent = data[i].name;
+      name.href = `#w-${data[i].slug}`;
+      client.textContent = data[i].client;
+      restartBar();
+    };
+
+    const restartBar = () => {
+      cap.classList.remove('run');
+      void cap.offsetWidth; // restart the hairline's CSS animation
+      if (!userPaused && !hovering && inView) cap.classList.add('run');
+    };
+
+    const schedule = () => {
+      clearTimeout(timer);
+      clearTimeout(warmTimer);
+      if (userPaused || hovering || document.hidden || !inView) return;
+      warmTimer = window.setTimeout(() => load((i + 1) % slides.length), DURATION - 1800);
+      timer = window.setTimeout(() => {
+        // hold still behind the expanded view
+        if (!document.querySelector('dialog[open]')) show(i + 1);
+        schedule();
+      }, DURATION);
+    };
+
+    const setPaused = (p: boolean) => {
+      userPaused = p;
+      cap.classList.toggle('paused', p);
+      if (pauseBtn) {
+        pauseBtn.setAttribute('aria-pressed', String(p));
+        pauseBtn.setAttribute('aria-label', p ? 'Play the slideshow' : 'Pause the slideshow');
+      }
+      restartBar();
+      schedule();
+    };
+
+    pauseBtn?.addEventListener('click', () => setPaused(!userPaused));
+    // a click opens the expanded view of whichever site is showing
+    stack.addEventListener('click', () => {
+      document.querySelector<HTMLButtonElement>(`#w-${data[i].slug} .sx-zoom`)?.click();
+    });
+    stack.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      hovering = true; cap.classList.remove('run'); clearTimeout(timer);
+    });
+    stack.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      hovering = false; restartBar(); schedule();
+    });
+    document.addEventListener('visibilitychange', schedule);
+    new IntersectionObserver(([e]) => {
+      if (inView === e.isIntersecting) return;
+      inView = e.isIntersecting;
+      restartBar();
+      schedule();
+    }).observe(stack);
+
+    setPaused(userPaused);
+  }
+
+  // copy-to-clipboard buttons (hero + contact)
+  document.querySelectorAll<HTMLButtonElement>('.copy-mail').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!navigator.clipboard) return;
+      const label = btn.textContent;
+      navigator.clipboard.writeText(btn.dataset.copy!).then(() => {
+        btn.textContent = 'copied';
+        btn.classList.add('done');
+        setTimeout(() => { btn.textContent = label; btn.classList.remove('done'); }, 1500);
+      });
+    });
+  });
+</script>

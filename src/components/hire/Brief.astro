@@ -1,0 +1,177 @@
+---
+// Contact, built to convert with no backend: a short project brief that turns into a ready-to-send
+// email (mailto:), plus copy-to-clipboard. Nothing is sent from the page. Without JS the form
+// still posts to mailto: as plain text.
+import { CONTACT_EMAIL, briefNeeds, briefBudgets, briefTimelines, replyTime } from '../../data/hire';
+---
+<div class="bb">
+  <div class="bb-side">
+    <p class="bb-lede reveal">
+      Fill this in and it becomes an email in your mail app, ready to send. Nothing is sent from this page, and it takes about a minute.
+    </p>
+    <ol class="bb-next reveal" style="--d:.05s">
+      <li><b>I reply</b><span>{replyTime.replace(/^Usually replies/, 'usually')}.</span></li>
+      <li><b>A 15-minute call</b><span>about the business and what it needs.</span></li>
+      <li><b>A written proposal</b><span>with the scope, timeline and one fixed price.</span></li>
+    </ol>
+    <div class="bb-mail reveal" style="--d:.1s">
+      <span class="bb-mail-k">Prefer plain email?</span>
+      <span class="bb-mail-v">
+        <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="hire-mailto-plain">{CONTACT_EMAIL}</a>
+        <button type="button" class="copy-mail" data-copy={CONTACT_EMAIL} data-umami-event="hire-copy-email" aria-label={`Copy ${CONTACT_EMAIL}`}>copy</button>
+      </span>
+    </div>
+  </div>
+
+  <div class="bb-card reveal" style="--d:.08s">
+    <form class="bb-form" action={`mailto:${CONTACT_EMAIL}`} method="post" enctype="text/plain" novalidate>
+      <div class="bb-row two">
+        <label class="bb-field">
+          <span class="bb-l">Your name <span class="bb-req" aria-hidden="true">*</span></span>
+          <input name="name" type="text" autocomplete="name" required aria-required="true" />
+        </label>
+        <label class="bb-field">
+          <span class="bb-l">Business or organisation</span>
+          <input name="business" type="text" autocomplete="organization" />
+        </label>
+      </div>
+      <div class="bb-row two">
+        <label class="bb-field">
+          <span class="bb-l">Current website <span class="bb-opt">if you have one</span></span>
+          <input name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" />
+        </label>
+        <label class="bb-field">
+          <span class="bb-l">Your phone <span class="bb-opt">optional</span></span>
+          <input name="phone" type="tel" autocomplete="tel" maxlength="40" />
+        </label>
+      </div>
+
+      <fieldset class="bb-set">
+        <legend class="bb-l">What do you need? <span class="bb-opt">pick any</span></legend>
+        <div class="bb-chips">
+          {briefNeeds.map((n) => (
+            <label class="bb-chip"><input type="checkbox" name="needs" value={n} /><span>{n}</span></label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="bb-set">
+        <legend class="bb-l">Budget</legend>
+        <div class="bb-chips">
+          {briefBudgets.map((b) => (
+            <label class="bb-chip"><input type="radio" name="budget" value={b} /><span>{b}</span></label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="bb-set">
+        <legend class="bb-l">When do you need it?</legend>
+        <div class="bb-chips">
+          {briefTimelines.map((t) => (
+            <label class="bb-chip"><input type="radio" name="timeline" value={t} /><span>{t}</span></label>
+          ))}
+        </div>
+      </fieldset>
+
+      <label class="bb-field">
+        <span class="bb-l">Anything else?</span>
+        <textarea name="message" rows="4" placeholder="What does the business do, and what should the site help with?"></textarea>
+      </label>
+
+      <div class="bb-submit">
+        <button type="submit" class="h-btn primary" data-umami-event="hire-brief-submit">Write the email <svg class="arr" aria-hidden="true" viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        <p class="bb-fine">Opens your email app with everything filled in, addressed to {CONTACT_EMAIL}.</p>
+      </div>
+      <p class="bb-err" role="alert" hidden>Please add your name so I know who to reply to.</p>
+    </form>
+
+    <div class="bb-done" hidden tabindex="-1">
+      <p class="bb-done-k">Almost done</p>
+      <h3 class="bb-done-h">Your email app should now be open with the brief filled in. Just press send.</h3>
+      <p class="bb-done-p">Didn't open? Copy the brief below and send it to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> from any email account.</p>
+      <pre class="bb-preview"></pre>
+      <div class="bb-done-actions">
+        <button type="button" class="h-btn primary bb-copy" data-umami-event="hire-brief-copy">Copy the brief</button>
+        <button type="button" class="copy-mail h-btn ghost" data-copy={CONTACT_EMAIL}>Copy email address</button>
+        <button type="button" class="bb-edit">Edit the brief</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.bb-form');
+  const done = document.querySelector<HTMLElement>('.bb-done');
+  if (form && done) {
+    const EMAIL = form.action.replace(/^mailto:/, '');
+    const err = form.querySelector<HTMLElement>('.bb-err')!;
+    const nameInput = form.querySelector<HTMLInputElement>('input[name="name"]')!;
+    const preview = done.querySelector<HTMLElement>('.bb-preview')!;
+    let lastBody = '';
+
+    const compose = () => {
+      const fd = new FormData(form);
+      const v = (k: string) => String(fd.get(k) ?? '').trim();
+      const needs = fd.getAll('needs').map(String);
+      const name = v('name');
+      const business = v('business');
+      const who = business || name;
+      const subject = `Project enquiry: ${who}${needs.length ? ` (${needs.slice(0, 2).join(', ')}${needs.length > 2 ? ', …' : ''})` : ''}`;
+      const lines = [
+        'Hi Kartik,',
+        '',
+        v('message') || "I'd like to talk about a project.",
+        '',
+        '— Project brief —',
+        `Name: ${name}`,
+        business ? `Business: ${business}` : null,
+        v('website') ? `Current website: ${v('website')}` : null,
+        // the lead's own number: optional, any format, never blocks sending
+        v('phone') ? `Phone: ${v('phone')}` : null,
+        needs.length > 0 ? `Needs: ${needs.join(', ')}` : null,
+        v('budget') ? `Budget: ${v('budget')}` : null,
+        v('timeline') ? `Timeline: ${v('timeline')}` : null,
+        '',
+        'Sent from jkartik.in/hire',
+      ];
+      // empty optional fields drop out entirely
+      const body = lines.filter((l): l is string => l !== null).join('\n');
+      return { subject, body };
+    };
+
+    form.addEventListener('input', () => { if (nameInput.value.trim()) { err.hidden = true; nameInput.removeAttribute('aria-invalid'); } });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!nameInput.value.trim()) {
+        err.hidden = false;
+        nameInput.setAttribute('aria-invalid', 'true');
+        nameInput.focus();
+        return;
+      }
+      const { subject, body } = compose();
+      lastBody = `To: ${EMAIL}\nSubject: ${subject}\n\n${body}`;
+      preview.textContent = lastBody;
+      window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      // show the fallback right away: if no mail app opens, the brief is one tap from the clipboard
+      form.hidden = true;
+      done.hidden = false;
+      done.focus({ preventScroll: true });
+      done.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    });
+
+    done.querySelector<HTMLButtonElement>('.bb-copy')!.addEventListener('click', (e) => {
+      const btn = e.currentTarget as HTMLButtonElement;
+      navigator.clipboard?.writeText(lastBody).then(() => {
+        btn.textContent = 'Copied';
+        setTimeout(() => { btn.textContent = 'Copy the brief'; }, 1600);
+      });
+    });
+
+    done.querySelector<HTMLButtonElement>('.bb-edit')!.addEventListener('click', () => {
+      done.hidden = true;
+      form.hidden = false;
+      nameInput.focus();
+    });
+  }
+</script>

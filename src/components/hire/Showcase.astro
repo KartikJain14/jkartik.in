@@ -1,0 +1,322 @@
+---
+// The work gallery: category filters, featured items large, the rest in a grid, and an expanded
+// view (native <dialog>) with the desktop + phone screenshots side by side. Without JS every item
+// is visible and the filters/expand buttons are hidden, so nothing looks clickable that isn't.
+import BrowserFrame from './BrowserFrame.astro';
+import PhoneFrame from './PhoneFrame.astro';
+import type { ResolvedItem } from './shots';
+import { filterGroups, roleLabel } from '../../data/hire';
+
+interface Props {
+  items: ResolvedItem[];
+}
+const { items } = Astro.props;
+
+// only show filters that have something in them
+const groups = filterGroups
+  .map((g) => ({ ...g, count: items.filter((it) => it.group === g.key).length }))
+  .filter((g) => g.count > 0);
+
+// "All" shows the first few, then a "show all" button (only when the list is long)
+const PREVIEW = 8;
+const collapsible = items.length > PREVIEW + 2;
+
+const roleText = (it: ResolvedItem) => it.roleNote ?? roleLabel[it.role] ?? it.role;
+
+// featured cards alternate the screenshot side for rhythm
+const featuredFlip = new Set(items.filter((it) => it.featured).filter((_, k) => k % 2 === 1).map((it) => it.slug));
+
+// data for the expanded view (kept small: what the dialog needs and nothing else)
+const lbData = items.map((it) => ({
+  slug: it.slug,
+  name: it.name,
+  client: it.client,
+  summary: it.summary,
+  highlight: it.highlight ?? null,
+  did: it.did,
+  stack: it.stack,
+  year: it.year,
+  role: roleText(it),
+  domain: it.domain,
+  url: it.url,
+  status: it.status,
+  archived: it.archived ?? null,
+  caseStudy: it.caseStudy ?? null,
+  desktop: it.desktopShot,
+  mobile: it.mobileShot,
+  alt: it.images.alt,
+}));
+---
+<div class="sx" data-collapsible={collapsible ? 'true' : undefined}>
+  {groups.length > 1 && (
+    <div class="sx-filters" role="group" aria-label="Filter the work by type">
+      <button type="button" class="sx-f" data-filter="all" aria-pressed="true">All <span class="sx-c">{items.length}</span></button>
+      {groups.map((g) => (
+        <button type="button" class="sx-f" data-filter={g.key} aria-pressed="false">{g.label} <span class="sx-c">{g.count}</span></button>
+      ))}
+    </div>
+  )}
+  <p class="sr-only" id="sx-status" aria-live="polite"></p>
+
+  <ul class="sx-grid" role="list">
+    {items.map((it, i) => {
+      const live = it.status === 'live';
+      const href = live ? it.url : it.archived;
+      return (
+        <li
+          class:list={['sx-item', 'reveal', { 'sx-feat': it.featured, flip: featuredFlip.has(it.slug), more: collapsible && i >= PREVIEW }]}
+          id={`w-${it.slug}`}
+          data-group={it.group}
+          data-i={i}
+          style={`--d:${((i % 2) * 0.06).toFixed(2)}s`}
+        >
+          <article class="sx-card" aria-labelledby={`w-${it.slug}-h`}>
+            <div class="sx-stage">
+              <div class="sx-scene">
+                <BrowserFrame shot={it.desktopShot} domain={it.domain} alt={it.images.alt} />
+                <PhoneFrame shot={it.mobileShot} alt={`${it.name} on a phone`} class="sx-phone" />
+              </div>
+              <button type="button" class="sx-zoom" data-i={i} aria-label={`Open a larger view of ${it.name}`} aria-haspopup="dialog">
+                <span class="sx-zoom-chip" aria-hidden="true">View larger <span class="sx-zoom-ic">&#x2197;</span></span>
+              </button>
+            </div>
+            <div class="sx-info">
+              <p class="sx-meta">
+                <span class="sx-client">{it.client}</span>
+                <span class="sx-year">{it.year}</span>
+              </p>
+              <h3 class="sx-name" id={`w-${it.slug}-h`}>{it.name}</h3>
+              <p class="sx-sum">{it.summary}</p>
+              {it.highlight && <p class="sx-hl">{it.highlight}</p>}
+              <ul class="sx-did" aria-label="What I did">
+                {it.did.map((d) => <li>{d}</li>)}
+              </ul>
+              <p class="sx-role">{roleText(it)}<span aria-hidden="true"> · </span><span class="sx-stack">{it.stack.slice(0, 3).join(' · ')}</span></p>
+              <div class="sx-links">
+                {href ? (
+                  <a class="sx-live" href={href}>
+                    {live ? <>Visit {it.domain}</> : <>Archived version</>}
+                  </a>
+                ) : (
+                  <span class="sx-gone">No longer online</span>
+                )}
+                {it.caseStudy && <a class="sx-case" href={it.caseStudy}>Case study</a>}
+              </div>
+            </div>
+          </article>
+        </li>
+      );
+    })}
+  </ul>
+
+  {collapsible && (
+    <div class="sx-more-wrap">
+      <button type="button" class="see-more sx-more" aria-expanded="false">
+        Show all {items.length} projects <span class="arr" aria-hidden="true">&darr;</span>
+      </button>
+    </div>
+  )}
+
+  <dialog class="lb" aria-labelledby="lb-title">
+    <div class="lb-inner">
+      <div class="lb-top">
+        <span class="lb-count" aria-live="polite"></span>
+        <div class="lb-nav">
+          <button type="button" class="lb-prev" aria-label="Previous project">&larr;</button>
+          <button type="button" class="lb-next" aria-label="Next project">&rarr;</button>
+          <button type="button" class="lb-close" aria-label="Close">&times;</button>
+        </div>
+      </div>
+      <div class="lb-body">
+        <div class="lb-stage">
+          <div class="bf lb-bf">
+            <div class="bf-bar" aria-hidden="true"><span class="bf-dots"><i></i><i></i><i></i></span><span class="bf-url"></span></div>
+            <div class="bf-screen"><img alt="" decoding="async" /></div>
+          </div>
+          <div class="pf lb-pf"><div class="pf-screen"><img alt="" decoding="async" /></div></div>
+        </div>
+        <div class="lb-info">
+          <p class="sx-meta"><span class="sx-client lb-client"></span><span class="sx-year lb-year"></span></p>
+          <h2 class="lb-title" id="lb-title"></h2>
+          <p class="lb-sum"></p>
+          <p class="sx-hl lb-hl"></p>
+          <ul class="sx-did lb-did" aria-label="What I did"></ul>
+          <p class="sx-role lb-role"></p>
+          <div class="sx-links lb-links"></div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="application/json" id="sx-data" set:html={JSON.stringify(lbData)} />
+</div>
+
+<script>
+  type Shot = { src: string; width: number; height: number } | null;
+  type Item = {
+    slug: string; name: string; client: string; summary: string; highlight: string | null;
+    did: string[]; stack: string[]; year: string; role: string; domain: string; url: string;
+    status: string; archived: string | null; caseStudy: string | null; desktop: Shot; mobile: Shot; alt: string;
+  };
+
+  const root = document.querySelector<HTMLElement>('.sx');
+  if (root) {
+    root.classList.add('sx-js');
+    const data: Item[] = JSON.parse(document.getElementById('sx-data')!.textContent || '[]');
+    const items = [...root.querySelectorAll<HTMLLIElement>('.sx-item')];
+    const status = document.getElementById('sx-status')!;
+    const moreBtn = root.querySelector<HTMLButtonElement>('.sx-more');
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let filter = 'all';
+    let expanded = !root.dataset.collapsible;
+
+    /* ── filters ── */
+    const visible = () => items.filter((li) => !li.hidden);
+    const apply = (animate: boolean) => {
+      items.forEach((li) => {
+        const inGroup = filter === 'all' || li.dataset.group === filter;
+        const collapsed = filter === 'all' && !expanded && li.classList.contains('more');
+        const show = inGroup && !collapsed;
+        if (show && li.hidden && animate && !reduced) {
+          li.classList.remove('sx-in');
+          void li.offsetWidth;
+          li.classList.add('sx-in');
+        }
+        li.hidden = !show;
+        // revealed-by-filter items skip the scroll reveal so they never sit invisible
+        if (show) li.classList.add('in');
+      });
+      if (moreBtn) moreBtn.parentElement!.hidden = filter !== 'all' || expanded;
+    };
+
+    root.querySelectorAll<HTMLButtonElement>('.sx-f').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.getAttribute('aria-pressed') === 'true') return;
+        root.querySelectorAll('.sx-f').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        filter = btn.dataset.filter!;
+        apply(true);
+        const n = visible().length;
+        status.textContent = `Showing ${n} ${n === 1 ? 'project' : 'projects'}`;
+      });
+    });
+
+    moreBtn?.addEventListener('click', () => {
+      expanded = true;
+      moreBtn.setAttribute('aria-expanded', 'true');
+      const firstNew = items.find((li) => li.classList.contains('more'));
+      apply(true);
+      firstNew?.querySelector<HTMLElement>('.sx-zoom')?.focus({ preventScroll: true });
+    });
+
+    apply(false);
+
+    /* links to a site (hero caption, client quotes) must work even when it's filtered or collapsed */
+    const reveal = (hash: string) => {
+      if (!hash.startsWith('#w-')) return;
+      const li = items.find((x) => `#${x.id}` === hash);
+      if (!li?.hidden) return;
+      filter = 'all';
+      expanded = true;
+      moreBtn?.setAttribute('aria-expanded', 'true');
+      root.querySelectorAll('.sx-f').forEach((b) => b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.filter === 'all')));
+      apply(false);
+    };
+    document.addEventListener('click', (e) => {
+      const a = (e.target as Element).closest?.('a[href^="#w-"]');
+      if (a) reveal(a.getAttribute('href')!);
+    });
+    if (location.hash.startsWith('#w-')) {
+      reveal(location.hash);
+      document.querySelector(location.hash)?.scrollIntoView();
+    }
+
+    /* ── expanded view ── */
+    const dlg = root.querySelector<HTMLDialogElement>('dialog.lb')!;
+    const $ = <T extends Element = HTMLElement>(s: string) => dlg.querySelector<T>(s)!;
+    const bfImg = $<HTMLImageElement>('.lb-bf img');
+    const pf = $('.lb-pf');
+    const pfImg = $<HTMLImageElement>('.lb-pf img');
+    let order: number[] = [];
+    let pos = 0;
+
+    const el = (tag: string, cls: string, text: string, href?: string) => {
+      const n = document.createElement(tag) as HTMLElement & { href?: string };
+      n.className = cls;
+      n.textContent = text;
+      if (href) (n as HTMLAnchorElement).href = href;
+      return n;
+    };
+
+    const render = () => {
+      const d = data[order[pos]];
+      $('.lb-count').textContent = `${String(pos + 1).padStart(2, '0')} / ${String(order.length).padStart(2, '0')}`;
+      $('.bf-url').textContent = d.domain;
+      if (d.desktop) {
+        bfImg.hidden = false;
+        bfImg.width = d.desktop.width; bfImg.height = d.desktop.height;
+        bfImg.src = d.desktop.src; bfImg.alt = d.alt;
+      } else {
+        bfImg.hidden = true;
+        bfImg.removeAttribute('src');
+      }
+      pf.hidden = !d.mobile;
+      if (d.mobile) {
+        pfImg.width = d.mobile.width; pfImg.height = d.mobile.height;
+        pfImg.src = d.mobile.src; pfImg.alt = `${d.name} on a phone`;
+      }
+      $('.lb-client').textContent = d.client;
+      $('.lb-year').textContent = d.year;
+      $('.lb-title').textContent = d.name;
+      $('.lb-sum').textContent = d.summary;
+      const hl = $('.lb-hl');
+      hl.textContent = d.highlight ?? '';
+      hl.hidden = !d.highlight;
+      const did = $('.lb-did');
+      did.replaceChildren(...d.did.map((x) => el('li', '', x)));
+      $('.lb-role').textContent = `${d.role} · ${d.stack.join(' · ')}`;
+      const links = $('.lb-links');
+      links.replaceChildren();
+      const href = d.status === 'live' ? d.url : d.archived;
+      if (href) links.append(el('a', 'sx-live', d.status === 'live' ? `Visit ${d.domain}` : 'Archived version', href));
+      else links.append(el('span', 'sx-gone', 'No longer online'));
+      if (d.caseStudy) links.append(el('a', 'sx-case', 'Case study', d.caseStudy));
+      links.querySelectorAll('a.sx-live').forEach((a) => { (a as HTMLAnchorElement).target = '_blank'; (a as HTMLAnchorElement).rel = 'noopener noreferrer'; });
+      const single = order.length < 2;
+      $<HTMLButtonElement>('.lb-prev').hidden = single;
+      $<HTMLButtonElement>('.lb-next').hidden = single;
+      // warm the neighbours so stepping through feels instant
+      [order[pos + 1], order[pos - 1]].forEach((k) => {
+        const n = k !== undefined ? data[k] : null;
+        if (n?.desktop) new Image().src = n.desktop.src;
+      });
+    };
+
+    const step = (dir: number) => {
+      pos = (pos + dir + order.length) % order.length;
+      render();
+    };
+
+    root.querySelectorAll<HTMLButtonElement>('.sx-zoom').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        // the "All" view walks every site, even the ones still collapsed in the list
+        order = (filter === 'all' ? items : visible()).map((li) => Number(li.dataset.i));
+        pos = Math.max(0, order.indexOf(Number(btn.dataset.i)));
+        render();
+        dlg.showModal();
+        document.documentElement.classList.add('lb-open');
+        $<HTMLButtonElement>('.lb-close').focus();
+      });
+    });
+
+    $<HTMLButtonElement>('.lb-prev').addEventListener('click', () => step(-1));
+    $<HTMLButtonElement>('.lb-next').addEventListener('click', () => step(1));
+    $<HTMLButtonElement>('.lb-close').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('close', () => document.documentElement.classList.remove('lb-open'));
+    dlg.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+    });
+    // click on the backdrop closes
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  }
+</script>

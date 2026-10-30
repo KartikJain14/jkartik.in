@@ -1,0 +1,24 @@
+---
+// A flat phone around a mobile screenshot. Styles: hire.css (.pf*). Renders nothing without a shot.
+import type { Shot } from './shots';
+
+interface Props {
+  shot: Shot | null;
+  alt: string;
+  eager?: boolean;
+  deferred?: boolean;
+  class?: string;
+}
+const { shot, alt, eager = false, deferred = false, class: cls } = Astro.props;
+---
+{shot && (
+  <div class:list={['pf', cls]}>
+    <div class="pf-screen">
+      {deferred ? (
+        <img data-src={shot.src} alt={alt} width={shot.width} height={shot.height} decoding="async" />
+      ) : (
+        <img src={shot.src} alt={alt} width={shot.width} height={shot.height} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+      )}
+    </div>
+  </div>
+)}

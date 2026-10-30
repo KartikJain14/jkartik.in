@@ -1,0 +1,243 @@
+---
+// /hire/ — the page Kartik sends to referred leads ("see my past work at jkartik.in/hire").
+// Written for business owners: plain language, real sites, a clear process, low-friction contact.
+//   sites      → src/data/showcase.ts (verified entries + screenshots in public/hire/shots/)
+//   copy/config → src/data/hire.ts (services, process, FAQ, testimonials, reply time, ownership)
+//   components → src/components/hire/*, styles in src/components/hire/hire.css
+// Static only: the contact form composes a mailto:, nothing is sent from the page.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/hire/Hero.astro';
+import Proof from '../../components/hire/Proof.astro';
+import Showcase from '../../components/hire/Showcase.astro';
+import Services from '../../components/hire/Services.astro';
+import Process from '../../components/hire/Process.astro';
+import Why from '../../components/hire/Why.astro';
+import Testimonials from '../../components/hire/Testimonials.astro';
+import Faq from '../../components/hire/Faq.astro';
+import Brief from '../../components/hire/Brief.astro';
+import StickyCta from '../../components/hire/StickyCta.astro';
+import CtaRow from '../../components/hire/CtaRow.astro';
+import '../../components/hire/hire.css';
+import { resolveItem } from '../../components/hire/shots';
+import { showcase } from '../../data/showcase';
+import { CONTACT_EMAIL, faq, filterGroups, replyTime, services, testimonials } from '../../data/hire';
+import { SITE, PERSON_ID, WEBSITE_ID, serviceNodes, breadcrumbs } from '../../lib/seo';
+
+const title = 'Websites, Online Stores & Web Apps — Kartik Jain, Mumbai';
+const description =
+  'Websites, online stores and web apps for businesses, designed, built and looked after by Kartik Jain in Mumbai. Domain, hosting, email, SEO and security.';
+const url = `${SITE}/hire/`;
+
+// share card: the dedicated one once it exists (public/og/hire.png), else the site default
+const OG = '/og/hire.png';
+const hasOg = existsSync(join(process.cwd(), 'public', OG));
+const ogAlt = 'Websites, online stores and web apps by Kartik Jain, with screenshots of sites built for clients';
+
+const groupOf = (cat: string) => filterGroups.find((g) => g.cats.includes(cat))?.key ?? 'other';
+const items = [...showcase].sort((a, b) => a.order - b.order).map((it) => resolveItem(it, groupOf));
+// featured first (they get the large treatment), then the rest in order
+const ordered = [...items.filter((i) => i.featured), ...items.filter((i) => !i.featured)];
+
+// hero slideshow: featured sites with a screenshot, topped up from the rest, at most 5
+const withShot = ordered.filter((i) => i.desktopShot);
+const slides = withShot.slice(0, Math.max(3, Math.min(5, withShot.filter((i) => i.featured).length)));
+const soloNames = ordered.filter((i) => i.role === 'Solo').map((i) => i.name);
+
+const bizId = `${url}#business`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${url}#webpage`,
+      url,
+      name: title,
+      description,
+      inLanguage: 'en',
+      isPartOf: { '@id': WEBSITE_ID },
+      about: { '@id': bizId },
+      mainEntity: { '@id': bizId },
+      breadcrumb: { '@id': `${url}#breadcrumb` },
+      ...(hasOg ? { primaryImageOfPage: new URL(OG, SITE).href } : {}),
+    },
+    {
+      // no prices, ratings or reviews: none exist yet, and none are ever invented
+      '@type': 'ProfessionalService',
+      '@id': bizId,
+      name: 'Kartik Jain — websites, online stores and web apps',
+      description,
+      url,
+      email: CONTACT_EMAIL,
+      ...(hasOg ? { image: new URL(OG, SITE).href } : {}),
+      founder: { '@id': PERSON_ID },
+      address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressRegion: 'Maharashtra', addressCountry: 'IN' },
+      areaServed: [
+        { '@type': 'City', name: 'Mumbai' },
+        { '@type': 'Country', name: 'India' },
+      ],
+      knowsLanguage: ['English', 'Hindi'],
+      hasOfferCatalog: { '@id': `${url}#services` },
+    },
+    {
+      '@type': 'OfferCatalog',
+      '@id': `${url}#services`,
+      name: 'Services by Kartik Jain',
+      itemListElement: [
+        ...services.map((s) => ({
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            '@id': `${url}#${s.slug}`,
+            name: s.name,
+            serviceType: s.type,
+            description: s.what,
+            provider: { '@id': bizId },
+            areaServed: { '@type': 'City', name: 'Mumbai' },
+          },
+        })),
+        // the technical services the rest of the site describes (src/lib/seo.ts)
+        ...serviceNodes().map((n) => ({ '@type': 'Offer', itemOffered: { '@id': n['@id'] } })),
+      ],
+    },
+    ...serviceNodes(),
+    // merges into the sitewide Person node Base.astro emits
+    { '@id': PERSON_ID, hasOfferCatalog: { '@id': `${url}#services` } },
+    {
+      '@type': 'ItemList',
+      '@id': `${url}#work`,
+      name: 'Websites and platforms built by Kartik Jain',
+      itemListElement: ordered.map((it, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'WebSite',
+          name: it.name,
+          url: it.status === 'live' ? it.url : it.archived ?? it.url,
+          description: it.summary,
+          // "Led team" sites were built by a team Kartik headed
+          [it.role === 'Led team' ? 'contributor' : 'creator']: { '@id': PERSON_ID },
+        },
+      })),
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': `${url}#faq`,
+      url: `${url}#faq`,
+      isPartOf: { '@id': `${url}#webpage` },
+      mainEntity: faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+    { ...breadcrumbs([['Home', '/'], ['Hire', '/hire/']]), '@id': `${url}#breadcrumb` },
+  ],
+};
+
+const lcp = slides[0]?.desktopShot;
+---
+<Base
+  title={title}
+  description={description}
+  active="hire"
+  image={hasOg ? OG : undefined}
+  imageAlt={hasOg ? ogAlt : undefined}
+>
+  <Fragment slot="head">
+    {/* wide screens only: on phones the headline is the LCP element and this would compete with the fonts */}
+    {lcp && <link rel="preload" as="image" href={lcp.src} media="(min-width: 961px)" fetchpriority="high" />}
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <Hero slides={slides} />
+
+  <main class="hire">
+    <Proof total={ordered.length} />
+
+    {ordered.length > 0 && (
+      <section id="work" class="h-sec wrap-wide">
+        <div class="h-head">
+          <p class="label reveal">Selected work</p>
+          <h2 class="h-h2 reveal">Sites and systems, <em>built and shipped.</em></h2>
+          <p class="h-lede reveal">
+            {ordered.length} projects for brands, companies, events and colleges. Open any screenshot for a closer look, or visit the site itself.
+          </p>
+        </div>
+        <Showcase items={ordered} />
+      </section>
+    )}
+
+    {testimonials.length > 0 && (
+      <section id="clients" class="h-sec wrap-wide">
+        <div class="h-head">
+          <p class="label reveal">Clients</p>
+          <h2 class="h-h2 reveal">In their <em>words.</em></h2>
+        </div>
+        <Testimonials items={ordered} />
+      </section>
+    )}
+
+    {ordered.length > 0 && (
+      <div class="wrap-wide"><CtaRow text="Want something like these for your business?" /></div>
+    )}
+
+    <section id="services" class="h-sec wrap-wide">
+      <div class="h-head">
+        <p class="label reveal">Services</p>
+        <h2 class="h-h2 reveal">Everything your business needs online, <em>A&nbsp;to&nbsp;Z.</em></h2>
+        <p class="h-lede reveal">
+          Take one piece or the whole thing. Either way, you deal with one person who knows how every part fits together.
+        </p>
+      </div>
+      <Services />
+    </section>
+
+    <section id="process" class="h-sec wrap-wide">
+      <div class="h-head">
+        <p class="label reveal">Process</p>
+        <h2 class="h-h2 reveal">How a project <em>runs.</em></h2>
+        <p class="h-lede reveal">From the first call to long after launch day.</p>
+      </div>
+      <Process />
+    </section>
+
+    <section id="why" class="h-sec wrap-wide">
+      <div class="h-head">
+        <p class="label reveal">Why me</p>
+        <h2 class="h-h2 reveal">Why work with <em>me.</em></h2>
+      </div>
+      <Why soloNames={soloNames} />
+      <CtaRow text="Know what you need? It takes about a minute to tell me." />
+    </section>
+
+    <section id="faq" class="h-sec wrap-wide">
+      <p class="label reveal">Questions</p>
+      <div class="fq-wrap">
+        <div class="fq-side">
+          <h2 class="h-h2 reveal">Before you <em>ask.</em></h2>
+          <p class="h-lede reveal">
+            Something else on your mind? Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. {replyTime}.
+          </p>
+        </div>
+        <Faq />
+      </div>
+    </section>
+
+    <section id="start" class="h-sec wrap-wide">
+      <div class="h-head">
+        <p class="label reveal">Start a project</p>
+        <h2 class="h-h2 reveal">Tell me about <em>your project.</em></h2>
+      </div>
+      <Brief />
+      <p class="h-aside reveal">
+        Hiring for an internship or a role instead? See the <a href="/resume/">résumé</a> or write to{' '}
+        <a href="mailto:career@jkartik.in">career@jkartik.in</a>. Need a security test of an app you already run? That's on the{' '}
+        <a href="/research/">research</a> side of the site.
+      </p>
+    </section>
+  </main>
+
+  <StickyCta />
+</Base>

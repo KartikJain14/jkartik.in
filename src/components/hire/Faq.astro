@@ -1,0 +1,12 @@
+---
+// FAQ as native <details> (keyboard + screen-reader friendly with no JS). Same data as the FAQPage JSON-LD.
+import { faq } from '../../data/hire';
+---
+<div class="fq">
+  {faq.map((f, i) => (
+    <details class="fq-item reveal" open={i === 0} style={`--d:${Math.min(i * 0.03, 0.18).toFixed(2)}s`}>
+      <summary><span class="fq-q">{f.q}</span><span class="fq-ic" aria-hidden="true"></span></summary>
+      <p class="fq-a">{f.a}</p>
+    </details>
+  ))}
+</div>

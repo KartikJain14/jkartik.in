@@ -1,0 +1,29 @@
+---
+// Why work with Kartik: claim on the left, plain explanation + the real thing that backs it on the right.
+import { why, ownership } from '../../data/hire';
+
+interface Props {
+  /** names of the showcase sites Kartik built alone */
+  soloNames: string[];
+}
+const { soloNames } = Astro.props;
+const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
+const fill = (s: string) => s.replace('{soloNames}', list(soloNames)).replace('{ownership}', ownership.long);
+// the solo-builds sentence only makes sense once the showcase has some
+const rows = why.map((w) => ({
+  claim: w.claim,
+  text: fill(w.text),
+  proof: w.proof.includes('{soloNames}') && soloNames.length === 0 ? w.proof.split('. ').slice(1).join('. ') : fill(w.proof),
+}));
+---
+<ul class="wy" role="list">
+  {rows.map((w, i) => (
+    <li class="wy-row reveal" style={`--d:${Math.min(i * 0.04, 0.2).toFixed(2)}s`}>
+      <h3 class="wy-claim">{w.claim}</h3>
+      <div class="wy-body">
+        <p class="wy-text">{w.text}</p>
+        {w.proof && <p class="wy-proof">{w.proof}</p>}
+      </div>
+    </li>
+  ))}
+</ul>

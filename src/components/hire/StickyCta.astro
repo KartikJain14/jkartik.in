@@ -1,0 +1,36 @@
+---
+// Phones only: a slim bar pinned to the bottom with the two actions that matter. It appears once
+// the hero's own buttons have scrolled away and hides again over the contact section and footer.
+import { CONTACT_EMAIL } from '../../data/hire';
+---
+<div class="stk" aria-hidden="true">
+  <a class="h-btn primary stk-go" href="#start" tabindex="-1" data-umami-event="hire-sticky-start">Start a project <svg class="arr" aria-hidden="true" viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+  <a class="h-btn ghost stk-mail" href={`mailto:${CONTACT_EMAIL}`} tabindex="-1" data-umami-event="hire-sticky-email">Email</a>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('.stk');
+  const ctas = document.querySelector('.h-ctas');
+  const hide = [document.getElementById('start'), document.querySelector('body > footer')].filter(Boolean) as Element[];
+  if (bar && ctas && 'IntersectionObserver' in window) {
+    let pastHero = false;
+    const over = new Set<Element>();
+    const links = bar.querySelectorAll('a');
+    const sync = () => {
+      const on = pastHero && over.size === 0;
+      bar.classList.toggle('show', on);
+      // only reachable (and announced) while it's actually on screen
+      bar.setAttribute('aria-hidden', String(!on));
+      links.forEach((a) => a.setAttribute('tabindex', on ? '0' : '-1'));
+    };
+    new IntersectionObserver(([e]) => {
+      pastHero = !e.isIntersecting && e.boundingClientRect.top < 0;
+      sync();
+    }).observe(ctas);
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => (e.isIntersecting ? over.add(e.target) : over.delete(e.target)));
+      sync();
+    });
+    hide.forEach((el) => io.observe(el));
+  }
+</script>

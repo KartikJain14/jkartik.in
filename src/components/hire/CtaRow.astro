@@ -1,0 +1,11 @@
+---
+// A quiet call to action between sections, so nobody has to scroll back to the top to act.
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+---
+<div class="h-cta-row reveal">
+  <p>{text}</p>
+  <a class="h-btn primary" href="#start" data-umami-event="hire-cta-mid">Start a project <svg class="arr" aria-hidden="true" viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+</div>

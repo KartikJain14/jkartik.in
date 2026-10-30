@@ -1,0 +1,60 @@
+---
+// Proof strip under the hero: only true numbers (CAREER.md), the site count computed from the
+// showcase. Final values are in the HTML; JS counts up to them once, when the strip is in view.
+import { proof } from '../../data/hire';
+
+interface Props {
+  total: number;
+}
+const { total } = Astro.props;
+const stats = [
+  ...(total > 0 ? [{ value: total, label: 'sites and systems shipped, every one shown below', href: '#work' }] : []),
+  ...proof,
+];
+const fmt = (n: number) => n.toLocaleString('en-US');
+---
+<section class="h-proof wrap-wide" aria-label="Track record">
+  <ul class="pr-list" role="list">
+    {stats.map((s, i) => {
+      const inner = (
+        <>
+          <span class="pv"><span aria-hidden="true">{'prefix' in s ? s.prefix : ''}</span><span class="pv-n" data-to={s.value}>{fmt(s.value)}</span><span aria-hidden="true">{'suffix' in s ? s.suffix : ''}</span></span>
+          <span class="pl">{s.label}</span>
+        </>
+      );
+      return (
+        <li class="pr-item hero-in" style={`--d:${(0.3 + i * 0.05).toFixed(2)}s`}>
+          {s.href ? <a class="pr-link" href={s.href}>{inner}</a> : <div class="pr-link">{inner}</div>}
+        </li>
+      );
+    })}
+  </ul>
+</section>
+
+<script>
+  const nums = document.querySelectorAll<HTMLElement>('.pv-n[data-to]');
+  if (nums.length && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    const fmt = (n: number) => n.toLocaleString('en-US');
+    const run = (el: HTMLElement) => {
+      const to = Number(el.dataset.to);
+      const dur = 1400;
+      const t0 = performance.now();
+      // keep the width steady while it counts, so nothing next to it shifts
+      el.style.minWidth = `${el.offsetWidth}px`;
+      el.style.display = 'inline-block';
+      const tick = (t: number) => {
+        const p = Math.min(1, (t - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = fmt(Math.round(to * eased));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { run(e.target as HTMLElement); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.6 });
+    nums.forEach((n) => io.observe(n));
+  }
+</script>

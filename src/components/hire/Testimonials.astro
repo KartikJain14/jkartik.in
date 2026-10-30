@@ -1,0 +1,73 @@
+---
+// Client quotes from src/data/hire.ts → testimonials. Renders nothing when the array is empty.
+// Editorial layout: the first quote runs large beside its site, the rest step down in rows on a
+// hairline grid, each tied to the real site it's about. On phones: a swipeable row of cards.
+// Visual only: no Review / AggregateRating structured data.
+import BrowserFrame from './BrowserFrame.astro';
+import type { ResolvedItem } from './shots';
+import { testimonials } from '../../data/hire';
+
+interface Props {
+  items: ResolvedItem[];
+}
+const { items } = Astro.props;
+
+const quotes = testimonials.map((t) => {
+  const site = t.site ? items.find((s) => s.slug === t.site) : undefined;
+  return { ...t, siteItem: site };
+});
+
+// rows after the lead quote: pairs, with one row of three when the count is odd, so the grid
+// never ends with a gap whatever the number of quotes.
+const rest = quotes.length - 1;
+const rows: number[] = [];
+for (let r = rest; r > 0; ) {
+  const take = r === 1 ? 1 : r % 2 === 1 ? 3 : 2;
+  rows.push(take);
+  r -= take;
+}
+rows.reverse();
+const span = (i: number) => {
+  if (i === 0) return 6;
+  let seen = 1;
+  for (const take of rows) {
+    if (i < seen + take) return 6 / take;
+    seen += take;
+  }
+  return 6;
+};
+---
+{quotes.length > 0 && (
+  <ul class="tm" role="list">
+    {quotes.map((t, i) => {
+      const lead = i === 0;
+      const s = t.siteItem;
+      return (
+        <li class:list={['tm-item', { 'tm-lead': lead, 'tm-mid': !lead && span(i) === 3 }]} style={`--span:${span(i)}`}>
+          <figure class="reveal" style={`--d:${lead ? 0 : (((i - 1) % 3) * 0.06).toFixed(2)}s`}>
+            <div class="tm-main">
+              <blockquote class="tm-quote"><p>{t.quote.replace(/'/g, '’')}</p></blockquote>
+              <figcaption class="tm-by">
+                {!lead && s?.desktopShot && (
+                  <span class="tm-thumb" aria-hidden="true">
+                    <img src={s.desktopShot.src} alt="" width={s.desktopShot.width} height={s.desktopShot.height} loading="lazy" decoding="async" />
+                  </span>
+                )}
+                <span class="tm-who">
+                  {t.name && <span class="tm-name">{t.name}</span>}
+                  <span class="tm-role">{t.role}</span>
+                  {s && <a class="tm-site" href={`#w-${s.slug}`}>See the site</a>}
+                </span>
+              </figcaption>
+            </div>
+            {lead && s?.desktopShot && (
+              <div class="tm-shot" aria-hidden="true">
+                <BrowserFrame shot={s.desktopShot} domain={s.domain} alt="" />
+              </div>
+            )}
+          </figure>
+        </li>
+      );
+    })}
+  </ul>
+)}

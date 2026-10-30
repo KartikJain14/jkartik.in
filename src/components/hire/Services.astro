@@ -1,0 +1,15 @@
+---
+// Services, A to Z, in client language. Each cell: what it is, what's included, and one real
+// line of proof. Full-cell hover highlight, like the research rows.
+import { services } from '../../data/hire';
+---
+<ul class="sv-grid" role="list">
+  {services.map((s, i) => (
+    <li class="sv reveal" id={s.slug} style={`--d:${((i % 2) * 0.06).toFixed(2)}s`}>
+      <h3 class="sv-name">{s.name}</h3>
+      <p class="sv-what">{s.what}</p>
+      <p class="sv-inc"><span class="sr-only">Includes: </span>{s.includes.join(' · ')}</p>
+      <p class="sv-proof">{s.proof}</p>
+    </li>
+  ))}
+</ul>

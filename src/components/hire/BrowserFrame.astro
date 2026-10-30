@@ -1,0 +1,42 @@
+---
+// A flat browser window around a desktop screenshot. Styles: hire.css (.bf*).
+// No screenshot yet → the domain set large instead, so a missing image never shows as broken.
+import type { Shot } from './shots';
+
+interface Props {
+  shot: Shot | null;
+  domain: string;
+  alt: string;
+  eager?: boolean;
+  /** defer loading until JS swaps data-src in (hero slides after the first) */
+  deferred?: boolean;
+  class?: string;
+}
+const { shot, domain, alt, eager = false, deferred = false, class: cls } = Astro.props;
+---
+<div class:list={['bf', cls]}>
+  <div class="bf-bar" aria-hidden="true">
+    <span class="bf-dots"><i></i><i></i><i></i></span>
+    <span class="bf-url">{domain}</span>
+  </div>
+  <div class="bf-screen">
+    {shot ? (
+      deferred ? (
+        <img data-src={shot.src} alt={alt} width={shot.width} height={shot.height} decoding="async" />
+      ) : (
+        <img
+          src={shot.src}
+          alt={alt}
+          width={shot.width}
+          height={shot.height}
+          loading={eager ? 'eager' : 'lazy'}
+          decoding={eager ? undefined : 'async'}
+        />
+      )
+    ) : (
+      <div class="bf-empty" role="img" aria-label={alt}>
+        <span class="bf-empty-domain">{domain}</span>
+      </div>
+    )}
+  </div>
+</div>
