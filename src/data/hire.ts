@@ -173,7 +173,7 @@ export const why = [
   {
     claim: 'One person, start to finish',
     text: 'The person you brief is the person who designs, builds and hosts it. Nothing gets lost in hand-offs.',
-    proof: 'Built solo, end to end: {soloNames}. I also ran the production server behind a company’s two Google Play apps.',
+    proof: 'Solo work, start to finish: {soloNames}. I also ran the production server behind a company’s two Google Play apps.',
   },
   {
     claim: 'You own everything',
@@ -242,7 +242,7 @@ export const faq: { q: string; a: string }[] = [
   },
 ];
 
-/** Brief builder options. The budget bands are the client's choice, not a price list. */
+/** Brief builder options. The budget is free text the client types, with INR as the default currency. */
 export const briefNeeds = [
   'A new website',
   'An online store',
@@ -254,7 +254,7 @@ export const briefNeeds = [
   'Security check',
   'Care after launch',
 ];
-export const briefBudgets = ['Not sure yet', 'Under ₹25k', '₹25k – ₹75k', '₹75k – ₹2 lakh', 'Above ₹2 lakh'];
+export const briefCurrencies = ['INR', 'USD', 'EUR', 'GBP', 'AED', 'AUD', 'CAD', 'SGD'];
 export const briefTimelines = ['As soon as possible', 'Within a month', '1–3 months', 'Just exploring'];
 
 /** Showcase filter groups (labels in client language). */

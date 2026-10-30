@@ -441,7 +441,15 @@ html.lb-open { overflow: hidden; }
 }
 .bb-form textarea { resize: vertical; min-height: 110px; }
 .bb-form input::placeholder, .bb-form textarea::placeholder { color: var(--ink-faint); opacity: 1; }
-.bb-form input[type="text"]:focus-visible, .bb-form input[type="tel"]:focus-visible, .bb-form textarea:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent); }
+.bb-budget { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; }
+.bb-form select {
+  width: 100%; padding: 12px 32px 12px 14px; font: 400 1rem/1.45 'Inter', system-ui, sans-serif; color: var(--ink);
+  background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='none' stroke='%238a8170' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 1px solid var(--pill-border); border-radius: 10px; appearance: none; cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.bb-form select option { color: var(--ink); background: var(--bg-lift); }
+.bb-form select:focus-visible, .bb-form input[type="text"]:focus-visible, .bb-form input[type="tel"]:focus-visible, .bb-form textarea:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent); }
 .bb-form input[aria-invalid="true"] { border-color: var(--accent); }
 .bb-set { border: 0; margin: 0 0 22px; padding: 0; min-width: 0; }
 .bb-set legend { padding: 0; margin-bottom: 10px; }

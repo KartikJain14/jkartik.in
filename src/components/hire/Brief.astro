@@ -2,7 +2,7 @@
 // Contact, built to convert with no backend: a short project brief that turns into a ready-to-send
 // email (mailto:), plus copy-to-clipboard. Nothing is sent from the page. Without JS the form
 // still posts to mailto: as plain text.
-import { CONTACT_EMAIL, briefNeeds, briefBudgets, briefTimelines, replyTime } from '../../data/hire';
+import { CONTACT_EMAIL, briefNeeds, briefCurrencies, briefTimelines, replyTime } from '../../data/hire';
 ---
 <div class="bb">
   <div class="bb-side">
@@ -28,11 +28,11 @@ import { CONTACT_EMAIL, briefNeeds, briefBudgets, briefTimelines, replyTime } fr
       <div class="bb-row two">
         <label class="bb-field">
           <span class="bb-l">Your name <span class="bb-req" aria-hidden="true">*</span></span>
-          <input name="name" type="text" autocomplete="name" required aria-required="true" />
+          <input name="name" type="text" autocomplete="name" required aria-required="true" placeholder="Your full name" />
         </label>
         <label class="bb-field">
           <span class="bb-l">Business or organisation</span>
-          <input name="business" type="text" autocomplete="organization" />
+          <input name="business" type="text" autocomplete="organization" placeholder="Your business name" />
         </label>
       </div>
       <div class="bb-row two">
@@ -42,7 +42,7 @@ import { CONTACT_EMAIL, briefNeeds, briefBudgets, briefTimelines, replyTime } fr
         </label>
         <label class="bb-field">
           <span class="bb-l">Your phone <span class="bb-opt">optional</span></span>
-          <input name="phone" type="tel" autocomplete="tel" maxlength="40" />
+          <input name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="+91 00000 00000" />
         </label>
       </div>
 
@@ -56,11 +56,12 @@ import { CONTACT_EMAIL, briefNeeds, briefBudgets, briefTimelines, replyTime } fr
       </fieldset>
 
       <fieldset class="bb-set">
-        <legend class="bb-l">Budget</legend>
-        <div class="bb-chips">
-          {briefBudgets.map((b) => (
-            <label class="bb-chip"><input type="radio" name="budget" value={b} /><span>{b}</span></label>
-          ))}
+        <legend class="bb-l">Budget <span class="bb-opt">optional</span></legend>
+        <div class="bb-budget">
+          <select name="currency" aria-label="Currency">
+            {briefCurrencies.map((c) => <option value={c} selected={c === 'INR'}>{c}</option>)}
+          </select>
+          <input name="budget" type="text" maxlength="40" aria-label="Budget amount" placeholder="20k - 30k" />
         </div>
       </fieldset>
 
@@ -129,7 +130,7 @@ import { CONTACT_EMAIL, briefNeeds, briefBudgets, briefTimelines, replyTime } fr
         // the lead's own number: optional, any format, never blocks sending
         v('phone') ? `Phone: ${v('phone')}` : null,
         needs.length > 0 ? `Needs: ${needs.join(', ')}` : null,
-        v('budget') ? `Budget: ${v('budget')}` : null,
+        v('budget') ? `Budget: ${v('currency')} ${v('budget')}` : null,
         v('timeline') ? `Timeline: ${v('timeline')}` : null,
         '',
         'Sent from jkartik.in/hire',
