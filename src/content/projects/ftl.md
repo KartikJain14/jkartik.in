@@ -7,7 +7,7 @@ stack: ["TypeScript", "Next.js", "Express", "Prisma", "PostgreSQL", "Gemini"]
 role: "Solo — full-stack"
 year: 2026
 status: "Built for a live event"
-order: 5
+order: 8
 ---
 
 Prompt injection is easier to *feel* than to explain, so I built a game out of it. Fool The LLM is a jailbreak contest: each level is an LLM guarding a secret codeword, and your job is to talk it into leaking. I built the platform that runs the whole thing — the guarded levels, the live chat, and the console the organizers drive it from.
@@ -27,6 +27,6 @@ I wrote about what actually cracks LLM guardrails — and what it means for defe
 
 ## Context
 
-Built as my own take on **FoolTheLLM**, an AI-security event run by ACM and GDG at MPSTME — and it plugged straight into my interest in how these models actually fail under adversarial pressure.
+I started **Fool The LLM** as an AI-security event while I was ACM MPSTME's Webmaster, and it runs as a joint ACM and GDG MPSTME event; the most recent edition had about 70 participants. This platform is what it runs on, and it plugged straight into my interest in how these models actually fail under adversarial pressure.
 
-> The best way to learn where an LLM's guardrails break is to hand a few hundred people a scoreboard and a reason to break them.
+> The best way to learn where an LLM's guardrails break is to hand a room full of people a scoreboard and a reason to break them.

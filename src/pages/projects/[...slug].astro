@@ -25,6 +25,13 @@ const cover = d.cover ?? coverFor(d.tag, 600);
 const ogImage = d.cover ?? '/kartik.png';
 const projUrl = new URL(`/projects/${project.id}/`, Astro.site).href;
 
+// `live:` is usually a web URL, but it can also be an ssh:// address for something you
+// play in a terminal (e.g. flap). That renders a copy-the-command button instead of a link.
+const sshHost = d.live?.startsWith('ssh://') ? d.live.slice('ssh://'.length).replace(/\/+$/, '') : null;
+const sshCmd = sshHost ? `ssh ${sshHost}` : null;
+const webLive = d.live && !sshHost ? d.live : null;
+const liveLabel = webLive && new URL(webLive).hostname === 'play.google.com' ? 'Google Play ↗' : 'Demo ↗';
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -37,10 +44,10 @@ const jsonLd = {
       inLanguage: 'en',
       image: new URL(ogImage, Astro.site).href,
       keywords: [d.tag, ...d.stack].join(', '),
-      author: { '@id': 'https://jkartik.in/#kartik' },
-      creator: { '@id': 'https://jkartik.in/#kartik' },
+      author: { '@type': 'Person', '@id': 'https://jkartik.in/#kartik', name: 'Kartik Jain', url: 'https://jkartik.in/' },
+      creator: { '@type': 'Person', '@id': 'https://jkartik.in/#kartik', name: 'Kartik Jain', url: 'https://jkartik.in/' },
       isPartOf: { '@id': 'https://jkartik.in/#website' },
-      ...(d.live ? { sameAs: d.live } : {}),
+      ...(webLive ? { sameAs: webLive } : {}),
     },
     {
       '@type': 'BreadcrumbList',
@@ -71,7 +78,12 @@ const jsonLd = {
         </div>
         {(d.live || d.source) && (
           <div class="proj-actions">
-            {d.live && <a class="btn primary" href={d.live}>Demo ↗</a>}
+            {sshCmd && (
+              <button type="button" class="btn primary play-copy" data-copy={sshCmd} title="Copy the command, then paste it into a terminal">
+                <span class="play-copy-label">Play:</span> <code>{sshCmd}</code>
+              </button>
+            )}
+            {webLive && <a class="btn primary" href={webLive}>{liveLabel}</a>}
             {d.source && <a class="btn ghost" href={d.source}>Source ↗</a>}
           </div>
         )}
@@ -94,7 +106,7 @@ const jsonLd = {
       <div class="txt">
         <p class="ec-title">Want something like this built?</p>
         <p>I take on freelance backend and API work — auth, payments, media, and the security review to go with it.</p>
-        <a class="cta" href="mailto:contact@jkartik.in">Start a conversation →</a>
+        <a class="cta" href="/hire/">Start a conversation →</a>
       </div>
     </div>
 
@@ -124,4 +136,19 @@ const jsonLd = {
     </nav>
   </article>
   </main>
+
+  {sshCmd && (
+    <script is:inline>
+      document.querySelectorAll('.play-copy').forEach(function (btn) {
+        var label = btn.querySelector('.play-copy-label');
+        btn.addEventListener('click', function () {
+          if (!navigator.clipboard) return;
+          navigator.clipboard.writeText(btn.dataset.copy).then(function () {
+            label.textContent = 'Copied:';
+            setTimeout(function () { label.textContent = 'Play:'; }, 1400);
+          });
+        });
+      });
+    </script>
+  )}
 </Base>

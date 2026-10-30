@@ -1,11 +1,33 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { disclosures, defensive } from '../../data/disclosures';
+import { SITE, WEBSITE_ID, PERSON_ID, breadcrumbs } from '../../lib/seo';
+
+const pageUrl = `${SITE}/research/`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      '@id': `${pageUrl}#page`,
+      url: pageUrl,
+      name: 'Security research by Kartik Jain',
+      description:
+        'Vulnerabilities Kartik Jain has reported through official programs and coordinated channels, plus defensive security work.',
+      inLanguage: 'en',
+      isPartOf: { '@id': WEBSITE_ID },
+      about: { '@id': PERSON_ID },
+      author: { '@id': PERSON_ID },
+    },
+    breadcrumbs([['Home', '/'], ['Security research', '/research/']]),
+  ],
+};
 ---
 <Base
-  title="Security research — Kartik Jain"
-  description="Responsible vulnerability disclosures and defensive security work by Kartik Jain — reports to Meta, Microsoft, CERT-In, and more."
+  title="Security Research & Disclosures — Kartik Jain"
+  description="Kartik Jain's security research: a $1,500 Meta (WhatsApp) bug bounty, vulnerabilities reported to Microsoft (MSRC) and CERT-In, and defensive work."
 >
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <header class="wrap page-head">
     <a class="crumb hero-in" href="/">← Home</a>
     <h1 class="hero-in" style="--d:.06s"><em>Security research</em></h1>
@@ -40,9 +62,9 @@ import { disclosures, defensive } from '../../data/disclosures';
     </div>
 
     <p class="aside reveal" style="margin-top:36px">
-      Found something on a system I run? Report it at&nbsp;
-      <a href="mailto:security@jkartik.in" style="color:var(--accent)">security@jkartik.in</a>&nbsp;
-      — see <a href="/.well-known/security.txt" style="color:var(--accent)">security.txt</a>.
+      Found something on a system I run? Report it at
+      <a href="mailto:security@jkartik.in" style="color:var(--accent)">security@jkartik.in</a>&nbsp;— see
+      <a href="/.well-known/security.txt" style="color:var(--accent)">security.txt</a>.
     </p>
 
     <div class="see-more-wrap reveal" style="margin-bottom:8px">

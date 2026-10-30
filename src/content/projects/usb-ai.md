@@ -8,7 +8,7 @@ role: "Solo"
 year: 2026
 status: "Personal project"
 source: "https://github.com/KartikJain14/usb-ai"
-order: 10
+order: 19
 ---
 
 Every "local" AI tool I tried still phoned home for something. usb-ai doesn't — it *can't*. It's a coding assistant where the model itself is baked into one Windows executable you can carry on a USB stick, run on an air-gapped machine, and trust to never send a byte anywhere.

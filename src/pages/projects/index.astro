@@ -3,22 +3,55 @@ import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { coverFor } from '../../lib/covers';
 import { getCollection } from 'astro:content';
+import { SITE, WEBSITE_ID, PERSON_ID, breadcrumbs } from '../../lib/seo';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const featured = projects.find((p) => p.data.featured) ?? projects[0];
 const rest = projects.filter((p) => p.id !== featured?.id);
+// The next few by `order` stay as cover cards; the long tail is a scannable list that
+// turns into compact hover rows on phones (see .cards.compact in global.css).
+const SELECTED = 3;
+const selected = rest.slice(0, SELECTED);
+const more = rest.slice(SELECTED);
 const fCover = featured?.data.cover ?? coverFor(featured?.data.tag, 630);
 const fMeta = featured?.data.stack.slice(0, 4).join(' · ');
+
+const pageUrl = `${SITE}/projects/`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      '@id': `${pageUrl}#page`,
+      url: pageUrl,
+      name: 'Projects by Kartik Jain',
+      inLanguage: 'en',
+      isPartOf: { '@id': WEBSITE_ID },
+      about: { '@id': PERSON_ID },
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: projects.map((p, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: p.data.title,
+          url: `${SITE}/projects/${p.id}/`,
+        })),
+      },
+    },
+    breadcrumbs([['Home', '/'], ['Projects', '/projects/']]),
+  ],
+};
 ---
 <Base
-  title="Projects — Kartik Jain"
-  description="Backend and security engineering projects by Kartik Jain — payments, ticketing, media, and the systems that keep them honest."
+  title="Projects: Backend & Security Work — Kartik Jain"
+  description="Backend and security projects by Kartik Jain: payments, ticketing, end-to-end-encrypted sharing, a from-scratch database and an LLM jailbreak contest."
   active="projects"
 >
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <header class="wrap-wide page-head">
     <a class="crumb hero-in" href="/">← Home</a>
     <h1 class="hero-in" style="--d:.06s"><em>Projects</em></h1>
-    <p class="intro hero-in" style="--d:.12s">Production backends and security tooling — payments, ticketing, media, and the systems that keep them honest. A few are live; the rest ship behind event apps.</p>
+    <p class="intro hero-in" style="--d:.12s">Production backends, mobile apps, security tooling and self-hosted infrastructure, plus an arcade game you can play over SSH. Some are live, some ran at a single event, and some are private client or employer work.</p>
   </header>
 
   <main class="wrap-wide">
@@ -34,10 +67,14 @@ const fMeta = featured?.data.stack.slice(0, 4).join(' · ');
       </a>
     )}
 
-    {rest.length > 0 && <h2 class="list-label reveal">All projects</h2>}
-
+    {selected.length > 0 && <h2 class="list-label reveal">Selected</h2>}
     <div class="cards three">
-      {rest.map((project, i) => <ProjectCard project={project} style={`--d:${0.04 + (i % 3) * 0.04}s`} />)}
+      {selected.map((project, i) => <ProjectCard project={project} style={`--d:${0.04 + (i % 3) * 0.04}s`} />)}
+    </div>
+
+    {more.length > 0 && <h2 class="list-label reveal">More projects</h2>}
+    <div class="cards three compact">
+      {more.map((project, i) => <ProjectCard project={project} style={`--d:${0.04 + (i % 3) * 0.04}s`} />)}
     </div>
   </main>
 </Base>

@@ -1,17 +1,17 @@
 ---
 title: "Delego — Mumbai MUN app"
-description: "The delegate companion app for Mumbai MUN, one of India's largest — I built the FastAPI backend behind it, shipped to the App Store and Play Store for 600+ delegates."
+description: "The delegate companion app for Mumbai MUN. I built the FastAPI backend behind its 2024–25 editions, which shipped to the App Store and Play Store for 600+ delegates."
 tag: "APIs"
 cover: "/projects/delego-mun.png"
 source: "https://github.com/munsoc-mpstme/mundra"
 stack: ["FastAPI", "PostgreSQL", "JWT", "Flutter", "QR"]
-role: "Backend"
+role: "Lead backend author"
 year: "2024–2025"
 status: "Shipped"
-order: 2
+order: 5
 ---
 
-Mumbai MUN is one of the largest Model UN conferences in India — hundreds of delegates, dozens of committees, three days of chaos to coordinate. Delego is the app that runs it, and I built the backend the whole thing leans on. It shipped to the App Store and Play Store and carried the conference for 600+ delegates.
+Mumbai MUN is one of the largest Model UN conferences in India — hundreds of delegates, dozens of committees, three days of chaos to coordinate. Delego is the conference's delegate app, and for its 2024–25 editions I built the backend the whole thing leaned on. It shipped to the App Store and Play Store and carried the conference for 600+ delegates.
 
 ## What it does
 

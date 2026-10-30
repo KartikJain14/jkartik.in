@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { codeContrast } from './src/lib/shiki-contrast.mjs';
 
 // https://astro.build
 export default defineConfig({
@@ -16,6 +17,8 @@ export default defineConfig({
       themes: { light: 'vitesse-light', dark: 'vitesse-dark' },
       defaultColor: false,
       wrap: false,
+      // keeps every token at WCAG AA on the warm code card
+      transformers: [codeContrast],
     },
   },
   vite: {

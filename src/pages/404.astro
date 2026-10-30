@@ -11,7 +11,7 @@ import '../styles/global.css';
   <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#14120f" media="(prefers-color-scheme: dark)" />
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="preload" href="/fonts/inter-900.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
 
   <script is:inline>
     document.documentElement.classList.add('js');
@@ -83,6 +83,7 @@ import '../styles/global.css';
       var C_DIM = css.getPropertyValue('--ink-dim').trim() || '#a69d8e';
       var C_HAIR = css.getPropertyValue('--hairline').trim() || 'rgba(237, 232, 223, 0.1)';
       var C_ACC = css.getPropertyValue('--accent').trim() || '#e0a054';
+      var C_WALL = getComputedStyle(root).getPropertyValue('--maze-wall').trim() || C_HAIR;
 
       var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
 
@@ -196,7 +197,7 @@ import '../styles/global.css';
         sctx.fillRect(0, 0, cw, ch);
 
         // walls (single stroke path; draw N/W, plus S/E borders)
-        sctx.strokeStyle = C_HAIR;
+        sctx.strokeStyle = C_WALL;
         sctx.lineWidth = 2;
         sctx.lineCap = 'square';
         sctx.beginPath();

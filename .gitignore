@@ -3,6 +3,9 @@ dist/
 .astro/
 resume/.out/
 
+# tailored per-application résumés (may contain a phone number — repo is public)
+resume/variants/
+
 # dependencies
 node_modules/
 
@@ -21,3 +24,9 @@ yarn-error.log*
 # editor
 .vscode/
 !.vscode/extensions.json
+
+# per-agent verification builds (astro build --outDir dist-<name>)
+dist-*/
+
+# job-market research lives in Kartik's private folder, not in this public repo
+resume/MARKET.md

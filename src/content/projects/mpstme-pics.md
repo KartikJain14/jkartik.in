@@ -7,7 +7,7 @@ stack: ["Node.js", "Express", "TypeScript", "PostgreSQL", "Redis", "Amazon S3", 
 role: "Scaffold, DevOps & backend features"
 year: 2025
 status: "Shipped"
-order: 7
+order: 17
 ---
 
 Campus clubs shoot thousands of photos at every event and then have nowhere good to put them. mpstme.pics gives each club its own gallery with real auth and access control. It's a team project — I set the codebase up and owned the deployment side, plus a handful of the backend features.

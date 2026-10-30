@@ -1,7 +1,7 @@
 {
-  "name": "Kartik Jain — Backend Engineer & Security Researcher",
+  "name": "Kartik Jain — Security Engineer & Backend Developer",
   "short_name": "Kartik Jain",
-  "description": "Portfolio of Kartik Jain — backend engineer and security researcher in Mumbai, India. Available for freelance work.",
+  "description": "Kartik Jain, security engineer and backend developer in Mumbai, India. Security research, projects, writing and résumé.",
   "lang": "en",
   "start_url": "/",
   "scope": "/",
@@ -11,13 +11,13 @@
   "icons": [
     {
       "src": "/favicon.ico",
-      "sizes": "48x48",
+      "sizes": "48x48 32x32 16x16",
       "type": "image/x-icon"
     },
     {
       "src": "/kartik.png",
       "sizes": "488x488",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any"
     }
   ]

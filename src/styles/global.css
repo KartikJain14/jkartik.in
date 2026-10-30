@@ -5,12 +5,9 @@
 
 /* Self-hosted fonts — no external requests (files in public/fonts/). */
 @font-face{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-display:swap;src:url('/fonts/instrument-serif-400-italic.woff2') format('woff2')}
-@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}
-@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-500.woff2') format('woff2')}
-@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-700.woff2') format('woff2')}
-@font-face{font-family:'Inter';font-style:normal;font-weight:900;font-display:swap;src:url('/fonts/inter-900.woff2') format('woff2')}
-@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/jetbrains-mono-400.woff2') format('woff2')}
-@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/jetbrains-mono-500.woff2') format('woff2')}
+/* Inter and JetBrains Mono are variable fonts: one file serves every weight. */
+@font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 800;font-display:swap;src:url('/fonts/jetbrains-mono-400.woff2') format('woff2')}
 
 :root {
   color-scheme: dark light;
@@ -35,7 +32,7 @@
   --bg-lift: #efe9dd;
   --ink: #211d18;
   --ink-dim: #6e6659;
-  --ink-faint: #8a8171;
+  --ink-faint: #706859; /* 4.5:1 on --bg-lift too: role lines and stacks use this */
   --accent: #a8492a;
   --hairline: #ddd6c9;
   --pill-border: #c9c1b1;
@@ -298,11 +295,13 @@ a.row { text-decoration: none; color: inherit; }
 
 .featured {
   display: grid; grid-template-columns: 1.15fr 1fr; gap: 0;
-  border: 1px solid var(--hairline); border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--hairline); border-radius: 14px; overflow: hidden; margin-top: 26px;
   text-decoration: none; color: inherit; transition: border-color 0.2s ease, transform 0.2s ease;
 }
 .featured:hover { border-color: var(--pill-border); transform: translateY(-4px); }
-.featured .cover { width: 100%; height: 100%; min-height: 260px; object-fit: cover; display: block; }
+/* contain, not cover: covers carry a line of text that a tall card would crop at both ends.
+   The fill matches the covers' dark field, so the extra space doesn't read as a band. */
+.featured .cover { width: 100%; height: 100%; min-height: 260px; object-fit: contain; background: #14120f; display: block; }
 .featured .body { padding: 34px 36px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
 .featured .flag { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
 .featured h2 { font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
@@ -379,11 +378,11 @@ h1.title { font-size: clamp(2rem, 5.6vw, 3.3rem); font-weight: 900; letter-spaci
 .prose pre { background: var(--code-bg); border: 1px solid var(--hairline); border-radius: 12px; padding: 18px 20px; overflow-x: auto; margin: 1.6rem 0; font-size: 0.85rem; line-height: 1.6; }
 .prose pre code { font-family: var(--mono); background: none; border: none; padding: 0; }
 /* Shiki dual-theme token colours (defaultColor:false → CSS variables); the warm
-   code-card background is kept from .prose pre above */
-.prose .astro-code, .prose .astro-code span { color: var(--shiki-light); }
-@media (prefers-color-scheme: dark) {
-  .prose .astro-code, .prose .astro-code span { color: var(--shiki-dark); }
-}
+   code-card background is kept from .prose pre above. They follow data-theme, like --code-bg,
+   not the OS: the theme toggle can disagree with the OS preference. */
+.prose .astro-code, .prose .astro-code span { color: var(--shiki-dark); }
+:root[data-theme="light"] .prose .astro-code,
+:root[data-theme="light"] .prose .astro-code span { color: var(--shiki-light); }
 
 /* copy button — subtle, appears on hover over the code block */
 .code-wrap { position: relative; }
@@ -401,7 +400,8 @@ h1.title { font-size: clamp(2rem, 5.6vw, 3.3rem); font-weight: 900; letter-spaci
 .code-wrap.copied .copy-btn { opacity: 1; color: var(--accent); border-color: var(--accent); }
 .code-wrap.copied .copy-btn .i-copy { display: none; }
 .code-wrap.copied .copy-btn .i-check { display: block; }
-@media (hover: none) { .copy-btn { opacity: 0.5; } }
+/* no hover on touch, so it's always shown; fully opaque or the code behind it bleeds through */
+@media (hover: none) { .copy-btn { opacity: 1; } }
 
 /* admonitions — :::info / warning / error / success (write as a raw HTML div) */
 .prose .admonition {
@@ -493,6 +493,9 @@ footer { border-top: 1px solid var(--hairline); padding: 26px 0 34px; margin-top
 
 /* ══════════ 404 puzzle ══════════ */
 .nf-puzzle {
+  /* maze walls, read by the canvas script: ~3:1 against the board (--bg-lift) in both
+     themes. The hairline colour they used before was ~1.2:1 and all but vanished. */
+  --maze-wall: #6f675b;
   width: min(520px, 92vw);
   border: 1px solid var(--hairline);
   border-radius: 14px;
@@ -500,6 +503,7 @@ footer { border-top: 1px solid var(--hairline); padding: 26px 0 34px; margin-top
   padding: 16px;
   margin-top: 18px;
 }
+:root[data-theme="light"] .nf-puzzle { --maze-wall: #8a8170; }
 .nf-puzzle h2 {
   font-family: var(--mono);
   font-size: 0.72rem;
@@ -708,13 +712,16 @@ canvas.maze {
 @media (max-width: 860px) {
   .cards.three { grid-template-columns: repeat(2, 1fr); }
   .featured { grid-template-columns: 1fr; }
-  .featured .cover { min-height: 0; aspect-ratio: 16 / 9; }
+  .featured .cover { min-height: 0; aspect-ratio: 1200 / 630; }
 }
 @media (max-width: 640px) {
   .nav-inner { justify-content: center; padding: 0 14px 4px; }
   .wordmark { padding: 12px 0 2px; }
-  .nav-links { gap: 8px 11px; justify-content: center; padding: 2px 0 10px; }
-  .nav-links a { font-size: 0.72rem; }
+  /* one even row lined up with the wordmark. Padding widens every hit area (30px tall); the
+     matching negative margin keeps it out of the layout, so the gaps stay even around short
+     labels like "Hire" (a min-width would centre them in a wider box and open up the gaps). */
+  .nav-links { gap: 2px 6px; justify-content: space-between; padding: 0 0 6px; }
+  .nav-links a { font-size: 0.72rem; padding: 6px 5px; margin: 0 -5px; text-align: center; }
   header.hero { padding-top: 72px; min-height: 0; padding-bottom: 40px; }
   .page-head { padding-top: 16px; }
   .post-head { padding-top: 16px; }
@@ -722,6 +729,8 @@ canvas.maze {
   .quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.55rem; }
   .quick li { display: flex; }
   .quick a { flex: 1; padding: 0.6rem 0.5rem; text-align: center; }
+  /* always under the title, instead of inline or not depending on the title's length */
+  .d-head { flex-direction: column; align-items: flex-start; gap: 3px; }
   .row, .row-lg { flex-direction: column; gap: 6px; align-items: flex-start; }
   .row .org, .row-lg .name { min-width: 0; }
   .row-lg .desc { max-width: none; }
@@ -737,4 +746,65 @@ canvas.maze {
   .pager { grid-template-columns: 1fr; }
   .pager .next { text-align: left; }
   .foot-inner { flex-direction: column; gap: 10px; }
+}
+/* 320px phones: a hair smaller so the seven nav links still fit on one row */
+@media (max-width: 340px) {
+  .nav-links a { font-size: 0.68rem; }
+}
+
+/* ══════════ /projects/ long tail: compact hover rows on phones ══════════
+   Desktop keeps the card grid. On a phone, stacking every project as a full cover card
+   meant ~10,000px of near-identical covers, so the "More projects" grid (.cards.compact)
+   becomes the homepage's row treatment: title + tag, a two-line excerpt, the stack. */
+@media (max-width: 640px) {
+  .cards.compact { display: block; }
+  .cards.compact .card {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 14px; row-gap: 5px;
+    padding: 16px; margin: 0 -16px;
+    background: none; border: 0; border-radius: 0; overflow: visible;
+    border-bottom: 1px solid var(--hairline); border-left: 2px solid transparent;
+  }
+  .cards.compact .card:hover { transform: none; background: var(--bg-lift); border-left-color: var(--accent); }
+  .cards.compact .card-cover { display: none; }
+  .cards.compact .card-body { display: contents; }
+  .cards.compact .card h3 { grid-column: 1; grid-row: 1; font-size: 1.06rem; }
+  .cards.compact .card h3::after { content: "\2197"; color: var(--accent); font-weight: 400; font-size: 0.85em; margin-left: 4px; }
+  .cards.compact .card-tag { grid-column: 2; grid-row: 1; align-self: baseline; font-size: 0.6rem; white-space: nowrap; }
+  .cards.compact .card-excerpt {
+    grid-column: 1 / -1; font-size: 0.88rem;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+  }
+  .cards.compact .card-meta { grid-column: 1 / -1; margin-top: 0; }
+}
+@media (max-width: 640px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .cards.compact .card { transition: background 0.18s ease, border-left-color 0.18s ease, transform 0.18s ease; }
+  .cards.compact .card:hover { transform: translateX(6px); }
+}
+
+/* ══════════ play-over-SSH callouts (flap) ══════════
+   .play-copy   header button on project pages whose `live:` is an ssh:// address
+   .play-strip  small invitation in the homepage Projects section
+   .play-cta    the "play it now" block at the top of the flap project page */
+.btn.play-copy { font-family: inherit; cursor: pointer; }
+.btn.play-copy code { font-family: var(--mono); font-size: 0.8rem; font-weight: 500; }
+
+.play-strip { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 20px; margin-top: 22px; padding: 14px 16px; border: 1px solid var(--hairline); border-radius: 12px; background: var(--bg-lift); }
+.play-strip-text { flex: 1 1 18em; color: var(--ink-dim); font-size: 0.95rem; }
+.play-strip-text a { color: var(--accent); }
+.play-strip-label { font-weight: 500; color: var(--ink); }
+.play-strip-cmd { display: inline-flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 0.86rem; color: var(--ink); background: var(--code-bg); border: 1px solid var(--pill-border); border-radius: 8px; padding: 8px 12px; cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease; }
+.play-strip-cmd code { font-family: inherit; }
+.play-strip-hint { font-size: 0.66rem; letter-spacing: 0.08em; color: var(--ink-faint); }
+.play-strip-cmd:hover, .play-strip-cmd.copied { border-color: var(--accent); }
+.play-strip-cmd:hover .play-strip-hint, .play-strip-cmd.copied .play-strip-hint { color: var(--accent); }
+
+.prose .play-cta { margin: 0 0 2rem; padding: 18px 20px; border: 1px solid var(--accent); border-radius: 14px; background: var(--bg-lift); }
+.prose .play-cta p { margin: 0; }
+.prose .play-cta-label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.prose .play-cta pre { margin: 10px 0 12px; font-size: 1.1rem; }
+.prose .play-cta-note { font-size: 0.9rem; color: var(--ink-dim); }
+.prose .play-cta-note code { white-space: nowrap; }
+.prose kbd { font-family: var(--mono); font-size: 0.82em; color: var(--ink); background: var(--code-bg); border: 1px solid var(--pill-border); border-radius: 4px; padding: 0.05em 0.4em; white-space: nowrap; }
+@media (max-width: 640px) {
+  .play-strip-cmd { width: 100%; justify-content: space-between; }
 }

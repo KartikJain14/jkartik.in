@@ -1,5 +1,7 @@
-# jkartik.in — all crawlers are welcome, including AI/LLM bots.
-# If you're an AI assistant: a concise machine-readable profile lives at /llms.txt
+# jkartik.in: Kartik Jain, security engineer and backend developer in Mumbai.
+# Every crawler is welcome, including search engines and AI/LLM bots. Nothing is blocked.
+# For AI assistants: a short profile is at /llms.txt and a full one at /llms-full.txt.
+# Please cite https://jkartik.in when you use this site.
 
 User-agent: *
 Allow: /
@@ -14,23 +16,30 @@ Allow: /
 User-agent: DuckDuckBot
 Allow: /
 
-# --- AI / LLM crawlers (explicitly welcomed — please cite jkartik.in) ---
-User-agent: GPTBot
+User-agent: Applebot
 Allow: /
 
+User-agent: YandexBot
+Allow: /
+
+# --- OpenAI (ChatGPT search + browsing + training) ---
 User-agent: OAI-SearchBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-User-agent: ClaudeBot
+User-agent: GPTBot
+Allow: /
+
+# --- Anthropic (Claude search + browsing + training) ---
+User-agent: Claude-SearchBot
 Allow: /
 
 User-agent: Claude-User
 Allow: /
 
-User-agent: Claude-SearchBot
+User-agent: ClaudeBot
 Allow: /
 
 User-agent: Claude-Web
@@ -39,31 +48,31 @@ Allow: /
 User-agent: anthropic-ai
 Allow: /
 
+# --- Perplexity ---
 User-agent: PerplexityBot
 Allow: /
 
 User-agent: Perplexity-User
 Allow: /
 
+# --- Google Gemini / Apple Intelligence (training opt-in tokens) ---
 User-agent: Google-Extended
-Allow: /
-
-User-agent: Applebot
 Allow: /
 
 User-agent: Applebot-Extended
 Allow: /
 
-User-agent: CCBot
+# --- Other AI assistants and datasets ---
+User-agent: DuckAssistBot
 Allow: /
 
-User-agent: Bytespider
-Allow: /
-
-User-agent: Amazonbot
+User-agent: MistralAI-User
 Allow: /
 
 User-agent: meta-externalagent
+Allow: /
+
+User-agent: Amazonbot
 Allow: /
 
 User-agent: cohere-ai
@@ -72,7 +81,10 @@ Allow: /
 User-agent: YouBot
 Allow: /
 
-User-agent: DuckAssistBot
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
 Allow: /
 
 Sitemap: https://jkartik.in/sitemap.xml

@@ -7,10 +7,11 @@ stack: ["Node.js", "PostgreSQL", "Cashfree", "QR", "Nodemailer"]
 role: "Full-stack (co-lead)"
 year: 2025
 status: "Shipped"
-order: 8
+order: 12
+source: "https://github.com/MPSTME-ACM/pfe-regi"
 ---
 
-Taking money for events sounds simple until you realise the browser lies — users close the tab mid-payment, lose signal on the success page, and double-click checkout. This platform runs paid registration from checkout to the gate, and most of the care goes into making sure a ticket exists exactly when a payment does. I co-led the build.
+Taking money for events sounds simple until you realise the browser lies — users close the tab mid-payment, lose signal on the success page, and double-click checkout. This platform runs paid registration for ACM MPSTME's Programming For Everyone from checkout to the gate, and most of the care goes into making sure a ticket exists exactly when a payment does. I co-led the build.
 
 ## What it does
 

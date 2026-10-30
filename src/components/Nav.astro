@@ -3,10 +3,10 @@ interface Props { active?: string }
 const { active } = Astro.props;
 
 const links = [
-  { href: '/Kartik_Resume.pdf', label: 'Résumé' },
+  { href: '/resume/', label: 'Résumé', key: 'resume' },
+  { href: '/hire/', label: 'Hire', key: 'hire' },
   { href: 'https://github.com/KartikJain14', label: 'GitHub' },
-  { href: 'https://linkedin.com/in/kartikjain1410', label: 'LinkedIn' },
-  { href: 'https://twitter.com/kartikjain1410', label: 'Twitter' },
+  { href: 'https://www.linkedin.com/in/kartikjain1410/', label: 'LinkedIn' },
   { href: 'mailto:contact@jkartik.in', label: 'Email' },
   { href: '/blog/', label: 'Blog', key: 'blog' },
   { href: '/projects/', label: 'Projects', key: 'projects' },

@@ -6,7 +6,7 @@ tag: "Backend"
 cover: "/blog/conc-qr-cover.jpg"
 ---
 
-Last year, [Social Conclave](https://socialconclave.in) handed every attendee (12–16 year old kids) a QR code, and someone had to build the thing that decides whether a scan means yes or no, at the door, at food, at high tea. This year that someone was me. Solo, less than two weeks, mostly after everyone else had gone to sleep. The result is [conc-qr](/projects/conc-qr/): an Express/TypeScript API, a Postgres database, and a Next.js scanning app staff run off their own phones ([source](https://github.com/Social-Conclave/conc-qr)).
+Last year, Social Conclave handed every attendee (12–16 year old kids) a QR code, and someone had to build the thing that decides whether a scan means yes or no, at the door, at food, at high tea. This year that someone was me. Solo, less than two weeks, mostly after everyone else had gone to sleep. The result is [conc-qr](/projects/conc-qr/): an Express/TypeScript API, a Postgres database, and a Next.js scanning app staff run off their own phones ([source](https://github.com/Social-Conclave/conc-qr)).
 
 <figure>
   <img src="/blog/conc-qr-login.jpg" alt="conc-qr login screen on a phone - email and access code fields under a Conclave logo" />

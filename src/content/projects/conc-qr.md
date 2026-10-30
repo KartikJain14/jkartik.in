@@ -8,10 +8,10 @@ role: "Solo — full-stack"
 year: 2026
 status: "Shipped"
 source: "https://github.com/Social-Conclave/conc-qr"
-order: 11
+order: 9
 ---
 
-[Social Conclave](https://socialconclave.in) hands every attendee a QR-coded badge, scanned repeatedly across the event — at the door, at food, at high tea. conc-qr is the system behind those scans: who gets in, who's already eaten, and who's allowed to say yes in the first place. Built solo, in under two weeks, shipped for the event on January 25, 2026. I wrote about the build in more detail on [the blog](/blog/what-conc-qr-taught-me-about-myself/).
+Social Conclave hands every attendee a QR-coded badge, scanned repeatedly across the event — at the door, at food, at high tea. conc-qr is the system behind those scans: who gets in, who's already eaten, and who's allowed to say yes in the first place. Built solo, in under two weeks, and shipped for the event on January 25, 2026, covering **500+ delegates**. I wrote about the build in more detail on [the blog](/blog/what-conc-qr-taught-me-about-myself/).
 
 ## What it does
 

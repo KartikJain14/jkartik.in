@@ -1,17 +1,19 @@
 ---
 title: "Railway Concession"
-description: "Official railway concession workflow for MPSTME — student submissions, slot booking, admin operations, and collection reporting."
+description: "MPSTME's official railway concession system, used by ~4,000 students: submissions, slot booking, admin operations and collection reporting. I took it over in 2026 and maintain it."
 tag: "Backend"
 cover: "/projects/railway-concession.png"
 live: "https://concession.mpst.me"
 stack: ["Next.js", "PostgreSQL", "Drizzle ORM", "Nodemailer"]
-role: "Lead Developer"
-year: 2026
+role: "Maintainer"
+year: "2026–present"
 status: "In active use"
-order: 2.5
+order: 3
 ---
 
-The MPSTME Railway Concession system is an official student-facing service built with [NeuroTechh](https://neurotechh.mpst.me). I now maintain it solo, working with the administration team to keep the process reliable as its real-world requirements change.
+The MPSTME Railway Concession system is the college's official online concession process, used by about **4,000 students**. The original version was built in 2025 by the [NeuroTechh](https://neurotechh.mpst.me) team. I took it over in July 2026 and now maintain it solo, working with the administration team to keep the process reliable as its real-world requirements change.
+
+Since taking it over I've moved it to PostgreSQL, made the booking window server-authoritative and IST-aware, built the admin tools and the automated daily collection report, added student confirmation emails, and patched vulnerable dependencies.
 
 ## What it does
 

@@ -8,7 +8,7 @@ role: "Solo"
 year: 2024
 status: "Hackathon build"
 source: "https://github.com/KartikJain14/hindcribe"
-order: 12
+order: 20
 ---
 
 Public-grievance audio comes in Hindi, and the systems that need to read it want English text — but you can't ship citizens' recordings off to a third-party cloud API. hindcribe does the whole pipeline on-device: upload a Hindi audio clip and get back both a Hindi transcript and an English translation, with nothing ever leaving the machine.

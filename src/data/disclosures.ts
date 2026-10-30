@@ -12,16 +12,16 @@ export const disclosures: Disclosure[] = [
   {
     org: "WhatsApp (Meta)",
     type: "Privilege escalation",
-    summary: "Privilege-escalation vulnerability.",
+    summary: "$1,500 bug bounty for a privilege-escalation vulnerability.",
     detail:
-      "Reported a privilege-escalation vulnerability in Meta's WhatsApp platform through its official disclosure program.",
+      "Awarded a $1,500 bug bounty by Meta for a privilege-escalation vulnerability in WhatsApp, reported through its official disclosure program.",
   },
   {
     org: "Microsoft",
     type: "Access control · via MSRC",
     summary: "Access-control & data-exposure issues, reported to MSRC.",
     detail:
-      "Reported multiple access-control and information-disclosure issues in Microsoft Intune and the Exchange Admin Center to Microsoft's MSRC (cases VULN-150984, VULN-152882, VULN-152884) — including organisation member data served before authorization checks (a time-of-check/time-of-use gap spanning Intune, Entra, and Azure), and standard users bypassing 'restricted' policies to modify directory name fields and join closed groups through the Exchange admin portal.",
+      "Reported multiple access-control and information-disclosure issues in Microsoft Intune and the Exchange Admin Center to Microsoft's MSRC — including organisation member data served before authorization checks (a time-of-check/time-of-use gap spanning Intune, Entra, and Azure), and standard users bypassing 'restricted' policies to modify directory name fields and join closed groups through the Exchange admin portal.",
   },
   {
     org: "Mumbai Police",
@@ -33,9 +33,9 @@ export const disclosures: Disclosure[] = [
   {
     org: "The Souled Store",
     type: "Infrastructure exposure",
-    summary: "Exposed staging infrastructure allowing full system compromise.",
+    summary: "Exposed staging infrastructure with potential for full compromise.",
     detail:
-      "Reported exposed staging infrastructure that could have allowed a full system compromise.",
+      "Reported exposed staging infrastructure with the potential for a full compromise.",
   },
   {
     org: "Belgian Waffle Co.",
@@ -63,11 +63,11 @@ export const disclosures: Disclosure[] = [
 export const defensive: { title: string; detail: string }[] = [
   {
     title: "Infrastructure hardening",
-    detail: "Hardened server infrastructure protecting the data of 16,000+ users.",
+    detail: "Hardened the server infrastructure of a web platform with 16,000+ users, as freelance work.",
   },
   {
     title: "Ransomware response",
     detail:
-      "Stopped a ransomware incident under pressure by rapidly deploying a backup-and-recovery setup.",
+      "Led the incident response when that platform was hit by ransomware: contained it and restored service through rapid backup and recovery.",
   },
 ];

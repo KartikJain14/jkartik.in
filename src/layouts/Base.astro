@@ -2,12 +2,19 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import { DEFAULT_OG, NAME, website, personCompact } from '../lib/seo';
+import { imageSize, imageType } from '../lib/image-size';
 
 interface Props {
   title: string;
   description: string;
   ogType?: string;
   image?: string;
+  imageAlt?: string;
+  /** article pages: publish / last-modified dates for article:* meta */
+  published?: Date;
+  modified?: Date;
+  noindex?: boolean;
   active?: string;
   progress?: boolean;
 }
@@ -16,16 +23,60 @@ const {
   title,
   description,
   ogType = 'website',
-  image = '/kartik.png',
+  image = DEFAULT_OG.src,
+  imageAlt,
+  published,
+  modified,
+  noindex = false,
   active,
   progress = false,
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const imageUrl = new URL(image, Astro.site).href;
 // homepage hides the nav until you scroll past the hero (it shows the same links);
 // every other page shows the nav from the very top.
 const isHome = Astro.url.pathname === '/';
+
+// One URL per page: always the trailing-slash directory form (build.format = 'directory').
+const path = Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/([^/])$/, '$1/');
+const canonical = new URL(path, Astro.site).href;
+
+// <title> stays ≤60 chars so results never truncate it mid-word, and keeps the name whenever it
+// can: a long "Headline: subtitle — Kartik Jain" becomes "Headline — Kartik Jain". Social cards
+// have room, so og:title keeps the full wording (as do the page's H1 and JSON-LD headline).
+const SUFFIX = ` — ${NAME}`;
+const bareTitle = title.endsWith(SUFFIX) ? title.slice(0, -SUFFIX.length) : title;
+const shortTitle = () => {
+  if (title.length <= 60) return title;
+  const head = bareTitle.split(/[:–—]\s/)[0];
+  if (head !== bareTitle && head.length + SUFFIX.length <= 60) return head + SUFFIX;
+  if (bareTitle.length <= 60) return bareTitle;
+  const cut = bareTitle.slice(0, 60);
+  return cut.slice(0, cut.lastIndexOf(' '));
+};
+const docTitle = shortTitle();
+const ogTitle = title.length <= 60 ? title : bareTitle;
+
+// meta description: ≤155 chars, cut at a word boundary (cards keep the full text).
+const clamp = (s: string, n = 155) => {
+  const t = s.replace(/\s+/g, ' ').trim();
+  if (t.length <= n) return t;
+  const cut = t.slice(0, n - 1);
+  return cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,;:—–-]+$/, '') + '…';
+};
+const metaDescription = clamp(description);
+
+const imageUrl = new URL(image, Astro.site).href;
+const isDefaultImage = image === DEFAULT_OG.src;
+const dims = isDefaultImage ? DEFAULT_OG : imageSize(image);
+const mime = imageType(image);
+const alt = imageAlt ?? (isDefaultImage ? DEFAULT_OG.alt : `Cover image for “${ogTitle}”`);
+
+// Sitewide graph: the WebSite + a compact Person, so every page's author/@id references
+// resolve. The homepage emits the full Person itself (src/lib/seo.ts → personFull).
+const siteGraph = {
+  '@context': 'https://schema.org',
+  '@graph': isHome ? [website] : [website, personCompact],
+};
 ---
 <!DOCTYPE html>
 <html lang="en" id="top">
@@ -33,42 +84,60 @@ const isHome = Astro.url.pathname === '/';
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>{title}</title>
-  <meta name="description" content={description} />
+  <title>{docTitle}</title>
+  <meta name="description" content={metaDescription} />
   <meta name="author" content="Kartik Jain" />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
   <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#14120f" media="(prefers-color-scheme: dark)" />
 
   <link rel="canonical" href={canonical} />
   <link rel="alternate" type="application/rss+xml" title="Kartik Jain — Writing" href="/rss.xml" />
+  <link rel="alternate" type="text/plain" title="Kartik Jain — profile for AI assistants" href="/llms.txt" />
   <link rel="author" type="text/plain" href="/humans.txt" />
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <link rel="apple-touch-icon" href="/kartik.png" />
   <link rel="manifest" href="/site.webmanifest" />
 
   <link rel="me" href="https://github.com/KartikJain14" />
-  <link rel="me" href="https://linkedin.com/in/kartikjain1410" />
-  <link rel="me" href="https://twitter.com/kartikjain1410" />
+  <link rel="me" href="https://www.linkedin.com/in/kartikjain1410/" />
+  <link rel="me" href="https://x.com/kartikjain1410" />
+  <link rel="me" href="mailto:contact@jkartik.in" />
 
   <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/fonts/inter-900.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="dns-prefetch" href="https://cloud.umami.is" />
 
   <!-- Open Graph -->
-  <meta property="og:site_name" content="jkartik.in" />
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
-  <meta property="og:image" content={imageUrl} />
+  <meta property="og:site_name" content="Kartik Jain" />
+  <meta property="og:title" content={ogTitle} />
+  <meta property="og:description" content={metaDescription} />
   <meta property="og:url" content={canonical} />
   <meta property="og:type" content={ogType} />
   <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content={imageUrl} />
+  {mime && <meta property="og:image:type" content={mime} />}
+  {dims && <meta property="og:image:width" content={String(dims.width)} />}
+  {dims && <meta property="og:image:height" content={String(dims.height)} />}
+  <meta property="og:image:alt" content={alt} />
+  {ogType === 'profile' && <meta property="profile:first_name" content="Kartik" />}
+  {ogType === 'profile' && <meta property="profile:last_name" content="Jain" />}
+  {ogType === 'profile' && <meta property="profile:username" content="kartikjain1410" />}
+  {ogType === 'article' && <meta property="article:author" content="https://jkartik.in/" />}
+  {published && <meta property="article:published_time" content={published.toISOString()} />}
+  {modified && <meta property="article:modified_time" content={modified.toISOString()} />}
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content={title} />
-  <meta name="twitter:description" content={description} />
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={ogTitle} />
+  <meta name="twitter:description" content={metaDescription} />
   <meta name="twitter:image" content={imageUrl} />
+  <meta name="twitter:image:alt" content={alt} />
   <meta name="twitter:site" content="@kartikjain1410" />
+  <meta name="twitter:creator" content="@kartikjain1410" />
+
+  <script type="application/ld+json" set:html={JSON.stringify(siteGraph)} />
 
   <script is:inline>
     document.documentElement.classList.add('js');

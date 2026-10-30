@@ -2,6 +2,9 @@ node_modules
 dist
 .astro
 resume/.out
+resume/CAREER.md
+resume/MARKET.md
+resume/variants
 npm-debug.log*
 yarn-error.log*
 *.log

@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PostCard from '../../components/PostCard.astro';
 import { coverFor } from '../../lib/covers';
 import { getCollection } from 'astro:content';
+import { SITE, WEBSITE_ID, personRef, breadcrumbs } from '../../lib/seo';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
@@ -13,12 +14,40 @@ const fCover = featured?.data.cover ?? coverFor(featured?.data.tag, 630);
 const fDate = featured?.data.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 const fWords = (featured?.body ?? '').trim().split(/\s+/).length;
 const fMins = Math.max(1, Math.round(fWords / 200));
+
+const pageUrl = `${SITE}/blog/`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Blog',
+      '@id': `${pageUrl}#blog`,
+      url: pageUrl,
+      name: 'Kartik Jain — Writing',
+      description: 'Notes on backend engineering and security research by Kartik Jain.',
+      inLanguage: 'en',
+      isPartOf: { '@id': WEBSITE_ID },
+      author: personRef,
+      publisher: personRef,
+      blogPost: posts.map((p) => ({
+        '@type': 'BlogPosting',
+        '@id': `${SITE}/blog/${p.id}/#post`,
+        headline: p.data.title,
+        url: `${SITE}/blog/${p.id}/`,
+        datePublished: p.data.date.toISOString(),
+        author: personRef,
+      })),
+    },
+    breadcrumbs([['Home', '/'], ['Writing', '/blog/']]),
+  ],
+};
 ---
 <Base
-  title="Writing — Kartik Jain"
-  description="Notes on backend engineering and security research by Kartik Jain — what broke, what shipped, and what to do differently."
+  title="Blog: Backend & Security Writing — Kartik Jain"
+  description="Kartik Jain's notes on backend engineering and security research: what broke, what shipped, and what I'd do differently next time."
   active="blog"
 >
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <header class="wrap-wide page-head">
     <a class="crumb hero-in" href="/">← Home</a>
     <h1 class="hero-in" style="--d:.06s"><em>Writing</em></h1>

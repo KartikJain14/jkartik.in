@@ -8,7 +8,7 @@ role: "Solo — full-stack"
 year: 2025
 status: "Personal project"
 source: "https://github.com/KartikJain14/groupay"
-order: 6
+order: 13
 ---
 
 Every housing society runs its maintenance billing on a WhatsApp group and a spreadsheet someone's cousin owns. GrouPay is the boring-but-correct version: multi-tenant billing where a super-admin runs the platform, each society runs itself, and every rupee has a paper trail.

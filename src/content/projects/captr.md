@@ -7,7 +7,7 @@ stack: ["Python", "FastAPI", "Gemini", "yt-dlp", "FFmpeg", "MongoDB", "Next.js"]
 role: "Solo — full-stack"
 year: 2025
 status: "Personal project"
-order: 9
+order: 18
 ---
 
 Research from video is a slog — you scrub through hours to find the ninety seconds that mattered. captr does the scrubbing. Give it a topic and it goes out, watches the videos for you, and hands back a written, illustrated research document you can then interrogate like a chat.

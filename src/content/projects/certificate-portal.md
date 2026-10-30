@@ -3,14 +3,14 @@ title: "Certificate portal"
 description: "A tool that batch-generates and emails event certificates from a CSV upload — no more hand-making a few hundred PDFs after every fest."
 tag: "Tooling"
 cover: "/projects/certificate-portal.png"
-stack: ["Node.js", "PostgreSQL", "PDF", "CSV"]
+stack: ["TypeScript", "Next.js", "Elysia", "PostgreSQL", "Drizzle", "Redis", "MJML", "Docker"]
 role: "Contributor"
-year: 2024
+year: "2025–2026"
 status: "Shipped"
-order: 14
+order: 22
 ---
 
-After an event, someone has to make a few hundred certificates and email them all out — a slow, error-prone afternoon done by hand. This portal turns it into a single CSV upload. It was a team build; I contributed to the generation-and-delivery side.
+After an event, someone has to make a few hundred certificates and email them all out — a slow, error-prone afternoon done by hand. This portal turns it into a single CSV upload. It was a team build; I contributed the Docker and Coolify deployment, the email sending, and fixes.
 
 ## What it does
 

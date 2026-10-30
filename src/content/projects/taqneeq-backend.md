@@ -3,12 +3,12 @@ title: "Taqneeq fest backend"
 description: "The gamified loyalty-and-credits engine behind NMIMS's tech fest — OTP login, role-based point allocation, referrals, and a cached live leaderboard for a crowd of thousands."
 tag: "Backend"
 cover: "/projects/taqneeq-backend.png"
-live: "https://taqneeqfest.com"
+source: "https://github.com/KartikJain14/qrshooter-backend"
 stack: ["Python", "Flask", "Firestore", "JWT", "Vercel"]
 role: "Lead backend"
 year: 2025
 status: "Shipped"
-order: 3
+order: 6
 ---
 
 Taqneeq is NMIMS's flagship tech fest — three days, thousands of attendees, and a fest-wide game where people earn and spend credits. I was the lead author of the backend that runs that game: sign-ins, points, a referral loop, and a leaderboard that stays live without melting the database.

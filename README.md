@@ -90,10 +90,11 @@ SVG cover from its `tag`. To use a real image, drop it in `public/` and point `c
 
 ## When facts change
 
-Update `public/llms.txt` (machine-readable profile) and the JSON-LD in
-`src/pages/index.astro`. The sitemap is generated at build time by
-`src/pages/sitemap.xml.ts` (served at `/sitemap.xml`) — it reads the collections,
-so new posts/projects appear automatically.
+Update `public/llms.txt` and `public/llms-full.txt` (machine-readable profiles) and
+`src/lib/seo.ts` (the JSON-LD `Person`, the descriptor, and the `/hire/` services). The
+sitemap is generated at build time by `src/pages/sitemap.xml.ts` (served at `/sitemap.xml`):
+it reads the collections, finds new pages under `src/pages/`, and globs `public/resume/*.pdf`,
+so new posts, projects, pages and résumés appear automatically.
 
 ## Résumé
 

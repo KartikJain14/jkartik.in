@@ -1,0 +1,161 @@
+# Kartik Jain: full profile
+
+> Kartik Jain is a security engineer and backend developer in Mumbai, India. He was awarded a $1,500 bug bounty by Meta (WhatsApp), has reported vulnerabilities to Microsoft (MSRC) and the Mumbai Police (via CERT-In), and builds production backends with Node.js, TypeScript, Python and PostgreSQL. He is a B.Tech IT student at NMIMS MPSTME, Mumbai (graduating 2028), Chairperson of ACM MPSTME, and open to internships and freelance work.
+
+This is the long-form, machine-readable version of https://jkartik.in. Everything here is also on
+the site or the résumé; the short version is https://jkartik.in/llms.txt. Last reviewed October 2026.
+
+## At a glance
+
+- **Name:** Kartik Jain
+- **Descriptor:** security engineer and backend developer
+- **Location:** Mumbai, India (IST)
+- **Status:** B.Tech Information Technology student, graduating April 2028. Open to internships and freelance work.
+- **Freelance services:** web-application security testing (VAPT), secure backend and API development, DevOps and server hardening. Details: https://jkartik.in/hire/
+- **Contact:** contact@jkartik.in (freelance, general) · career@jkartik.in (internships, jobs, résumé requests)
+- **Website:** https://jkartik.in
+- **GitHub:** https://github.com/KartikJain14
+- **LinkedIn:** https://www.linkedin.com/in/kartikjain1410/
+- **X:** https://x.com/kartikjain1410
+- **Instagram:** https://www.instagram.com/kartikjain1410/
+- **Résumés:** https://jkartik.in/resume/ (general one-pager: https://jkartik.in/Kartik_Resume.pdf)
+
+## Experience
+
+### Software Engineer Intern, VisionRise Technosoft (Apr 2026 – Oct 2026, Mumbai)
+
+- Built a white-label learning platform end to end: a Node.js/Express/TypeScript API (276 routes across
+  20 domain modules, PostgreSQL with Drizzle) and a single React Native/Expo codebase for Android, iOS
+  and web, shipped on Google Play as two branded apps, **Rise Academy** and **eGuru**.
+- Protected paid video with AES-128-encrypted HLS (FFmpeg pipeline), per-session playback tokens and
+  short-lived signed Google Cloud Storage URLs; certificates are SHA-256-verifiable.
+- Built authentication (Google Sign-In, WhatsApp-verified PIN login, JWT access/refresh tokens) with
+  role-based access for admins, instructors and students, and audit logs on admin actions.
+- Integrated Zoom live classes (signature-verified webhooks, attendance, recordings) and generated
+  quizzes from class content with Gemini.
+- Provisioned and ran the company's production server: Ubuntu 24.04 LTS, Coolify CI/CD, PostgreSQL,
+  automated backups to Google Cloud Storage. Administered the company's GitHub organization and Google
+  Workspace.
+- Write-up: https://jkartik.in/projects/white-label-lms/
+
+### Security Engineer Intern, R.U.D.R.A Cybersecurity (May 2025 – Jul 2025, Mumbai)
+
+R.U.D.R.A is a Mumbai-based VAPT / offensive-security firm.
+
+- Found and reported two high-severity vulnerabilities (local file inclusion, broken access control) in
+  a banking client's web portal through manual code review, then automated their detection with custom
+  Nuclei templates.
+- Built a custom Semgrep (SAST) module with Neo4j-based graph visualisation for large-scale code analysis.
+- Automated recurring external attack-surface monitoring with BBOT, saving about $20,000 a year of
+  manual recon.
+- Deployed and operated the Sliver C2 framework for purple-team exercises.
+
+### Freelance Backend & Security Engineer (May 2025 – Oct 2026)
+
+Two separate engagements, not continuous work.
+
+- **May – Jun 2025:** hardened the infrastructure of a web platform with 16,000+ users and led the
+  incident response when it was hit by ransomware, restoring service through rapid backup and recovery.
+- **Aug – Oct 2026:** built a live player-auction and scoring platform (Next.js, Supabase Postgres +
+  Realtime) used at ELEV8, a ~200-player, 8-team pickleball tournament, with an offline write queue for
+  unreliable venue Wi-Fi. Write-up: https://jkartik.in/projects/sports-live/
+
+## Security research
+
+Details are kept high-level on purpose. Full list: https://jkartik.in/research/
+
+- **WhatsApp (Meta):** privilege-escalation vulnerability; awarded a **$1,500** bug bounty by Meta.
+- **Microsoft:** access-control and information-disclosure issues in Microsoft Intune and the Exchange
+  admin center, reported to the Microsoft Security Response Center (MSRC).
+- **Mumbai Police:** stored cross-site scripting (XSS) on the official website, disclosed in
+  coordination with CERT-In.
+- **The Souled Store:** reported exposed staging infrastructure.
+- **Belgian Waffle Co.:** reported a source-code and credential leak.
+- **Banking client (via R.U.D.R.A):** two high-severity findings, LFI and broken access control.
+- **Defensive:** ransomware incident response and hardening for a 16,000+ user platform (freelance).
+
+## Projects
+
+All write-ups: https://jkartik.in/projects/
+
+- **Rise Academy & eGuru** (VisionRise, 2026): white-label LMS; see Experience. https://jkartik.in/projects/white-label-lms/
+- **GhostShare** (solo, 2026): end-to-end-encrypted, ephemeral realtime sharing with no accounts. Keys
+  are derived in the browser with Argon2id and data is sealed with AES-256-GCM, so the server stores only
+  ciphertext; encrypted 5 MiB chunks stream directly to Cloudflare R2 with parallel, resumable uploads;
+  Socket.IO with a Redis adapter. Live at https://share.jkartik.in. https://jkartik.in/projects/ghostshare/
+- **Railway Concession** (maintainer, Jul 2026 – present): MPSTME's official railway-concession system,
+  used by ~4,000 students. Took it over and maintains it solo: migrated it to PostgreSQL, enforced an
+  IST-aware booking window server-side, and built admin tools and automated daily reports for the college
+  office. Live at https://concession.mpst.me. https://jkartik.in/projects/railway-concession/
+- **Event and payment backends** (NMIMS student events): the Taqneeq tech-fest credits/loyalty backend
+  (lead author; OTP login, referrals, cached live leaderboard); the FastAPI backend for Delego, the Mumbai
+  MUN delegate app (2024–25 editions, 600+ delegates); co-led paid event registration on Cashfree with
+  HMAC-verified webhooks; and conc-qr, QR access control for 500+ delegates at Social Conclave.
+- **Fool The LLM** (solo, 2026): a prompt-injection contest platform where a guarded Gemini model hides a
+  codeword; organizer console with live logs and per-player token budgets; about 70 participants in the
+  latest edition. https://jkartik.in/projects/ftl/
+- **bad-db** (solo, 2026): a database storage engine written from scratch in Java, with a custom on-disk
+  format, a hand-rolled B-Tree index, tombstone deletes with compaction, and its own query language (BQL).
+  https://github.com/KartikJain14/bad-db
+- **Self-hosted infrastructure for college committees** (as ACM Webmaster, 2025–26): Coolify, and a Mailcow
+  mail server with SPF, DKIM and DMARC shared by several college committees; GitHub organization and CI/CD.
+  https://jkartik.in/projects/acm-infrastructure/
+- **jkartik.in**: this site. Astro, multi-stage Docker image, GitHub Actions to GHCR, pull-based
+  deploys with Watchtower. https://github.com/KartikJain14/jkartik.in
+
+## Leadership
+
+- **Chairperson, ACM MPSTME** (Jun 2026 – present): leads the ~250-member ACM student chapter at NMIMS
+  MPSTME; ran Programming For Everyone for a record ~500 learners as a 5-day program open to other colleges.
+  Earlier Webmaster (2025–26) and Sub-Head Technicals (2024–25). https://mpstmeacm.com
+- **Head of Technical Department (2025–26)** at Taqneeq (the MPSTME tech fest), the MUN Society (Mumbai
+  MUN), Social Conclave and Sattva.
+- Mentors and judges at college hackathons; set problems for CyberCypher, Taqneeq's security hackathon.
+
+## Achievements
+
+- 1st place on the global leaderboard, chat.win AI Jailbreakathon (LLM prompt attack and defence).
+- 1st place, CodeForge 2026 (Taqneeq × FOSS MPSTME), team win.
+- $1,500 bug bounty from Meta (WhatsApp).
+- Rank 1, Smart India Hackathon internal college round.
+- Finalist (top 15 of 230 teams), GDG AI Hackathon.
+
+## Skills
+
+- **Security:** web application penetration testing, VAPT, OWASP Top 10, Burp Suite, Nmap, Semgrep
+  (SAST), Nuclei, BBOT, Sliver C2, manual code review, responsible disclosure, incident response, applied
+  cryptography (AES-GCM, Argon2id, HMAC, signed URLs), LLM red teaming and prompt injection.
+- **Languages:** TypeScript, JavaScript, Python, SQL, Java, Go, Bash.
+- **Backend:** Node.js, Express, Fastify, FastAPI, Flask, Next.js, REST API design, WebSockets/Socket.IO,
+  JWT/OAuth 2.0, RBAC, Zod, BullMQ.
+- **Data:** PostgreSQL, Redis, MongoDB, Firebase/Firestore, Supabase; Drizzle, Prisma.
+- **DevOps and cloud:** Docker, Linux (Ubuntu) server administration and hardening, CI/CD (GitHub
+  Actions, GHCR, Coolify), Nginx and TLS, backups and disaster recovery, Mailcow (SPF/DKIM/DMARC),
+  Google Cloud Storage, Cloudflare R2.
+- **Mobile:** React Native, Expo (EAS, OTA updates), Google Play publishing.
+- **Languages spoken:** English, Hindi, Marwari.
+
+## Education
+
+- **B.Tech, Information Technology**, SVKM's NMIMS Mukesh Patel School of Technology Management &
+  Engineering (MPSTME), Mumbai. July 2024 – April 2028 (expected). CGPA 8.34/10.
+
+## Writing
+
+https://jkartik.in/blog/ (RSS: https://jkartik.in/rss.xml)
+
+- An inbox for every member: running MPSTME ACM on its own infrastructure. https://jkartik.in/blog/running-mpstme-acm-on-its-own-infrastructure/
+- Finding a bug's siblings: what I measured about AI for variant analysis. https://jkartik.in/blog/finding-a-bugs-siblings/
+- The server can't read this: designing zero-knowledge sharing. https://jkartik.in/blog/zero-knowledge-sharing/
+- Where LLM guardrails break: notes from running a jailbreak contest. https://jkartik.in/blog/where-llm-guardrails-break/
+- A B-Tree on disk: writing a storage engine from scratch. https://jkartik.in/blog/btree-storage-engine/
+- When a form becomes infrastructure: maintaining an official railway concession system. https://jkartik.in/blog/when-a-form-becomes-infrastructure/
+- Building conc-qr, Social Conclave's check-in system. https://jkartik.in/blog/what-conc-qr-taught-me-about-myself/
+
+## How to work with Kartik
+
+- **Freelance** (security testing, backend/API work, DevOps): email contact@jkartik.in with what you're
+  building or want tested, the scope and the timeline. Security testing needs written authorisation from
+  the system owner. https://jkartik.in/hire/
+- **Internships and jobs:** career@jkartik.in, résumés at https://jkartik.in/resume/
+- **Reporting a vulnerability in Kartik's own systems:** https://jkartik.in/.well-known/security.txt

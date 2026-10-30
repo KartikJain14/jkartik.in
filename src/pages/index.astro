@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 import { disclosures } from '../data/disclosures';
+import { SITE, PERSON_ID, WEBSITE_ID, personFull } from '../lib/seo';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
@@ -13,80 +14,47 @@ const projects = (await getCollection('projects')).sort(
   (a, b) => a.data.order - b.data.order,
 );
 
+// The homepage IS the profile page: the full Person entity (src/lib/seo.ts) + ProfilePage.
+// Base.astro adds the WebSite node. Facts live in seo.ts — edit them there, not here.
+const title = 'Kartik Jain — Security Engineer & Backend Developer';
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
-    {
-      '@type': 'Person',
-      '@id': 'https://jkartik.in/#kartik',
-      name: 'Kartik Jain',
-      alternateName: 'jkartik',
-      url: 'https://jkartik.in/',
-      image: 'https://jkartik.in/kartik.png',
-      description:
-        'Backend engineer and security researcher in Mumbai, India. Builds production backend systems; has reported vulnerabilities to Meta, Microsoft, and CERT-In. Available for freelance work.',
-      jobTitle: ['Backend Engineer', 'Security Researcher'],
-      email: 'mailto:contact@jkartik.in',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Mumbai',
-        addressRegion: 'Maharashtra',
-        addressCountry: 'IN',
-      },
-      alumniOf: {
-        '@type': 'CollegeOrUniversity',
-        name: 'NMIMS Mukesh Patel School of Technology Management and Engineering',
-      },
-      knowsAbout: [
-        'Backend Development', 'Application Security', 'Penetration Testing',
-        'Vulnerability Research', 'Node.js', 'TypeScript', 'Python', 'FastAPI',
-        'PostgreSQL', 'Docker', 'Redis', 'AWS', 'Linux', 'API Design',
-      ],
-      sameAs: [
-        'https://github.com/KartikJain14',
-        'https://linkedin.com/in/kartikjain1410',
-        'https://twitter.com/kartikjain1410',
-      ],
-    },
-    {
-      '@type': 'WebSite',
-      '@id': 'https://jkartik.in/#website',
-      url: 'https://jkartik.in/',
-      name: 'Kartik Jain',
-      inLanguage: 'en',
-      author: { '@id': 'https://jkartik.in/#kartik' },
-      publisher: { '@id': 'https://jkartik.in/#kartik' },
-    },
+    personFull,
     {
       '@type': 'ProfilePage',
-      '@id': 'https://jkartik.in/#profilepage',
-      url: 'https://jkartik.in/',
-      name: 'Kartik Jain — Backend Engineer & Security Researcher',
-      isPartOf: { '@id': 'https://jkartik.in/#website' },
-      about: { '@id': 'https://jkartik.in/#kartik' },
-      mainEntity: { '@id': 'https://jkartik.in/#kartik' },
+      '@id': `${SITE}/#profilepage`,
+      url: `${SITE}/`,
+      name: title,
+      inLanguage: 'en',
+      dateModified: new Date().toISOString(),
+      isPartOf: { '@id': WEBSITE_ID },
+      about: { '@id': PERSON_ID },
+      mainEntity: { '@id': PERSON_ID },
+      primaryImageOfPage: { '@id': `${SITE}/#portrait` },
+      significantLink: [`${SITE}/hire/`, `${SITE}/research/`, `${SITE}/projects/`, `${SITE}/resume/`],
     },
   ],
 };
 ---
 <Base
-  title="Kartik Jain — Backend Engineer & Security Researcher"
-  description="Kartik Jain is a backend engineer and security researcher in Mumbai, India. He builds production backend systems and has reported vulnerabilities to Meta, Microsoft, and CERT-In. Available for freelance work."
+  title={title}
+  description="Kartik Jain, security engineer and backend developer in Mumbai. $1,500 Meta bug bounty; reported to MSRC and CERT-In. Open to internships and freelance."
   ogType="profile"
 >
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <header class="hero wrap">
     <div>
-      <p class="kicker hero-in"><span id="kicker">MUMBAI · OPEN TO FREELANCE WORK</span></p>
+      <p class="kicker hero-in"><span id="kicker">MUMBAI · FREELANCE &amp; INTERNSHIPS</span></p>
       <h1 class="hero-in" style="--d:.08s">Kartik Jain</h1>
-      <p class="tagline hero-in" style="--d:.16s">Backend engineer &amp; <em>security researcher</em>. I build production systems — and <em>break</em> the rest.</p>
+      <p class="tagline hero-in" style="--d:.16s">Security engineer &amp; <em>backend developer</em>. I build production systems — and <em>break</em> the rest.</p>
       <ul class="quick hero-in" style="--d:.24s">
-        <li><a class="primary" href="/Kartik_Resume.pdf">Résumé</a></li>
+        <li><a class="primary" href="/resume/">Résumé</a></li>
+        <li><a href="/hire/">Hire me</a></li>
         <li><a href="/blog/">Blogs</a></li>
         <li><a href="https://github.com/KartikJain14">GitHub</a></li>
-        <li><a href="https://linkedin.com/in/kartikjain1410">LinkedIn</a></li>
-        <li><a href="https://twitter.com/kartikjain1410">Twitter</a></li>
+        <li><a href="https://www.linkedin.com/in/kartikjain1410/">LinkedIn</a></li>
         <li><a href="mailto:contact@jkartik.in">Email</a></li>
         <li><button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle light and dark theme" title="Toggle theme"><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button></li>
       </ul>
@@ -97,28 +65,33 @@ const jsonLd = {
 
     <section id="about">
       <h2 class="label reveal">About</h2>
-      <p class="reveal" style="--d:.05s; max-width:40em">
-        I've reported vulnerabilities to <strong>Meta</strong>, <strong>Microsoft</strong>, and the&nbsp;
-        <strong>Mumbai Police</strong> (through CERT-In), and my backends have handled payments,
-        ticketing, and media for events with thousands of attendees.
+      <p class="hero-in" style="--d:.28s; max-width:40em">
+        I'm Kartik Jain, a security engineer and backend developer in Mumbai. I find vulnerabilities
+        in web applications, and I build the backends they run on: auth, payments, media, and the
+        servers underneath.
       </p>
-      <p class="reveal" style="--d:.1s; max-width:40em; margin-top:1rem">
-        I'm studying IT at NMIMS Mumbai (class of 2028) and working as a security engineer intern at
-        R.U.D.R.A Cybersecurity. I take on <strong>freelance work</strong> — security assessments,
-        penetration testing, and backend or API builds. The fastest way to reach me is&nbsp;
-        <a href="mailto:contact@jkartik.in" style="color:var(--accent)">contact@jkartik.in</a>.
+      <div class="xp">
+        <ul>
+          <li class="hero-in" style="--d:.31s"><strong>Security research:</strong> awarded a $1,500 bug bounty by Meta (WhatsApp); reported vulnerabilities to Microsoft (MSRC) and the Mumbai Police (via CERT-In). <a href="/research/">All findings</a></li>
+          <li class="hero-in" style="--d:.34s"><strong>Most recently:</strong> Software Engineer Intern at VisionRise Technosoft (Apr–Oct 2026). Built a <a href="/projects/white-label-lms/">white-label learning platform</a> that ships as two Google Play apps, Rise Academy and eGuru, and ran its production server.</li>
+          <li class="hero-in" style="--d:.37s"><strong>Before that:</strong> Security Engineer Intern at R.U.D.R.A Cybersecurity (May–Jul 2025): VAPT, SAST and attack-surface automation.</li>
+          <li class="hero-in" style="--d:.4s"><strong>Now:</strong> Chairperson of ACM MPSTME, B.Tech IT at NMIMS MPSTME (2024–2028), and maintainer of the college's <a href="/projects/railway-concession/">Railway Concession</a> system for ~4,000 students.</li>
+        </ul>
+      </div>
+      <p class="hero-in" style="--d:.43s; max-width:40em; margin-top:1rem">
+        Open to <strong>internships</strong> and <strong>freelance work</strong>: web-app security testing, backend and API builds, server hardening.{' '}<a href="/hire/" style="color:var(--accent)">How to hire me</a>, or write to <a href="mailto:contact@jkartik.in" style="color:var(--accent)">contact@jkartik.in</a>.
       </p>
     </section>
 
     <section id="research">
       <h2 class="label reveal">Security research</h2>
       {disclosures.slice(0, 5).map((d, i) => (
-        <div class="row reveal" style={`--d:${0.05 + i * 0.05}s`}>
+        <div class="row reveal" style={`--d:${(0.05 + i * 0.05).toFixed(2)}s`}>
           <span class="org">{d.org}</span>
           <span class="finding">{d.summary}</span>
         </div>
       ))}
-      <p class="aside reveal" style="--d:.3s">On the defensive side: hardened infrastructure protecting <strong>16,000+ users' data</strong>, and stopped a ransomware incident with a backup-and-recovery deployment under pressure.</p>
+      <p class="aside reveal" style="--d:.3s">On the defensive side: hardened the infrastructure of a web platform with <strong>16,000+ users</strong>, and led the incident response when it was hit by ransomware, restoring service through rapid backup and recovery.</p>
       <div class="see-more-wrap reveal" style="--d:.35s">
         <a class="see-more" href="/research/">See more <span class="arr">&rarr;</span></a>
       </div>
@@ -130,7 +103,7 @@ const jsonLd = {
         <a class="all-link reveal" style="--d:.05s" href="/projects/">All projects &rarr;</a>
       </div>
       {projects.slice(0, 6).map((p, i) => (
-        <a class="row row-lg reveal" style={`--d:${0.05 + i * 0.05}s`} href={`/projects/${p.id}/`}>
+        <a class="row row-lg reveal" style={`--d:${(0.05 + i * 0.05).toFixed(2)}s`} href={`/projects/${p.id}/`}>
           <span class="name">{p.data.title}<span class="arrow">&nearr;</span></span>
           <span class="desc">
             {p.data.description}
@@ -138,9 +111,26 @@ const jsonLd = {
           </span>
         </a>
       ))}
+      <div class="play-strip reveal" style="--d:.35s">
+        <p class="play-strip-text"><span class="play-strip-label">Got a terminal?</span> Play <a href="/projects/flap/">flap</a>, a tiny arcade game that runs entirely over SSH.</p>
+        <button type="button" class="play-strip-cmd" data-copy="ssh jkartik.in" title="Copy the command, then paste it into a terminal"><code>ssh jkartik.in</code><span class="play-strip-hint">copy</span></button>
+      </div>
       <div class="see-more-wrap reveal">
         <a class="see-more" href="/projects/">See all projects <span class="arr">&rarr;</span></a>
       </div>
+      <script is:inline>
+        document.querySelectorAll('.play-strip-cmd').forEach(function (btn) {
+          var hint = btn.querySelector('.play-strip-hint');
+          btn.addEventListener('click', function () {
+            if (!navigator.clipboard) return;
+            navigator.clipboard.writeText(btn.dataset.copy).then(function () {
+              hint.textContent = 'copied';
+              btn.classList.add('copied');
+              setTimeout(function () { hint.textContent = 'copy'; btn.classList.remove('copied'); }, 1400);
+            });
+          });
+        });
+      </script>
     </section>
 
     <section id="writing">
@@ -149,41 +139,67 @@ const jsonLd = {
         <a class="all-link reveal" style="--d:.05s" href="/blog/">All posts &rarr;</a>
       </div>
       <div class="cards">
-        {latest.map((post, i) => <PostCard post={post} style={`--d:${0.05 + i * 0.05}s`} />)}
+        {latest.map((post, i) => <PostCard post={post} style={`--d:${(0.05 + i * 0.05).toFixed(2)}s`} />)}
       </div>
     </section>
 
     <section id="experience">
       <h2 class="label reveal">Experience</h2>
+
+      <div class="xp-head reveal" style="--d:.05s">
+        <h3>VisionRise Technosoft</h3>
+        <span class="role">Software Engineer Intern · Apr 2026 – Oct 2026</span>
+      </div>
+      <div class="xp">
+        <ul>
+          <li class="reveal" style="--d:.08s">Built a <a href="/projects/white-label-lms/">white-label learning platform</a> end to end: a TypeScript/Express API with <strong>276 routes</strong> across 20 modules on PostgreSQL, and one React Native/Expo app shipped to Google Play as <strong>Rise Academy</strong> and <strong>eGuru</strong>.</li>
+          <li class="reveal" style="--d:.11s">Protected paid video with <strong>AES-128-encrypted HLS</strong>, per-session playback tokens checked on every segment, and short-lived signed Cloud Storage URLs.</li>
+          <li class="reveal" style="--d:.14s">Ran the production server: Ubuntu 24.04 LTS, <strong>Coolify</strong> CI/CD, PostgreSQL and automated backups to Google Cloud Storage.</li>
+          <li class="reveal" style="--d:.17s">Administered the company's GitHub organization (15 repositories) and its Google Workspace directory of <strong>35+ accounts</strong>.</li>
+        </ul>
+      </div>
+
       <div class="xp-head reveal" style="--d:.05s">
         <h3>R.U.D.R.A Cybersecurity</h3>
-        <span class="role">Security engineer intern</span>
+        <span class="role">Security Engineer Intern · May 2025 – Jul 2025</span>
       </div>
       <div class="xp">
         <ul>
-          <li class="reveal" style="--d:.1s">Automated attack-surface monitoring with <strong>BBOT</strong>, cutting ~$20k/yr of manual work.</li>
-          <li class="reveal" style="--d:.15s">Built a custom <strong>Semgrep</strong> module with findings visualized in Neo4j.</li>
-          <li class="reveal" style="--d:.2s">Found two high-severity vulns (<strong>LFI, broken access control</strong>) in a banking client's portal via manual code review; automated detection with Nuclei.</li>
-          <li class="reveal" style="--d:.25s">Purple-team exercises with <strong>Sliver C2</strong>.</li>
+          <li class="reveal" style="--d:.08s">Automated external attack-surface monitoring with <strong>BBOT</strong>, cutting manual recon and saving ~$20,000 a year.</li>
+          <li class="reveal" style="--d:.11s">Built a custom <strong>Semgrep</strong> (SAST) module on my own, with findings visualized as a Neo4j graph.</li>
+          <li class="reveal" style="--d:.14s">Found two high-severity vulnerabilities (<strong>LFI, broken access control</strong>) in a banking client's portal through manual code review, then automated their detection with custom Nuclei templates.</li>
+          <li class="reveal" style="--d:.17s">Deployed and operated the <strong>Sliver C2</strong> framework for purple-team exercises.</li>
         </ul>
       </div>
-      <div class="xp-head reveal" style="--d:.3s">
+
+      <div class="xp-head reveal" style="--d:.05s">
+        <h3>Freelance</h3>
+        <span class="role">Backend &amp; Security Engineer · May 2025 – Oct 2026</span>
+      </div>
+      <div class="xp">
+        <ul>
+          <li class="reveal" style="--d:.08s">May–Jun 2025: hardened the infrastructure of a web platform with <strong>16,000+ users</strong>, and led the incident response when it was hit by ransomware, restoring service through rapid backup and recovery.</li>
+          <li class="reveal" style="--d:.11s">Aug–Oct 2026: built <a href="/projects/sports-live/">sports-live</a>, the live auction and scoring platform for <strong>ELEV8</strong>, a pickleball tournament where about 200 players were auctioned into 8 teams.</li>
+        </ul>
+      </div>
+
+      <div class="xp-head reveal" style="--d:.05s">
         <h3><a href="https://mpstmeacm.com">ACM MPSTME</a></h3>
-        <span class="role">Chairperson</span>
+        <span class="role">Chairperson · since Jun 2026</span>
       </div>
       <div class="xp">
         <ul>
-          <li class="reveal" style="--d:.34s">Chairperson of <strong>ACM MPSTME</strong> (since 2026), my college's computing society — leading its technical direction. Head of Technical Department across NMIMS's biggest student bodies in 2025–26: <a href="https://taqneeqfest.com">Taqneeq</a> (the tech fest), <a href="https://munsocietympstme.com">MUN Society</a> / Mumbai MUN, <a href="https://socialconclave.in">Social Conclave</a>, and Sattva — where I led the platforms and apps thousands use each year.</li>
-          <li class="reveal" style="--d:.38s">Shipped <strong>Delego</strong>, the Mumbai MUN delegate app, to the App Store and Play Store — and built the FastAPI backend running it for <strong>600+ delegates</strong>.</li>
-          <li class="reveal" style="--d:.42s">Built fest infrastructure at scale: a gamified loyalty/credits backend and a Discord onboarding system that registered <strong>1,100+ hackathon participants</strong>.</li>
+          <li class="reveal" style="--d:.08s">Chair a chapter of <strong>~250 members</strong>, 50 of them core. Grew Programming For Everyone to a record <strong>~500 learners</strong>, run for the first time as a 5-day program open to other colleges.</li>
+          <li class="reveal" style="--d:.11s">As Webmaster (2025–26), built the chapter's <a href="/projects/acm-infrastructure/">self-hosted infrastructure</a>: Coolify, a Mailcow server now shared by <strong>7–9 college committees</strong>, and an @mpstmeacm.com inbox for every member. Started <a href="/projects/ftl/">Fool The LLM</a>, a prompt-injection contest.</li>
+          <li class="reveal" style="--d:.14s">Head of Technical Department in 2025–26 at <a href="https://taqneeqfest.com">Taqneeq</a>, the <a href="https://munsocietympstme.com">MUN Society</a>, Social Conclave and Sattva. Built the <a href="/projects/delego-mun/">Delego backend</a> for Mumbai MUN's 2024–25 editions (<strong>600+ delegates</strong>) and <a href="/projects/discord-bots/">Discord onboarding</a> that registered <strong>1,100+ hackathon participants</strong>.</li>
         </ul>
       </div>
-      <p class="campus reveal" style="--d:.46s">Also: <strong>1st globally</strong> at the chat.win AI Jailbreakathon (LLM attack &amp; defense) · <strong>1st</strong> at Taqneeq CodeForge 2026 · Rank&nbsp;1 in Smart India Hackathon's internal round · open-source contributor (SWFT) · NMIMS Mumbai IT, class of 2028.</p>
+      <p class="campus reveal" style="--d:.18s">Also: <strong>1st</strong> on the global leaderboard of chat.win's AI Jailbreakathon (LLM attack &amp; defense) · <strong>1st</strong> at Taqneeq CodeForge 2026 (team win) · Rank&nbsp;1 in Smart India Hackathon's internal round · finalist, top 15 of 230 teams, at the GDG AI Hackathon · open-source contributor.</p>
     </section>
 
     <section id="contact" class="contact-block">
       <h2 class="reveal">Have something to <em>build</em> — or <em>break</em>?</h2>
-      <p class="reveal" style="--d:.08s">Open to freelance work: security assessments, penetration testing, and backend/API builds.</p>
+      <p class="reveal" style="--d:.08s">Open to internships and freelance work: security assessments, penetration testing, and backend/API builds.</p>
       <a class="cta-btn reveal" style="--d:.16s" href="mailto:contact@jkartik.in">contact@jkartik.in</a>
     </section>
 

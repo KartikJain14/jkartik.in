@@ -8,7 +8,7 @@ role: "Solo"
 year: 2026
 status: "Personal project"
 source: "https://github.com/KartikJain14/bad-db"
-order: 4
+order: 7
 ---
 
 I wanted to actually understand what happens between `INSERT` and the disk, so I stopped reading about databases and wrote one. bad-db is a real storage engine — its own binary file format, a B-Tree index I implemented node-split and all, compaction, and a small query language with a parser and a REPL on top.
