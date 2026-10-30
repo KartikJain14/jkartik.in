@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { coverFor } from '../../lib/covers';
+import { imageSize } from '../../lib/image-size';
 import { getCollection } from 'astro:content';
 import { SITE, WEBSITE_ID, PERSON_ID, breadcrumbs } from '../../lib/seo';
 
@@ -14,6 +15,7 @@ const SELECTED = 3;
 const selected = rest.slice(0, SELECTED);
 const more = rest.slice(SELECTED);
 const fCover = featured?.data.cover ?? coverFor(featured?.data.tag, 630);
+const fCoverSize = imageSize(fCover);
 const fMeta = featured?.data.stack.slice(0, 4).join(' · ');
 
 const pageUrl = `${SITE}/projects/`;
@@ -57,7 +59,7 @@ const jsonLd = {
   <main class="wrap-wide">
     {featured && (
       <a class="featured reveal" href={`/projects/${featured.id}/`}>
-        <img class="cover" alt="" src={fCover} />
+        <img class="cover" alt="" src={fCover} width={fCoverSize?.width} height={fCoverSize?.height} />
         <div class="body">
           <span class="flag">Featured{featured.data.live ? ' · Live' : ''}</span>
           <h2>{featured.data.title}</h2>

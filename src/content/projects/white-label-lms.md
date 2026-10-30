@@ -1,6 +1,7 @@
 ---
 title: "Rise Academy & eGuru"
 description: "A white-label learning platform I built at VisionRise Technosoft: one TypeScript backend and one React Native app, shipped to Google Play as two branded apps."
+seoDescription: "A white-label learning platform built at VisionRise Technosoft: one TypeScript backend and one React Native app, shipped on Google Play as two apps."
 tag: "Backend & mobile"
 cover: "/projects/white-label-lms.png"
 live: "https://play.google.com/store/apps/details?id=tech.riseinstitute.app"

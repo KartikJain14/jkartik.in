@@ -1,6 +1,7 @@
 ---
 title: "Where LLM guardrails break: notes from running a jailbreak contest"
 description: "I built a prompt-injection contest and handed a few hundred people a scoreboard and a reason to break it. Here's what actually cracks an LLM's guardrails — and what it means for defending them."
+seoDescription: "I built a prompt-injection contest and gave a few hundred people a reason to break it. What actually cracks an LLM's guardrails, and how to defend them."
 date: 2026-04-03
 tag: "Security"
 cover: "/projects/ftl.png"

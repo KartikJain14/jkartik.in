@@ -277,7 +277,7 @@ a.row { text-decoration: none; color: inherit; }
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 .card:hover { transform: translateY(-4px); border-color: var(--pill-border); }
-.card-cover { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-bottom: 1px solid var(--hairline); }
+.card-cover { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-bottom: 1px solid var(--hairline); }
 .card-body { padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
 .card-tag { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
 .card h3 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.28; }
@@ -321,7 +321,7 @@ h1.title { font-size: clamp(2rem, 5.6vw, 3.3rem); font-weight: 900; letter-spaci
 .byline { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin-top: 20px; padding-bottom: 4px; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink-faint); }
 .byline .who { color: var(--ink-dim); }
 
-.cover-hero { width: 100%; aspect-ratio: 16 / 8; object-fit: cover; display: block; border: 1px solid var(--hairline); border-radius: 14px; margin: 30px 0 8px; }
+.cover-hero { width: 100%; height: auto; aspect-ratio: 16 / 8; object-fit: cover; display: block; border: 1px solid var(--hairline); border-radius: 14px; margin: 30px 0 8px; }
 .cover-cap { font-size: 0.78rem; color: var(--ink-faint); font-style: italic; margin-bottom: 8px; }
 
 /* project meta bar */
@@ -351,7 +351,7 @@ h1.title { font-size: clamp(2rem, 5.6vw, 3.3rem); font-weight: 900; letter-spaci
 .prose li { margin-bottom: 0.5rem; color: var(--ink); }
 .prose li::marker { color: var(--accent); }
 .prose blockquote { margin: 1.6rem 0; padding: 0.4rem 0 0.4rem 1.4rem; border-left: 3px solid var(--accent); font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.45; color: var(--ink); }
-.prose img { display: block; width: 100%; border: 1px solid var(--hairline); border-radius: 12px; margin: 2rem 0 0.6rem; background: var(--bg-lift); }
+.prose img { display: block; width: 100%; height: auto; border: 1px solid var(--hairline); border-radius: 12px; margin: 2rem 0 0.6rem; background: var(--bg-lift); }
 .prose figure { margin: 2rem 0; }
 .prose figure img { margin: 0; }
 .prose figcaption { margin-top: 10px; font-size: 0.82rem; color: var(--ink-faint); font-style: italic; text-align: center; }

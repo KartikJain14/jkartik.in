@@ -1,6 +1,7 @@
 ---
 title: "sports-live"
 description: "A freelance build that ran a pickleball tournament: registration, a live player auction on a projector, fixtures, live scoring and standings. Used at ELEV8, where about 200 players were auctioned into 8 teams."
+seoDescription: "A freelance platform that ran the ELEV8 pickleball tournament: registration, a live player auction on a projector, fixtures, live scoring and standings."
 tag: "Realtime"
 cover: "/projects/sports-live.png"
 stack: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Realtime", "Vitest"]

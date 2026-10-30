@@ -76,7 +76,7 @@ const lbData = items.map((it) => ({
                 <BrowserFrame shot={it.desktopShot} domain={it.domain} alt={it.images.alt} />
                 <PhoneFrame shot={it.mobileShot} alt={`${it.name} on a phone`} class="sx-phone" />
               </div>
-              <button type="button" class="sx-zoom" data-i={i} aria-label={`Open a larger view of ${it.name}`} aria-haspopup="dialog">
+              <button type="button" class="sx-zoom" data-i={i} aria-label={`View larger: ${it.name}`} aria-haspopup="dialog">
                 <span class="sx-zoom-chip" aria-hidden="true">View larger <span class="sx-zoom-ic">&#x2197;</span></span>
               </button>
             </div>

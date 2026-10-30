@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { coverFor } from '../../lib/covers';
+import { imageSize } from '../../lib/image-size';
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
@@ -22,6 +23,7 @@ const { Content } = await render(project);
 
 const d = project.data;
 const cover = d.cover ?? coverFor(d.tag, 600);
+const coverSize = imageSize(cover);
 const ogImage = d.cover ?? '/kartik.png';
 const projUrl = new URL(`/projects/${project.id}/`, Astro.site).href;
 
@@ -60,7 +62,7 @@ const jsonLd = {
   ],
 };
 ---
-<Base title={`${d.title} — Kartik Jain`} description={d.description} ogType="article" image={ogImage} active="projects" progress={true}>
+<Base title={`${d.title} — Kartik Jain`} description={d.seoDescription ?? d.description} ogType="article" image={ogImage} active="projects" progress={true}>
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <main>
@@ -90,7 +92,7 @@ const jsonLd = {
       </div>
     </div>
 
-    <img class="cover-hero hero-in" style="--d:.22s" alt="" src={cover} />
+    <img class="cover-hero hero-in" style="--d:.22s" alt="" src={cover} width={coverSize?.width} height={coverSize?.height} />
 
     {d.stack.length > 0 && (
       <div class="chips reveal" style="margin-top:1.8rem">

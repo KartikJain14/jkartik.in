@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { coverFor } from '../../lib/covers';
+import { imageSize } from '../../lib/image-size';
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
@@ -24,6 +25,7 @@ const { Content } = await render(post);
 
 const d = post.data;
 const cover = d.cover ?? coverFor(d.tag, 600);
+const coverSize = imageSize(cover);
 const dateH = d.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 const dateISO = d.date.toISOString();
 const words = (post.body ?? '').trim().split(/\s+/).length;
@@ -67,7 +69,7 @@ const jsonLd = {
   ],
 };
 ---
-<Base title={`${d.title} — Kartik Jain`} description={d.description} ogType="article" image={ogImage} published={d.date} active="blog" progress={true}>
+<Base title={`${d.title} — Kartik Jain`} description={d.seoDescription ?? d.description} ogType="article" image={ogImage} published={d.date} active="blog" progress={true}>
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <main>
@@ -83,7 +85,7 @@ const jsonLd = {
       </div>
     </div>
 
-    <img class="cover-hero hero-in" style="--d:.2s" alt="" src={cover} />
+    <img class="cover-hero hero-in" style="--d:.2s" alt="" src={cover} width={coverSize?.width} height={coverSize?.height} />
 
     <div class="prose">
       <Content />

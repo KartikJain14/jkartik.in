@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PostCard from '../../components/PostCard.astro';
 import { coverFor } from '../../lib/covers';
+import { imageSize } from '../../lib/image-size';
 import { getCollection } from 'astro:content';
 import { SITE, WEBSITE_ID, personRef, breadcrumbs } from '../../lib/seo';
 
@@ -11,6 +12,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 
 const [featured, ...rest] = posts;
 const fCover = featured?.data.cover ?? coverFor(featured?.data.tag, 630);
+const fCoverSize = imageSize(fCover);
 const fDate = featured?.data.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 const fWords = (featured?.body ?? '').trim().split(/\s+/).length;
 const fMins = Math.max(1, Math.round(fWords / 200));
@@ -57,7 +59,7 @@ const jsonLd = {
   <main class="wrap-wide">
     {featured && (
       <a class="featured reveal" href={`/blog/${featured.id}/`}>
-        <img class="cover" alt="" src={fCover} />
+        <img class="cover" alt="" src={fCover} width={fCoverSize?.width} height={fCoverSize?.height} />
         <div class="body">
           <span class="flag">Latest · {featured.data.tag}</span>
           <h2>{featured.data.title}</h2>

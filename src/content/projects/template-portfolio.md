@@ -1,6 +1,7 @@
 ---
 title: "template-portfolio"
 description: "A one-page portfolio template for students who have never written code: fill in one file, push, and it's online. Used by participants of ACM MPSTME's Programming For Everyone."
+seoDescription: "A one-page portfolio template for students who have never written code: fill in one file, push, and it's online. Used at ACM's Programming For Everyone."
 tag: "Community"
 cover: "/projects/template-portfolio.png"
 source: "https://github.com/KartikJain14/template-portfolio"

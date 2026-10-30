@@ -1,6 +1,7 @@
 ---
 title: "ballast"
 description: "A hackathon build: a treasury engine that decides, every hour, how much of a digital bank's cash to keep liquid and how much to put to work, and explains every move."
+seoDescription: "A hackathon treasury engine that decides every hour how much of a digital bank's cash to keep liquid and how much to put to work, and explains each move."
 tag: "Fintech"
 cover: "/projects/ballast.png"
 source: "https://github.com/KartikJain14/ballast"

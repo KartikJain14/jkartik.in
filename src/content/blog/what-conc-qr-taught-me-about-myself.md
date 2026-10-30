@@ -1,6 +1,7 @@
 ---
 title: "Building conc-qr, Social Conclave's check-in system"
 description: "The system behind Social Conclave's badge scanning with role-based access, a live-editable permission matrix, and a race condition I fixed by accident while chasing latency."
+seoDescription: "The system behind Social Conclave's badge scanning: role-based access, a live-editable permission matrix, and a race condition I fixed by accident."
 date: 2026-08-03
 tag: "Backend"
 cover: "/blog/conc-qr-cover.jpg"

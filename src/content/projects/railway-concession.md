@@ -1,6 +1,7 @@
 ---
 title: "Railway Concession"
 description: "MPSTME's official railway concession system, used by ~4,000 students: submissions, slot booking, admin operations and collection reporting. I took it over in 2026 and maintain it."
+seoDescription: "MPSTME's railway concession system, used by ~4,000 students: submissions, slot booking, admin tools and reports. I took it over in 2026 and maintain it."
 tag: "Backend"
 cover: "/projects/railway-concession.png"
 live: "https://concession.mpst.me"

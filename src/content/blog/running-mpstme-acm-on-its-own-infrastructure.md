@@ -1,6 +1,7 @@
 ---
 title: "An inbox for every member: running MPSTME ACM on its own infrastructure"
 description: "How I set up Coolify and a Mailcow mail server for ACM MPSTME as Webmaster, what email deliverability actually takes, how Discord onboarding and a members-only Minecraft server fit in, and why seven to nine committees now depend on it."
+seoDescription: "How I set up Coolify and a Mailcow mail server for ACM MPSTME, what email deliverability takes, and why several college committees now depend on it."
 date: 2026-10-30
 tag: "Infra"
 cover: "/blog/acm-infra-cover.png"

@@ -1,6 +1,6 @@
 # Kartik Jain
 
-> Kartik Jain is a security engineer and backend developer in Mumbai, India. He was awarded a $1,500 bug bounty by Meta (WhatsApp), has reported vulnerabilities to Microsoft (MSRC) and the Mumbai Police (via CERT-In), and builds production backends with Node.js, TypeScript, Python and PostgreSQL. He is open to internships and to freelance work: web-application security testing (VAPT), secure backend and API development, and DevOps/server hardening.
+> Kartik Jain is a security engineer and backend developer in Mumbai, India, who also builds websites, online stores and web apps for businesses as a freelancer. He was awarded a $1,500 bug bounty by Meta (WhatsApp), has reported vulnerabilities to Microsoft (MSRC) and the Mumbai Police (via CERT-In), and builds production backends with Node.js, TypeScript, Python and PostgreSQL. He is open to internships and to freelance work: websites and online stores, web-application security testing (VAPT), secure backend and API development, and DevOps/server hardening.
 
 Key facts (as of October 2026):
 
@@ -9,7 +9,8 @@ Key facts (as of October 2026):
 - Availability: open to internships and freelance work. Freelance and general contact: contact@jkartik.in. Internships, jobs and résumé requests: career@jkartik.in.
 - Most recent role: Software Engineer Intern at VisionRise Technosoft (Apr 2026 – Oct 2026). Built a white-label learning platform (TypeScript/Node.js API with 276 routes, PostgreSQL, one React Native/Expo app) shipped on Google Play as two branded apps, Rise Academy and eGuru, and ran the company's production server (Ubuntu 24.04, Coolify CI/CD, automated Google Cloud Storage backups).
 - Earlier: Security Engineer Intern at R.U.D.R.A Cybersecurity, Mumbai (May 2025 – Jul 2025). Found two high-severity vulnerabilities (LFI, broken access control) in a banking client's web portal, built a custom Semgrep module, and automated attack-surface monitoring with BBOT.
-- Freelance (two separate engagements, not continuous): in May – Jun 2025, led ransomware incident response and recovery for a web platform with 16,000+ users; in Aug – Oct 2026, built a live-auction and scoring platform used at a ~200-player pickleball tournament.
+- Freelance client websites: online stores for KHOY and Schon Zapato (Shopify), the ELEV8 tournament platform, the AI4HCE symposium site, and more at https://jkartik.in/hire/.
+- Freelance backend and security (two separate engagements, not continuous): in May – Jun 2025, led ransomware incident response and recovery for a web platform with 16,000+ users; in Aug – Oct 2026, built a live-auction and scoring platform used at a ~200-player pickleball tournament.
 - Security research: $1,500 Meta (WhatsApp) bug bounty for a privilege-escalation vulnerability; vulnerabilities reported to Microsoft (MSRC), to the Mumbai Police via CERT-In, to The Souled Store and to Belgian Waffle Co.
 - Leadership: Chairperson of ACM MPSTME, the ACM student chapter at NMIMS MPSTME (Jun 2026 – present). Earlier Head of Technical Department at Taqneeq, Mumbai MUN, Social Conclave and Sattva (2025–26).
 - Maintains MPSTME's official Railway Concession system, used by ~4,000 students.
@@ -18,7 +19,7 @@ Key facts (as of October 2026):
 
 ## Hire and résumé
 
-- [Hire Kartik Jain](https://jkartik.in/hire/): freelance services (web-app security testing, backend and API development, DevOps), proof and how to start
+- [Hire Kartik Jain](https://jkartik.in/hire/): freelance websites, online stores and web apps for businesses, with 13 live examples, client testimonials and how to start. Also web-app security testing, backend and API development, and DevOps
 - [Résumés](https://jkartik.in/resume/): the general résumé plus role-specific versions (security, backend, DevOps, full-stack) as PDFs
 - [General résumé (PDF)](https://jkartik.in/Kartik_Resume.pdf): one page, backend and security
 

@@ -17,6 +17,7 @@ export const LOCATION = 'Mumbai, India';
 /** Quotable one-paragraph summary (third person) — also the Person.description. */
 export const SUMMARY =
   'Kartik Jain is a security engineer and backend developer in Mumbai, India. ' +
+  'As a freelancer he also builds websites, online stores and web apps for businesses. ' +
   'He was awarded a $1,500 bug bounty by Meta (WhatsApp), has reported vulnerabilities to ' +
   'Microsoft (MSRC) and the Mumbai Police (via CERT-In), and builds production backends with ' +
   'Node.js, TypeScript, Python and PostgreSQL. He is open to internships and to freelance ' +
@@ -38,6 +39,13 @@ export const SAME_AS = [
 ];
 
 export const SERVICES = [
+  {
+    slug: 'websites-online-stores',
+    name: 'Websites, online stores and web apps',
+    serviceType: 'Web development',
+    description:
+      'Design, build, hosting and upkeep of business websites, Shopify online stores and custom web apps, including domain, business email and SEO. Past work is at https://jkartik.in/hire/.',
+  },
   {
     slug: 'web-app-security-testing',
     name: 'Web application security testing (VAPT)',
@@ -176,6 +184,13 @@ export const personFull = {
   hasOccupation: [
     {
       '@type': 'Occupation',
+      name: 'Freelance Web Developer',
+      occupationalCategory: '15-1254.00 Web Developers',
+      occupationLocation: { '@type': 'City', name: 'Mumbai' },
+      skills: 'Business websites, Shopify online stores, Next.js, React, TypeScript, Tailwind CSS, hosting, business email, SEO',
+    },
+    {
+      '@type': 'Occupation',
       name: 'Security Engineer',
       occupationalCategory: '15-1212.00 Information Security Analysts',
       occupationLocation: { '@type': 'City', name: 'Mumbai' },
@@ -192,6 +207,9 @@ export const personFull = {
     },
   ],
   knowsAbout: [
+    'Web development',
+    'E-commerce',
+    'Shopify',
     'Web application security testing',
     'Penetration testing',
     'Vulnerability assessment and penetration testing (VAPT)',

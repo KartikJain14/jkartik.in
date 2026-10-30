@@ -1,6 +1,7 @@
 ---
 title: "conc-qr"
 description: "Role-based QR check-in system for Social Conclave — a live-editable permission matrix, phone-camera scanning with a manual fallback, and race-free attendance tracking."
+seoDescription: "Role-based QR check-in system for Social Conclave: a live-editable permission matrix, phone-camera scanning and race-free attendance tracking."
 tag: "Backend"
 cover: "/projects/conc-qr.png"
 stack: ["TypeScript", "Express", "Next.js", "PostgreSQL", "Sequelize", "JWT"]

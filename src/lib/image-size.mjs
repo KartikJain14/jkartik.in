@@ -3,9 +3,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-export function imageSize(publicPath: string): { width: number; height: number } | null {
+export function imageSize(publicPath) {
   if (!publicPath.startsWith('/')) return null;
-  let b: Buffer;
+  let b;
   try {
     b = readFileSync(join(process.cwd(), 'public', decodeURIComponent(publicPath)));
   } catch {
@@ -42,7 +42,7 @@ export function imageSize(publicPath: string): { width: number; height: number }
 }
 
 /** Image MIME type from the file's magic bytes (not its extension). */
-export function imageType(publicPath: string): string | null {
+export function imageType(publicPath) {
   try {
     const b = readFileSync(join(process.cwd(), 'public', decodeURIComponent(publicPath)));
     if (b.readUInt32BE(0) === 0x89504e47) return 'image/png';

@@ -1,6 +1,7 @@
 ---
 title: "Finding a bug's siblings: what I measured about AI for variant analysis"
 description: "I built VARSEER and a benchmark of 49 real vulnerability families mined from git history to test whether clone matching, code embeddings, or an LLM is the right tool for finding a patched bug's unpatched siblings. The gains were modest, and two results went against what I expected."
+seoDescription: "A benchmark of 49 real vulnerability families tests whether clone matching, code embeddings or an LLM best finds a patched bug's unpatched siblings."
 date: 2026-10-20
 tag: "Research"
 cover: "/blog/varseer-cover.png"

@@ -1,6 +1,7 @@
 ---
 title: "meven"
 description: "In development: a portal to replace MPSTME's paper chain of approvals for event rooms and entry permissions with one tracked application and a full audit trail."
+seoDescription: "In development: a portal replacing MPSTME's paper chain of approvals for event rooms and entry permissions with one tracked application and an audit trail."
 tag: "Backend"
 cover: "/projects/meven.png"
 stack: ["TypeScript", "Next.js", "Express 5", "PostgreSQL", "Redis", "Cloudflare R2", "Docker"]

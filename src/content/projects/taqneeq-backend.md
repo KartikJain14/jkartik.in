@@ -1,6 +1,7 @@
 ---
 title: "Taqneeq fest backend"
 description: "The gamified loyalty-and-credits engine behind NMIMS's tech fest — OTP login, role-based point allocation, referrals, and a cached live leaderboard for a crowd of thousands."
+seoDescription: "The gamified loyalty and credits engine behind NMIMS's tech fest: OTP login, role-based point allocation, referrals and a cached live leaderboard."
 tag: "Backend"
 cover: "/projects/taqneeq-backend.png"
 source: "https://github.com/KartikJain14/qrshooter-backend"

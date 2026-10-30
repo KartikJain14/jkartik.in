@@ -11,7 +11,7 @@ the site or the résumé; the short version is https://jkartik.in/llms.txt. Last
 - **Descriptor:** security engineer and backend developer
 - **Location:** Mumbai, India (IST)
 - **Status:** B.Tech Information Technology student, graduating April 2028. Open to internships and freelance work.
-- **Freelance services:** web-application security testing (VAPT), secure backend and API development, DevOps and server hardening. Details: https://jkartik.in/hire/
+- **Freelance services:** websites, online stores (Shopify) and web apps for businesses, with domain, hosting, email and SEO handled; web-application security testing (VAPT), secure backend and API development, DevOps and server hardening. Details: https://jkartik.in/hire/
 - **Contact:** contact@jkartik.in (freelance, general) · career@jkartik.in (internships, jobs, résumé requests)
 - **Website:** https://jkartik.in
 - **GitHub:** https://github.com/KartikJain14
@@ -152,9 +152,19 @@ https://jkartik.in/blog/ (RSS: https://jkartik.in/rss.xml)
 - When a form becomes infrastructure: maintaining an official railway concession system. https://jkartik.in/blog/when-a-form-becomes-infrastructure/
 - Building conc-qr, Social Conclave's check-in system. https://jkartik.in/blog/what-conc-qr-taught-me-about-myself/
 
+## Client websites
+
+Kartik builds websites and online stores for businesses as a freelance web developer in Mumbai. Live examples, with screenshots, are at https://jkartik.in/hire/:
+
+- **KHOY** (khoy.in): launch store for a premium shirt label, on a custom Shopify theme. Built solo.
+- **Schon Zapato** (schonzapato.com): Shopify store for a vegan-leather footwear label. Revamped solo.
+- **ELEV8** (sports-live.in): pickleball tournament platform with a live player auction, fixtures, live scoring and standings. Built solo.
+- **AI4HCE Symposium** (ai4hce-mpstme.nmims.edu): official site for an international NMIMS symposium. Lead developer.
+- **Marketing Machines** (marketingmachines.io): site for a SaaS growth coach. Co-built with a teammate.
+
 ## How to work with Kartik
 
-- **Freelance** (security testing, backend/API work, DevOps): email contact@jkartik.in with what you're
+- **Freelance** (websites, online stores, web apps, security testing, backend/API work, DevOps): email contact@jkartik.in with what you're
   building or want tested, the scope and the timeline. Security testing needs written authorisation from
   the system owner. https://jkartik.in/hire/
 - **Internships and jobs:** career@jkartik.in, résumés at https://jkartik.in/resume/

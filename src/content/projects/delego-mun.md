@@ -1,6 +1,7 @@
 ---
 title: "Delego — Mumbai MUN app"
 description: "The delegate companion app for Mumbai MUN. I built the FastAPI backend behind its 2024–25 editions, which shipped to the App Store and Play Store for 600+ delegates."
+seoDescription: "Mumbai MUN's delegate app. I built the FastAPI backend behind its 2024–25 editions, which shipped to the App Store and Play Store for 600+ delegates."
 tag: "APIs"
 cover: "/projects/delego-mun.png"
 source: "https://github.com/munsoc-mpstme/mundra"

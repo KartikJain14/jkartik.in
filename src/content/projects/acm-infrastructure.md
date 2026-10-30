@@ -1,6 +1,7 @@
 ---
 title: "MPSTME ACM infrastructure"
 description: "The self-hosted platform I set up as ACM MPSTME's Webmaster and now run as Chairperson: Coolify for deploys, a Mailcow mail server shared by 7–9 college committees, an @mpstmeacm.com inbox for every member, and members-only Discord and Minecraft."
+seoDescription: "The self-hosted platform I run for ACM MPSTME: Coolify deploys, a Mailcow server shared by college committees, member inboxes, Discord and Minecraft."
 tag: "Infra"
 cover: "/projects/acm-infrastructure.png"
 stack: ["Coolify", "Mailcow", "Docker", "Linux", "SPF / DKIM / DMARC", "GitHub Actions", "Python"]

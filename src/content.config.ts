@@ -7,6 +7,8 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    // optional <meta> description (≤155 chars) when `description` is too long for search results
+    seoDescription: z.string().max(155).optional(),
     date: z.coerce.date(),
     tag: z.string().default('Notes'),
     cover: z.string().optional(),
@@ -19,6 +21,8 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    // optional <meta> description (≤155 chars) when `description` is too long for search results
+    seoDescription: z.string().max(155).optional(),
     tag: z.string().default('Project'),
     cover: z.string().optional(),
     live: z.string().url().optional(),

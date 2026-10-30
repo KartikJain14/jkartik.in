@@ -1,6 +1,7 @@
 ---
 title: "When a form becomes infrastructure: maintaining an official railway concession system"
 description: "Building the MPSTME Railway Concession system was only the beginning. The harder part was making it official, keeping it dependable, and staying responsible for the people and process around it."
+seoDescription: "Building MPSTME's Railway Concession system was only the beginning. The harder part was making it official, dependable and someone's responsibility."
 date: 2026-08-23
 tag: "Backend"
 cover: "/blog/concession-pass.jpg"

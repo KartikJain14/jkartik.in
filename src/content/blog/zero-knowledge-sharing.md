@@ -1,6 +1,7 @@
 ---
 title: "The server can't read this: designing zero-knowledge sharing"
 description: "How GhostShare shares notes and files in real time while making the server mathematically unable to read them — in-browser key derivation, AES-GCM, and direct-to-R2 encrypted uploads."
+seoDescription: "How GhostShare shares notes and files in real time while the server can't read them: in-browser key derivation, AES-GCM and encrypted uploads to R2."
 date: 2026-07-18
 tag: "Applied crypto"
 cover: "/projects/ghostshare.png"

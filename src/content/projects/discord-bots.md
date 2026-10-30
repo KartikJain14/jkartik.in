@@ -1,6 +1,7 @@
 ---
 title: "Discord onboarding bots"
 description: "Bots that replace the registration desk on college Discord servers: one unique invite per person, and roles, channels and real-name nicknames set automatically the moment they join. One of them onboarded 1,100+ hackathon participants."
+seoDescription: "Bots that replace the registration desk on college Discord servers: unique invites, automatic roles, channels and nicknames. One onboarded 1,100+ people."
 tag: "Automation"
 cover: "/projects/discord-bots.png"
 source: "https://github.com/MPSTME-ACM/acm-cord"

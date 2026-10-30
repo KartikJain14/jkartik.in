@@ -1,10 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import { codeContrast } from './src/lib/shiki-contrast.mjs';
+import { imageDimensions } from './src/lib/image-dimensions.mjs';
 
 // https://astro.build
 export default defineConfig({
   site: 'https://jkartik.in',
+  integrations: [imageDimensions()],
   build: {
     // emit /blog/my-post/index.html so URLs keep a trailing slash
     format: 'directory',
