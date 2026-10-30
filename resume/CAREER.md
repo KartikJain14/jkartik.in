@@ -809,10 +809,11 @@ Résumé line: `B.Tech, Information Technology, NMIMS MPSTME, Mumbai · CGPA 8.3
 | play.google.com/store/apps/details?id=tech.riseinstitute.app | ✅ | Yes (VisionRise) |
 | play.google.com/store/apps/details?id=app.eguru.lms | ✅ | Yes (VisionRise) |
 | eguru.app · riseinstitute.tech · risetechnosoft.com | ✅ | Optional |
-| taqneeqfest.com · munsocietympstme.com | ✅ | Optional (committee proof). taqneeqfest.com now shows a later team's fest, so never link it as a demo of Kartik's work |
+| taqneeqfest.com · munsocietympstme.com | ✅ | Optional (committee proof). taqneeqfest.com now shows a later team's edition, so name the edition Kartik worked on when linking it |
 | khoy.in · schonzapato.com · marketingmachines.io · ai4hce-mpstme.nmims.edu · sports-live.in | ✅ | Yes for client work (P22–P24, P26, P9) |
 | Taqneeq Fest App Store listing | ✅ | **No** (Kartik's call) |
-| socialconclave.in · muntree.munsocietympstme.com · mpstmestudentcouncil.com | ❌ not resolving or parked | No |
+| socialconclave.org | ✅ | Optional (committee proof). The old socialconclave.in no longer resolves |
+| muntree.munsocietympstme.com · mpstmestudentcouncil.com | ❌ not resolving or parked | No |
 | mpstme.pics | ❌ domain lapsed | No |
 | Delego store listings (2024–25 app) | ❌ taken down | No |
 
@@ -967,3 +968,4 @@ Fool The LLM, Railway Concession source, certificate portal, department classifi
 - **2026-10-30**: Six client testimonials approved for jkartik.in/hire (KHOY, Schon Zapato, ELEV8, Marketing Machines, AI4HCE Symposium, Social Conclave; source: Kartik). Quotes live in `src/data/hire.ts`; use them in proposals and cover letters with the same attributions.
 - **2026-10-30**: Added client and company sites P22–P26 from the verified jkartik.in/hire showcase (source: git history, site credits, Kartik's list). §11: mpstmestudentcouncil.com marked parked; client sites added.
 - **2026-10-30**: Schon Zapato revamp (P23) confirmed solo (source: Kartik).
+- **2026-10-30**: jkartik.in/hire now links fest sites by their real domains (Social Conclave, Sattva, Mumbai MUN, Taqneeq), with screenshots of the edition Kartik worked on (source: Kartik). Added Taqneeq to the showcase.

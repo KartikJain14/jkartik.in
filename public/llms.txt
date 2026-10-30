@@ -19,7 +19,7 @@ Key facts (as of October 2026):
 
 ## Hire and résumé
 
-- [Hire Kartik Jain](https://jkartik.in/hire/): freelance websites, online stores and web apps for businesses, with 13 live examples, client testimonials and how to start. Also web-app security testing, backend and API development, and DevOps
+- [Hire Kartik Jain](https://jkartik.in/hire/): freelance websites, online stores and web apps for businesses, with 14 examples, client testimonials and how to start. Also web-app security testing, backend and API development, and DevOps
 - [Résumés](https://jkartik.in/resume/): the general résumé plus role-specific versions (security, backend, DevOps, full-stack) as PDFs
 - [General résumé (PDF)](https://jkartik.in/Kartik_Resume.pdf): one page, backend and security
 

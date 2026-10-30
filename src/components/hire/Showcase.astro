@@ -40,7 +40,6 @@ const lbData = items.map((it) => ({
   domain: it.domain,
   url: it.url,
   status: it.status,
-  archived: it.archived ?? null,
   caseStudy: it.caseStudy ?? null,
   desktop: it.desktopShot,
   mobile: it.mobileShot,
@@ -61,7 +60,7 @@ const lbData = items.map((it) => ({
   <ul class="sx-grid" role="list">
     {items.map((it, i) => {
       const live = it.status === 'live';
-      const href = live ? it.url : it.archived;
+      const href = live ? it.url : null;
       return (
         <li
           class:list={['sx-item', 'reveal', { 'sx-feat': it.featured, flip: featuredFlip.has(it.slug), more: collapsible && i >= PREVIEW }]}
@@ -95,7 +94,7 @@ const lbData = items.map((it) => ({
               <div class="sx-links">
                 {href ? (
                   <a class="sx-live" href={href}>
-                    {live ? <>Visit {it.domain}</> : <>Archived version</>}
+                    Visit {it.domain}
                   </a>
                 ) : (
                   <span class="sx-gone">No longer online</span>
@@ -156,7 +155,7 @@ const lbData = items.map((it) => ({
   type Item = {
     slug: string; name: string; client: string; summary: string; highlight: string | null;
     did: string[]; stack: string[]; year: string; role: string; domain: string; url: string;
-    status: string; archived: string | null; caseStudy: string | null; desktop: Shot; mobile: Shot; alt: string;
+    status: string; caseStudy: string | null; desktop: Shot; mobile: Shot; alt: string;
   };
 
   const root = document.querySelector<HTMLElement>('.sx');
@@ -276,8 +275,8 @@ const lbData = items.map((it) => ({
       $('.lb-role').textContent = `${d.role} · ${d.stack.join(' · ')}`;
       const links = $('.lb-links');
       links.replaceChildren();
-      const href = d.status === 'live' ? d.url : d.archived;
-      if (href) links.append(el('a', 'sx-live', d.status === 'live' ? `Visit ${d.domain}` : 'Archived version', href));
+      const href = d.status === 'live' ? d.url : null;
+      if (href) links.append(el('a', 'sx-live', `Visit ${d.domain}`, href));
       else links.append(el('span', 'sx-gone', 'No longer online'));
       if (d.caseStudy) links.append(el('a', 'sx-case', 'Case study', d.caseStudy));
       links.querySelectorAll('a.sx-live').forEach((a) => { (a as HTMLAnchorElement).target = '_blank'; (a as HTMLAnchorElement).rel = 'noopener noreferrer'; });

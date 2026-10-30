@@ -113,7 +113,7 @@ const jsonLd = {
         item: {
           '@type': 'WebSite',
           name: it.name,
-          url: it.status === 'live' ? it.url : it.archived ?? it.url,
+          url: it.url,
           description: it.summary,
           // "Led team" sites were built by a team Kartik headed
           [it.role === 'Led team' ? 'contributor' : 'creator']: { '@id': PERSON_ID },

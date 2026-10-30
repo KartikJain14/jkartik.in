@@ -7,11 +7,10 @@ export type ShowcaseCategory = 'business' | 'ecommerce' | 'events' | 'education'
 export interface ShowcaseItem {
   slug: string;
   name: string;
-  /** Live URL. For a replaced or dead site, keep the original URL and set `archived`. */
+  /** The site's real domain, always, even if a later team now runs it. Screenshots may show an earlier edition. */
   url: string;
-  status: 'live' | 'archived';
-  /** web.archive.org snapshot to link when the site is no longer live in Kartik's version. */
-  archived?: string;
+  /** 'offline' = no working domain: the card says so and doesn't link out. */
+  status: 'live' | 'offline';
   category: ShowcaseCategory;
   /** Public-safe descriptor of who it's for, e.g. "Footwear brand", "MPSTME's tech fest". */
   client: string;
@@ -232,9 +231,28 @@ export const showcase: ShowcaseItem[] = [
     images: { ...shots('acm-mpstme'), alt: 'ACM MPSTME website hero with the chapter name in large type' },
   },
   {
+    slug: 'taqneeq',
+    name: 'Taqneeq',
+    url: 'https://taqneeqfest.com',
+    status: 'live',
+    category: 'events',
+    client: 'MPSTME’s annual tech fest',
+    summary:
+      'Website for the annual tech fest of NMIMS MPSTME: its events, competitions, workshops and schedule, in front of the whole student crowd.',
+    did: ['Development', 'App'],
+    stack: ['Next.js', 'React'],
+    year: '2024–26',
+    role: 'Led team',
+    roleNote: 'Tech team, then Head of Technical',
+    highlight: 'Led the fest app revamp, with facial-recognition photo discovery',
+    caseStudy: '/projects/taqneeq-backend/',
+    order: 105,
+    images: { ...shots('taqneeq'), alt: 'Taqneeq 17.0 site hero with an astronaut and the line Innovation meets reality' },
+  },
+  {
     slug: 'social-conclave',
     name: 'Social Conclave 2026',
-    url: 'https://conclave26.vercel.app',
+    url: 'https://socialconclave.org',
     status: 'live',
     category: 'events',
     client: 'NMIMS MPSTME student conference',
@@ -252,7 +270,7 @@ export const showcase: ShowcaseItem[] = [
   {
     slug: 'sattva',
     name: 'Sattva 2026',
-    url: 'https://sattva-26.vercel.app',
+    url: 'https://sattvafest.in',
     status: 'live',
     category: 'events',
     client: 'MPSTME’s cultural fest',
@@ -269,8 +287,7 @@ export const showcase: ShowcaseItem[] = [
     slug: 'mumbai-mun',
     name: 'Mumbai MUN 2025',
     url: 'https://mumbaimun.com',
-    status: 'archived',
-    archived: 'https://web.archive.org/web/20251018200103/https://mumbaimun.com/',
+    status: 'live',
     category: 'events',
     client: 'Model UN conference',
     summary:
@@ -282,6 +299,6 @@ export const showcase: ShowcaseItem[] = [
     highlight: 'Backend for its delegate app served 600+ delegates',
     caseStudy: '/projects/delego-mun/',
     order: 130,
-    images: { ...shots('mumbai-mun'), alt: 'Mumbai MUN 2025 site with a banner and event countdown (archived version)' },
+    images: { ...shots('mumbai-mun'), alt: 'Mumbai MUN 2025 site with a banner and event countdown' },
   },
 ];
