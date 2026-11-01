@@ -87,7 +87,7 @@ export const resumes: ResumeEntry[] = [
     highlights: [
       '276-route TypeScript API on PostgreSQL behind two Google Play apps',
       "Maintains the college's railway-concession system for ~4,000 students",
-      'Payment, ticketing and check-in backends for events with 500+ delegates',
+      'Clinic-booking prototype designed with a 3-person team: HLD, LLD and 19 ADRs',
     ],
     file: '/resume/Kartik_Jain_Backend_Engineer.pdf',
     length: '1 page',

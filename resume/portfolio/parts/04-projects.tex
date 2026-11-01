@@ -3,8 +3,8 @@
 
 Case studies first, then shorter entries. Ownership uses five fixed words: \emph{solo} (all
 Kartik's work), \emph{lead} (majority author), \emph{co-lead} (a major share), \emph{maintainer}
-(took over an existing system) and \emph{contributor} (a minority share). Source links appear
-where the repository is public.
+(took over an existing system) and \emph{contributor} (a minority share). The one team project
+says \emph{team of 3} instead. Source links appear where the repository is public.
 
 % ............................................................ GhostShare
 \entry[proj:ghostshare]{GhostShare}{Solo · 2026}
@@ -70,6 +70,40 @@ backup and restore scripts cover the data that does persist.
 \runin{Limits, stated in the write-up} Metadata such as timing and blob sizes stays visible to the
 server, the client code that is served must be trusted, and a room keeps one key for its lifetime;
 per-room key rotation is the planned next step.
+
+% ............................................................ NeuroTechh (MAL 4)
+\entry[proj:neurotechh]{NeuroTechh: clinic appointment platform}{Team of 3 · Nov 2026}
+\dek{The first-prize entry at the MAL 4 hackathon: an architecture and prototype in which patients request appointment slots and clinics confirm or decline them.}
+
+\begin{facts}
+\fact{Event}{MAL 4 (Mobile Architecture Lab), Paytm, Mumbai, 1 November 2026. First prize, against working
+  professionals and students.}
+\fact{Stack}{React Native, Expo, Express, TypeScript, PostgreSQL, Redis, Measure SDK, Docker Compose}
+\fact{Links}{Source and design documents:
+  \href{https://github.com/KartikJain14/mal-hackathon}{github.com/KartikJain14/mal-hackathon} \,·\, write-up:
+  \href{https://jkartik.in/blog/mal4-hackathon-where-code-was-optional/}{``We won a hackathon where the code was optional''}}
+\end{facts}
+
+\runin{What was judged} Architecture was 60\% of the score and code was optional. The team of three
+submitted a one-page problem brief, a full platform design, an HLD, an LLD, 19 Architecture Decision
+Records and three walkthroughs: the core path, failures and a new requirement. The rule the design
+protects is that a confirmed slot belongs to exactly one patient and that a cancellation reopens the
+slot consistently.
+
+\runin{Key decisions} One modular API rather than the nine microservices first proposed. Postgres row
+locks and a partial unique index rather than Redis locks. A transactional outbox rather than Kafka.
+Pending requests hold no slot, so the race happens when a clinic confirms rather than when a patient
+asks. Idempotency keys are created on the phone.
+
+\runin{Prototype} Built for extra credit: patient, hospital and doctor flows, QR check-in, family
+profiles and record uploads. Integration tests cover booking and workflows. The booking rule was
+checked with 2, 50 and 200 concurrent confirms on one slot, and exactly one was confirmed each time.
+
+\runin{Limits, stated in the repository} This is a hackathon design and prototype, not a deployed
+service. The prototype writes outbox rows in the same transaction as each booking change, but the
+worker that would deliver them exists only in the design. The repository's
+\href{https://github.com/KartikJain14/mal-hackathon/blob/main/docs/architecture/as-built.md}{as-built
+document} records what the code does and where it differs from the design.
 
 % ............................................................ Railway Concession
 \entry[proj:concession]{Railway Concession}{Maintainer · Jul 2026 -- present}

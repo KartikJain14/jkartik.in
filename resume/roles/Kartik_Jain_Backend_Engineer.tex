@@ -75,8 +75,7 @@ apps, maintains a college system for \textasciitilde{}4,000 students, and earned
   TypeScript, Zod, PostgreSQL + Drizzle ORM) with audit logs; ships as two Google Play apps (\lnk{https://play.google.com/store/apps/details?id=tech.riseinstitute.app}{Rise Academy}, \lnk{https://play.google.com/store/apps/details?id=app.eguru.lms}{eGuru}).
   \item Built JWT authentication with refresh tokens, Google Sign-In, WhatsApp-verified PIN login and role-based access control;
   secured paid video with AES-128-encrypted HLS, per-session playback tokens and signed GCS URLs.
-  \item Integrated Zoom live classes (signature-verified webhooks, attendance, recordings), Gemini quiz generation, UPI payment
-  verification, and push and email notifications.
+  \item Integrated Zoom (signature-verified webhooks), Gemini quizzes, UPI payment verification and push notifications.
   \item Deployed Docker apps and PostgreSQL to a hardened Ubuntu server via Coolify CI/CD, with automated GCS backups.
 \end{itemize}
 
@@ -101,6 +100,11 @@ apps, maintains a college system for \textasciitilde{}4,000 students, and earned
   \item Streamed encrypted 5 MiB chunks directly to Cloudflare R2 with parallel, resumable uploads; realtime sync over Socket.IO with a
   Redis adapter for horizontal scaling; the server stores only ciphertext.
 \end{itemize}
+\proj{NeuroTechh}{clinic booking prototype, first prize at MAL 4}{React Native, Express, TypeScript, PostgreSQL}{\lnk{https://github.com/KartikJain14/mal-hackathon}{Source}}
+\begin{itemize}
+  \item Designed with a 3-person team (HLD, LLD, 19 ADRs) and prototyped the booking API: row locks, a partial unique index,
+  idempotency keys and version checks; 200 concurrent confirms on one slot produced exactly one booking.
+\end{itemize}
 \proj{Railway Concession System}{MPSTME's official portal}{Next.js, PostgreSQL, Drizzle}{\lnk{https://concession.mpst.me}{Live}}
 \begin{itemize}
   \item Took over and maintain the system \textasciitilde{}4,000 students use: migrated it to PostgreSQL, enforced an
@@ -118,7 +122,7 @@ apps, maintains a college system for \textasciitilde{}4,000 students, and earned
   \item Awarded a \textbf{\$1,500 bug bounty by Meta} for a privilege-escalation vulnerability in WhatsApp.
   \item Reported access-control and information-disclosure flaws in Microsoft Intune and Exchange Admin to MSRC;
   responsibly disclosed a stored XSS on the Mumbai Police website through CERT-In.
-  \item \textbf{1st place} (global), chat.win AI Jailbreakathon (LLM red teaming); \textbf{1st place}, CodeForge 2026 team hackathon.
+  \item \textbf{Won 3 hackathons:} MAL 4 (Paytm, team of 3), chat.win AI Jailbreakathon (global), CodeForge 2026 (team).
 \end{itemize}
 
 \section{Skills}
@@ -126,6 +130,6 @@ apps, maintains a college system for \textasciitilde{}4,000 students, and earned
 \textbf{Backend:} Node.js, Express, Fastify, FastAPI, Flask, REST APIs, WebSockets, JWT/OAuth 2.0, RBAC, Zod, BullMQ\par
 \textbf{Data:} PostgreSQL, Redis, MongoDB, Drizzle ORM, Prisma, Firebase, Supabase\par
 \textbf{Infra:} Docker, Linux, Git, CI/CD (GitHub Actions), Coolify, Nginx, Google Cloud Storage, Cloudflare R2\par
-\textbf{Practices:} Data Structures \& Algorithms, System Design basics, Unit Testing, Secure Code Review, Dependency Scanning
+\textbf{Practices:} System Design (HLD/LLD, ADRs), Data Structures \& Algorithms, Unit Testing, Secure Code Review
 
 \end{document}

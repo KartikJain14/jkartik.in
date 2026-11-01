@@ -274,6 +274,8 @@ offer the closest true experience instead.
 | **E** | Mobile | React Native / mobile app developer | `Software Engineer · Mobile & Backend` | Education → Experience → Projects → Achievements → Skills → Leadership |
 | **F** | AI / LLM security | AI security / red team / LLM eng intern | `Security Engineer · LLM Red Teaming` | Education → Experience → Security Research + AI wins → Projects → Skills → Leadership |
 
+*Hackathon wins are supporting evidence, not the headline (rule 15). Most résumés get at most one combined line.*
+
 *Kartik's default order puts **Education & Leadership at the top**. For his general résumé, use
 Education then a one-line Leadership entry (LD-0) right under it, and drop Leadership from the bottom.*
 
@@ -285,13 +287,13 @@ Education then a one-line Leadership entry (LD-0) right under it, and drop Leade
   webhooks, access control), conc-qr. Skills: §9 line **A**.
 - **B Backend.** VisionRise first and longest (VR-1c, VR-2a, VR-3a, VR-4a/b, VR-5b). Freelance entry
   (FL-2a + DF-1b) if space allows. Projects: GhostShare, Railway Concession, event & payment backends,
-  then bad-db. Keep R.U.D.R.A to 2–3 bullets. Skills: line **B**.
-- **C SWE.** Like B, but add bad-db (CS fundamentals: B-Tree, parser), FL-2 (a client product used at a
+  then P27 (MAL 4: concurrency, HLD/LLD, ADRs) and bad-db. Keep R.U.D.R.A to 2–3 bullets. Skills: line **B**.
+- **C SWE.** Like B, but add bad-db (CS fundamentals: B-Tree, parser), P27 only if it reads stronger than what it would replace, FL-2 (a client product used at a
   live event), and say "single codebase for Android, iOS and web". Skills: line **C**.
 - **D DevOps.** Must include: VR-5a, VR-6a, DF-1, the ACM Webmaster infra (LD-2a: Coolify + Mailcow
   shared by several committees, GitHub org + CI/CD), RU-1 (BBOT automation). Projects: committee infra
   (P14), the jkartik.in pipeline (P15), GhostShare (Docker, Redis scale-out, backup/restore scripts),
-  Railway Concession (runs a 4,000-student system). Skills: line **D**.
+  Railway Concession (runs a 4,000-student system), P27d as one line (reliability design). Skills: line **D**.
 - **E Mobile.** VR-1a up top (single React Native/Expo codebase, 2 apps on Google Play, OTA updates,
   push notifications). Supporting: Taqneeq 17.0 Flutter integration, the Delego backend. Skills: line **E**.
 - **F AI/LLM.** chat.win 1st (global), Fool The LLM (built it and started the event), CSAW LLMAC'25
@@ -606,6 +608,18 @@ CyberCypher); built a freshers' CTF; `template-portfolio` (P18) used by PFE part
 - **P5a (M):** Wrote a database storage engine from scratch in Java: custom on-disk format, a hand-rolled
   B-Tree index, tombstone deletes with compaction, and its own query language and parser.
 
+**P27. NeuroTechh: clinic appointment platform (MAL 4 first prize)**: Team of 3 · Nov 2026 · github.com/KartikJain14/mal-hackathon · `BE SWE MOB`
+- **What:** the first-prize entry at the MAL 4 hackathon (AW-9). Healthtech track: patients request appointment slots and clinics confirm or decline them. The rule the design protects: a confirmed slot belongs to exactly one patient, and a cancellation reopens the slot consistently.
+- **Documents (judged):** one-page problem brief, production design, HLD, LLD, **19 Architecture Decision Records** and three walkthroughs (core path, failures, a new requirement).
+- **Key decisions:** one modular API rather than the nine microservices first proposed; Postgres row locks and a partial unique index rather than Redis locks; a transactional outbox rather than Kafka; pending requests hold no slot, so the race happens at clinic confirm; phone-created idempotency keys.
+- **Prototype (for extra credit):** React Native + Expo app, Express + TypeScript API, PostgreSQL, Redis, Measure SDK, Docker Compose. Patient, hospital and doctor flows; QR check-in; family profiles; record uploads. Booking rule checked with **2, 50 and 200 concurrent confirms on one slot: exactly one confirmed each time.** Integration tests cover booking and workflows.
+- **Links:** github.com/KartikJain14/mal-hackathon; write-up at jkartik.in/projects/mal-hackathon/; blog jkartik.in/blog/mal4-hackathon-where-code-was-optional/.
+- **Wording:** "team of 3", "prototype". It's a hackathon design and prototype with no live users. The repo's `docs/architecture/as-built.md` records what the code does and where it differs from the design.
+- **P27a (L):** Designed a clinic appointment platform with a 3-person team (HLD, LLD, 19 ADRs), winning first prize at MAL 4: Postgres row locks and a partial unique index guard each slot, and 200 concurrent confirms produced exactly one booking.
+- **P27b (M) `BE`:** Prototyped the booking API (Express, TypeScript, PostgreSQL) with idempotency keys, version checks and an outbox written in the same transaction; 200 concurrent confirms on one slot produced exactly one booking.
+- **P27c (S):** First-prize architecture and React Native prototype for clinic booking: HLD, LLD, 19 ADRs (team of 3).
+- **P27d (S) `OPS`:** Failure and recovery design, first prize at MAL 4: idempotent retries, transactional outbox, HLD/LLD, ADRs (team of 3).
+
 ### 6.2 Tier B (use when the role fits)
 
 | ID | Project | Ownership · year | Link | Best for | Facts | Status / note |
@@ -663,6 +677,7 @@ Compressed one-liner (for B/C/D/E résumés where research gets 1–2 lines):
 | ID | Achievement | Notes |
 |---|---|---|
 | **AW-1** | **1st place (global leaderboard)**, AI Jailbreakathon by **chat.win**: LLM prompt attack & defence, won with the fewest tokens; $250 prize | Strong for SEC/AI |
+| **AW-9** | **First prize (Champions), MAL 4 hackathon**, Mobile Architecture Lab, Paytm, Mumbai, 1 Nov 2026; supported by Measure, Google for Developers, Paytm and Ocean AI; **₹20,000**; team of 3; competing against working professionals and students | Architecture was 60% of the score and code was optional, so it's real system-design evidence. Use it where system design matters, usually through P27, not as a stand-alone boast (rule 15) |
 | **AW-2** | **1st place, CodeForge 2026** (Taqneeq × FOSS MPSTME): 3-person team; NIFTY options-analytics platform | Wording: "1st place, CodeForge 2026: built and pitched a NIFTY options-analytics platform with a 3-person team." No repo link |
 | **AW-3** | **$1,500 bug bounty from Meta** | Usually lives in Security Research (SR-1) |
 | **AW-4** | **Rank 1**, Smart India Hackathon (SIH) internal college round | Say "internal round" |
@@ -703,6 +718,8 @@ Compressed one-liner (for B/C/D/E résumés where research gets 1–2 lines):
 | | ORMs: Drizzle, Prisma, Sequelize | S/W | LMS + GhostShare (Drizzle), FTL (Prisma), conc-qr (Sequelize) |
 | | Validation: Zod | S | LMS, GhostShare |
 | | Testing: unit/integration tests (Vitest, pytest-style) | W | LMS, ballast (52 tests), sports-live |
+| | System design: HLD, LLD, Architecture Decision Records (ADRs) | W | MAL 4 first prize (P27) |
+| | Concurrency & reliability: row locks, partial unique indexes, optimistic versioning, idempotency keys, transactional outbox | W | P27 |
 | Data | PostgreSQL | S | most projects; SQLite → PostgreSQL migration (MUNSoc) |
 | | Redis | W | GhostShare (pub/sub, presence, queues), meven |
 | | MongoDB | W | captr, freelance work |
@@ -751,14 +768,14 @@ Compressed one-liner (for B/C/D/E résumés where research gets 1–2 lines):
   `Backend & Infra:` Node.js, FastAPI, Flask, REST APIs, JWT/OAuth 2.0, PostgreSQL, Redis, Docker, Linux, Nginx, CI/CD (GitHub Actions)
 - **B, Backend:**
   `Languages:` TypeScript, JavaScript, Python, SQL, Java ·
-  `Backend:` Node.js, Express, Fastify, FastAPI, Flask, REST APIs, WebSockets, JWT/OAuth 2.0, RBAC, Zod ·
+  `Backend:` Node.js, Express, Fastify, FastAPI, Flask, REST APIs, WebSockets, JWT/OAuth 2.0, RBAC, Zod, System Design (HLD/LLD, ADRs) ·
   `Data:` PostgreSQL, Redis, MongoDB, Drizzle ORM, Prisma ·
   `Infra:` Docker, Linux, CI/CD (GitHub Actions), Coolify, Nginx, Google Cloud Storage, Cloudflare R2
 - **C, SWE:**
   `Languages:` TypeScript, JavaScript, Python, Java, SQL, Go, C++ ·
   `Frameworks:` Node.js, Express, Next.js, React, React Native (Expo), FastAPI ·
   `Data & Infra:` PostgreSQL, Redis, MongoDB, Docker, Linux, Git, CI/CD ·
-  `Concepts:` REST APIs, Data Structures & Algorithms, Authentication, System Design basics
+  `Concepts:` REST APIs, Data Structures & Algorithms, Authentication, System Design (HLD/LLD, ADRs)
 - **D, DevOps:**
   `DevOps:` Docker, Docker Compose, Linux (Ubuntu) Server Administration, CI/CD (GitHub Actions), GHCR, Coolify, Nginx, TLS, Backups & Disaster Recovery, Logging ·
   `Cloud:` Google Cloud Storage, Cloudflare R2, Vercel ·
@@ -801,6 +818,8 @@ Résumé line: `B.Tech, Information Technology, NMIMS MPSTME, Mumbai · CGPA 8.3
 | concession.mpst.me (Railway Concession) | ✅ | Yes |
 | mpstmeacm.com · neurotechh.mpst.me | ✅ | Optional |
 | github.com/KartikJain14/bad-db | ✅ public | Yes |
+| github.com/KartikJain14/mal-hackathon | ✅ public | Yes (P27; docs and winner photo) |
+| mobilearchitecturelab.com/mal4 | ✅ | Optional (event page) |
 | github.com/KartikJain14/qrshooter-backend | ✅ public | Yes (Taqneeq credits backend) |
 | github.com/munsoc-mpstme/mundra | ✅ public | Yes (Delego backend) |
 | github.com/MPSTME-ACM/pfe-regi | ✅ public | Yes |
@@ -827,7 +846,7 @@ Résumé line: `B.Tech, Information Technology, NMIMS MPSTME, Mumbai · CGPA 8.3
    Intern (R.U.D.R.A).
 3. **Ownership wording is fixed:** Railway Concession = "took over / maintain"; PFE registration = "co-led";
    the earlier VisionRise LMS = "contributed"; certificate portal = "contributed"; mpstme.pics = "set up
-   and deployed"; Delego = "2024–25 editions"; CodeForge = "team win".
+   and deployed"; Delego = "2024–25 editions"; CodeForge = "team win"; MAL 4 = "team of 3", "prototype".
 4. **MSRC:** say "reported to MSRC"; never include case IDs.
 5. **CSAW LLMAC'25:** say "participated".
 6. **WhatsApp:** the $1,500 bounty is confirmed; keep the technical detail at "privilege escalation".
@@ -841,11 +860,15 @@ Résumé line: `B.Tech, Information Technology, NMIMS MPSTME, Mumbai · CGPA 8.3
     276 routes · 20 modules · ~4,000 students · 600+ delegates · 500+ delegates · 1,100+ participants ·
     ~250 members · 50 core · ~500 learners · 120+ committee · 70–80 alumni event · 8.34/10 · 52 tests ·
     top 15 of 230 · ~70 FTL participants · 35+ Workspace accounts · 7+ committees on the mail server ·
-    2022 (WhatsApp bounty year) · 15 repositories (VisionRise GitHub org) · ~200 players / 8 teams (ELEV8).
+    2022 (WhatsApp bounty year) · 15 repositories (VisionRise GitHub org) · ₹20,000 (MAL 4) · 19 ADRs · 200 concurrent confirms · 3 hackathon wins (MAL 4, chat.win, CodeForge) · ~200 players / 8 teams (ELEV8).
 13. **Personal details are asked for, never stored or invented** (§0.7). That includes motivations and
     personal stories in SOPs and essays.
 14. **Every claim must be something Kartik can walk through in an interview.** If he says he can't, take it
     out or reword it, whatever this file says.
+15. **Don't lean on hackathon wins.** A résumé shouldn't look like it needs one. Add a win only where it's relevant
+    to the role and reads well, and never add a line just for it or put it in a summary. Otherwise use one
+    combined line: "Won 3 hackathons: MAL 4 (Paytm, team of 3), chat.win AI Jailbreakathon (global), CodeForge
+    2026 (team)". Update the count when a new win comes in. Lead with the engineering; the prize is a few words at most.
 
 ---
 
@@ -893,6 +916,7 @@ need to produce LaTeX.*
 | ID | Question | Unlocks |
 |---|---|---|
 | **Q-coursework** | Relevant coursework? | §10 |
+| **Q-mal-role** | What did Kartik personally own in MAL 4 (which documents, which parts of the prototype, who presented)? | A first-person P27 bullet instead of team wording |
 
 ---
 
@@ -916,6 +940,7 @@ VisionRise-Technosoft, taqneeq (contributor).
 |---|---|
 | KartikJain14/bad-db, groupay, ballast, usb-ai, hindcribe, flap, template-portfolio, jkartik.in | Solo / lead |
 | KartikJain14/qrshooter-backend | Lead author (Taqneeq 17.0 credits backend) |
+| KartikJain14/mal-hackathon (also NeuroTechh/mal-hackathon) | Team of 3 (MAL 4 first prize; P27) |
 | munsoc-mpstme/mundra | Lead backend author for the 2024–25 Delego editions |
 | MPSTME-ACM/pfe-regi | Co-lead |
 | Social-Conclave/conc-qr | Solo |
@@ -969,3 +994,6 @@ Fool The LLM, Railway Concession source, certificate portal, department classifi
 - **2026-10-30**: Added client and company sites P22–P26 from the verified jkartik.in/hire showcase (source: git history, site credits, Kartik's list). §11: mpstmestudentcouncil.com marked parked; client sites added.
 - **2026-10-30**: Schon Zapato revamp (P23) confirmed solo (source: Kartik).
 - **2026-10-30**: jkartik.in/hire now links fest sites by their real domains (Social Conclave, Sattva, Mumbai MUN, Taqneeq), with screenshots of the edition Kartik worked on (source: Kartik). Added Taqneeq to the showcase.
+- **2026-11-02**: Won first prize at MAL 4 (AW-9), with P27 added as Tier A. New skills: system design (HLD/LLD/ADRs), concurrency and reliability patterns. Sources: Kartik, the winner's cheque photo, mobilearchitecturelab.com/mal4, the repo's docs and `as-built.md`. Commit history is one team commit plus Kartik's documentation commit, so ownership stays at team level until Q-mal-role is answered.
+- **2026-11-02**: Rule 15 added (source: Kartik): hackathon wins go only where they read well, otherwise one combined count.
+
