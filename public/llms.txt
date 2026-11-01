@@ -14,7 +14,7 @@ Key facts (as of October 2026):
 - Security research: $1,500 Meta (WhatsApp) bug bounty for a privilege-escalation vulnerability; vulnerabilities reported to Microsoft (MSRC), to the Mumbai Police via CERT-In, to The Souled Store and to Belgian Waffle Co.
 - Leadership: Chairperson of ACM MPSTME, the ACM student chapter at NMIMS MPSTME (Jun 2026 – present). Earlier Head of Technical Department at Taqneeq, Mumbai MUN, Social Conclave and Sattva (2025–26).
 - Maintains MPSTME's official Railway Concession system, used by ~4,000 students.
-- Awards: 1st place on the global leaderboard of chat.win's AI Jailbreakathon; 1st place at CodeForge 2026 (team).
+- Awards: first prize at the MAL 4 hackathon, judged on system architecture, at Paytm Mumbai (Nov 2026, team of 3); 1st place on the global leaderboard of chat.win's AI Jailbreakathon; 1st place at CodeForge 2026 (team).
 - Education: B.Tech in Information Technology, SVKM's NMIMS Mukesh Patel School of Technology Management & Engineering (MPSTME), Mumbai, 2024 – 2028, CGPA 8.34/10.
 
 ## Hire and résumé
@@ -29,6 +29,7 @@ Key facts (as of October 2026):
 - [Rise Academy & eGuru](https://jkartik.in/projects/white-label-lms/): the white-label learning platform built at VisionRise Technosoft
 - [GhostShare](https://jkartik.in/projects/ghostshare/): end-to-end-encrypted, zero-knowledge sharing; keys are derived in the browser and the server stores only ciphertext
 - [Railway Concession](https://jkartik.in/projects/railway-concession/): MPSTME's official concession system, maintained by Kartik for ~4,000 students
+- [NeuroTechh](https://jkartik.in/projects/mal-hackathon/): first-prize clinic appointment design and prototype from the MAL 4 hackathon, built by a team of 3; high-level and low-level designs, 19 decision records
 - [bad-db](https://jkartik.in/projects/bad-db/): a storage engine written from scratch in Java, with a B-Tree index and its own query language
 - [Fool The LLM](https://jkartik.in/projects/ftl/): a prompt-injection contest platform
 - [All projects](https://jkartik.in/projects/): backends, security tooling and event systems

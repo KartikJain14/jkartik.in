@@ -242,6 +242,7 @@ export const personFull = {
   ],
   award: [
     '$1,500 bug bounty from Meta for a privilege-escalation vulnerability in WhatsApp (2022)',
+    'First prize, MAL 4 hackathon, Mobile Architecture Lab, Mumbai (2026, team)',
     '1st place on the global leaderboard, chat.win AI Jailbreakathon',
   ],
   sameAs: SAME_AS,

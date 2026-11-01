@@ -87,6 +87,11 @@ All write-ups: https://jkartik.in/projects/
   used by ~4,000 students. Took it over and maintains it solo: migrated it to PostgreSQL, enforced an
   IST-aware booking window server-side, and built admin tools and automated daily reports for the college
   office. Live at https://concession.mpst.me. https://jkartik.in/projects/railway-concession/
+- **NeuroTechh** (team of 3, Nov 2026): clinic appointment design and prototype that won first prize at the
+  MAL 4 hackathon, where architecture was 60% of the score. High-level and low-level designs and 19 decision
+  records; Postgres row locks and a partial unique index guard each slot, and 200 concurrent confirms on one
+  slot produced exactly one booking. Prototype in React Native, Express and PostgreSQL.
+  https://jkartik.in/projects/mal-hackathon/
 - **Event and payment backends** (NMIMS student events): the Taqneeq tech-fest credits/loyalty backend
   (lead author; OTP login, referrals, cached live leaderboard); the FastAPI backend for Delego, the Mumbai
   MUN delegate app (2024–25 editions, 600+ delegates); co-led paid event registration on Cashfree with
@@ -114,6 +119,7 @@ All write-ups: https://jkartik.in/projects/
 
 ## Achievements
 
+- First prize, MAL 4 hackathon, Mobile Architecture Lab, at Paytm Mumbai (Nov 2026, team of 3, ₹20,000). Judged mainly on system architecture. https://jkartik.in/projects/mal-hackathon/
 - 1st place on the global leaderboard, chat.win AI Jailbreakathon (LLM prompt attack and defence).
 - 1st place, CodeForge 2026 (Taqneeq × FOSS MPSTME), team win.
 - $1,500 bug bounty from Meta (WhatsApp).
@@ -144,6 +150,7 @@ All write-ups: https://jkartik.in/projects/
 
 https://jkartik.in/blog/ (RSS: https://jkartik.in/rss.xml)
 
+- We won a hackathon where the code was optional. https://jkartik.in/blog/mal4-hackathon-where-code-was-optional/
 - An inbox for every member: running MPSTME ACM on its own infrastructure. https://jkartik.in/blog/running-mpstme-acm-on-its-own-infrastructure/
 - Finding a bug's siblings: what I measured about AI for variant analysis. https://jkartik.in/blog/finding-a-bugs-siblings/
 - The server can't read this: designing zero-knowledge sharing. https://jkartik.in/blog/zero-knowledge-sharing/
