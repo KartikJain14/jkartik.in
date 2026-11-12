@@ -3,6 +3,8 @@ title: "Maintaining a student portal: booking rules, PostgreSQL and admin workfl
 description: "How I maintain MPSTME's railway-concession portal for approximately 4,000 students: server-side booking rules, PostgreSQL history, admin tools and daily email reports."
 seoDescription: "Maintaining MPSTME's railway-concession portal: IST-aware booking validation, PostgreSQL history, admin workflows and reliable confirmation emails."
 date: 2026-08-23
+updated: 2026-11-13
+socialImage: "/blog/concession-form.jpg"
 tag: "Backend"
 cover: "/blog/concession-pass.jpg"
 ---

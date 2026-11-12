@@ -3,6 +3,7 @@ title: "Self-hosting college infrastructure with Coolify, Mailcow and Discord"
 description: "How I run ACM MPSTME's self-hosted infrastructure: Coolify deployments, Mailcow email for 7–9 committees, member mailboxes and Discord-based access."
 seoDescription: "ACM MPSTME's self-hosting case study: Coolify deployments, Mailcow email, SPF/DKIM/DMARC and Discord membership access across college committees."
 date: 2026-10-30
+updated: 2026-11-13
 tag: "Infra"
 cover: "/blog/acm-infra-cover.png"
 ---

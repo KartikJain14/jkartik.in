@@ -16,7 +16,7 @@ RUN npm ci
 
 # the rest (including .git, for accurate sitemap dates) + build
 COPY . .
-RUN npm run build
+RUN npm run build && npm run check:seo
 
 # ---- runtime stage: nginx serving the static output (no app server) ----
 FROM nginx:alpine AS runtime

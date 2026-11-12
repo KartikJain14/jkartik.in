@@ -3,6 +3,7 @@ title: "AI vulnerability variant analysis: VARSEER benchmark results and limits"
 description: "My VARSEER study compares clone matching, retrieval signals and LLM triage on 49 vulnerability families across 12 C projects, including negative results and uncertainty."
 seoDescription: "VARSEER tests vulnerability variant analysis on 49 families in 12 C projects: retrieval fusion, clone matching, LLM triage and negative fuzzing results."
 date: 2026-10-20
+updated: 2026-11-13
 tag: "Research"
 cover: "/blog/varseer-cover.png"
 ---

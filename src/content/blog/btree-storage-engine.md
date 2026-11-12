@@ -3,6 +3,7 @@ title: "Building a database storage engine in Java: B-Trees, tombstones and comp
 description: "How I built bad-db, a Java storage engine with a binary record format, an in-memory B-Tree index, tombstone deletes and compaction, and what it lacks for durability."
 seoDescription: "Build a Java storage engine: binary records, an in-memory B-Tree index, tombstone deletes and compaction, with clear limits around crash recovery."
 date: 2026-04-16
+updated: 2026-11-13
 tag: "Systems"
 cover: "/projects/bad-db.png"
 ---

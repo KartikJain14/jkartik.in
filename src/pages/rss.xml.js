@@ -8,6 +8,9 @@ export async function GET(context) {
     (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
   );
   const feedUrl = new URL('/rss.xml', context.site).href;
+  const lastUpdated = posts.length
+    ? new Date(Math.max(...posts.map((post) => (post.data.updated ?? post.data.date).valueOf())))
+    : null;
 
   return rss({
     title: 'Kartik Jain — Writing',
@@ -23,13 +26,14 @@ export async function GET(context) {
       link: `/blog/${p.id}/`,
       author: 'contact@jkartik.in (Kartik Jain)',
       categories: [p.data.tag],
+      customData: `<atom:updated>${(p.data.updated ?? p.data.date).toISOString()}</atom:updated>`,
     })),
     customData: [
       '<language>en</language>',
       `<atom:link href="${feedUrl}" rel="self" type="application/rss+xml"/>`,
       '<managingEditor>contact@jkartik.in (Kartik Jain)</managingEditor>',
       '<webMaster>contact@jkartik.in (Kartik Jain)</webMaster>',
-      `<lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`,
+      ...(lastUpdated ? [`<lastBuildDate>${lastUpdated.toUTCString()}</lastBuildDate>`] : []),
       '<image><url>https://jkartik.in/kartik.png</url><title>Kartik Jain — Writing</title><link>https://jkartik.in/</link></image>',
     ].join(''),
   });

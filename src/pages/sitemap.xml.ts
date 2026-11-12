@@ -114,8 +114,11 @@ export const GET: APIRoute = async () => {
   );
   const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 
-  // Blog posts keep their frontmatter `date` (the publish date you set on purpose).
-  const postEntries = posts.map((p) => ({ id: p.id, lastmod: iso(p.data.date), cover: p.data.cover }));
+  const postEntries = posts.map((post) => ({
+    id: post.id,
+    lastmod: iso(post.data.updated ?? post.data.date),
+    cover: post.data.socialImage ?? post.data.cover,
+  }));
   // Projects, research and the résumé derive their date from git — edit + commit and it updates itself.
   const projectEntries = projects.map((p) => ({
     id: p.id,
@@ -123,7 +126,7 @@ export const GET: APIRoute = async () => {
     cover: p.data.cover,
   }));
 
-  const newestPost = posts[0] ? iso(posts[0].data.date) : today;
+  const newestPost = maxDate(...postEntries.map((post) => post.lastmod));
   const newestProject = maxDate(...projectEntries.map((p) => p.lastmod));
   const researchMod = gitDate('src/data/disclosures.ts');
   const resumeMod = gitDate('public/Kartik_Resume.pdf');

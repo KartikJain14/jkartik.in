@@ -3,6 +3,7 @@ title: "LLM prompt injection: lessons from building a jailbreak contest"
 description: "What running Fool The LLM taught me about prompt injection, encoded secret leaks, streaming-output checks and authorization outside the language model."
 seoDescription: "Lessons from an LLM jailbreak contest: prompt injection, encoded secret leaks, streaming-output checks and why authorization must live outside the model."
 date: 2026-04-03
+updated: 2026-11-13
 tag: "Security"
 cover: "/projects/ftl.png"
 ---

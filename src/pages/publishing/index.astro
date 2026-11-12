@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE, WEBSITE_ID, personRef, breadcrumbs } from '../../lib/seo';
+
+const title = 'About this site, authorship & contact — Kartik Jain';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'AboutPage',
+      '@id': `${SITE}/publishing/#webpage`,
+      url: `${SITE}/publishing/`,
+      name: title,
+      mainEntity: personRef,
+      isPartOf: { '@id': WEBSITE_ID },
+    },
+    breadcrumbs([['Home', '/'], ['About this site', '/publishing/']]),
+  ],
+};
+---
+<Base title={title} description="Who writes jkartik.in, how to contact Kartik Jain, and how to read the dates, project ownership and limitations in his engineering articles.">
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <main>
+    <article>
+      <header class="post-head">
+        <a class="crumb" href="/">← Home</a>
+        <h1 class="title">About this site &amp; contact</h1>
+      </header>
+      <div class="prose">
+        <h2>Written and published by Kartik Jain</h2>
+        <p>I’m Kartik Jain, a security engineer and backend developer in Mumbai, studying Information Technology at NMIMS MPSTME. This is my personal portfolio and engineering blog. I write about systems I build, maintain, test and investigate. My <a href="/">profile</a>, <a href="/resume/">résumés</a>, <a href="/projects/">projects</a> and <a href="/research/">security research</a> provide the background behind the articles.</p>
+        <h2>Contact and corrections</h2>
+        <p>For project enquiries, questions about an article or factual corrections, email <a href="mailto:contact@jkartik.in">contact@jkartik.in</a>. Please include the article URL and the passage you’re referring to. For internships and recruitment, use <a href="mailto:career@jkartik.in">career@jkartik.in</a>.</p>
+        <h2>Dates and revisions</h2>
+        <p>The publication date identifies when an article first appeared. A separate update date records a substantial revision. Updating an old article does not make its original experiment or event new. Where an article describes an earlier version of a system, its results should be read in that context.</p>
+        <h2>Project ownership and evidence</h2>
+        <p>Client projects, employer work, team prototypes and personal experiments have different contexts. Project pages identify my role and whether the work is in production, a prototype or in development. Private source code is not presented as publicly reproducible evidence. Technical writeups include implementation details and, where available, source links, screenshots or measurements.</p>
+        <h2>Research limitations and security disclosures</h2>
+        <p>A reported vulnerability is not necessarily a confirmed bounty or vendor acknowledgement. Benchmark results describe the stated dataset and method; they do not establish that a technique works universally. See each article for its assumptions, negative results and limitations. To report a vulnerability in this site, use the contact in <a href="/.well-known/security.txt">security.txt</a>.</p>
+        <h2>Client relationships</h2>
+        <p>My <a href="/hire/">freelance work page</a> promotes services I provide and identifies client work. An article about work I performed for an employer or client should be read with that relationship in mind.</p>
+        <p>You can follow new writing through the <a href="/rss.xml">RSS feed</a> or find me on <a href="https://github.com/KartikJain14">GitHub</a> and <a href="https://www.linkedin.com/in/kartikjain1410/">LinkedIn</a>.</p>
+      </div>
+    </article>
+  </main>
+</Base>

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "check:seo": "node scripts/check-seo.mjs",
+    "indexnow": "node scripts/indexnow.mjs",
     "preview": "astro preview",
     "resume": "node scripts/build-resume.mjs",
     "astro": "astro"

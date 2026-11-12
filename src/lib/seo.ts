@@ -140,7 +140,6 @@ export const personFull = {
   },
   homeLocation: { '@type': 'City', name: 'Mumbai', sameAs: 'https://www.wikidata.org/wiki/Q1156' },
   knowsLanguage: ['English', 'Hindi', 'Marwari'],
-  alumniOf: mpstme,
   affiliation: [
     {
       '@type': 'OrganizationRole',

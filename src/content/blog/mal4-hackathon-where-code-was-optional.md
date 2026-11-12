@@ -3,6 +3,8 @@ title: "Clinic booking system design: PostgreSQL locks and ADRs at MAL 4"
 description: "How our three-person team designed a clinic appointment prototype at MAL 4 using PostgreSQL row locks, a partial unique index, idempotency keys and 19 ADRs."
 seoDescription: "Clinic appointment system design at MAL 4: PostgreSQL row locks, a partial unique index, idempotent retries and architecture decision records."
 date: 2026-11-02
+updated: 2026-11-13
+socialImage: "/blog/mal4-race.png"
 tag: "System design"
 cover: "/blog/mal4-cover.jpg"
 ---

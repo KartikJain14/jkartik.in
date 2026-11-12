@@ -3,6 +3,7 @@ title: "Building a QR check-in system: PostgreSQL race conditions and role-based
 description: "How I built Social Conclave's QR check-in system for 500+ delegates, with editable role permissions, manual scanning fallback and PostgreSQL duplicate prevention."
 seoDescription: "Build reliable QR check-ins with PostgreSQL unique constraints, role-based permissions and manual fallback: lessons from Social Conclave's conc-qr."
 date: 2026-08-03
+updated: 2026-11-13
 tag: "Backend"
 cover: "/blog/conc-qr-cover.jpg"
 ---

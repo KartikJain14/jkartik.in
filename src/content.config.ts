@@ -10,9 +10,14 @@ const blog = defineCollection({
     // optional <meta> description (≤155 chars) when `description` is too long for search results
     seoDescription: z.string().max(155).optional(),
     date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    socialImage: z.string().optional(),
     tag: z.string().default('Notes'),
     cover: z.string().optional(),
     draft: z.boolean().default(false),
+  }).refine((post) => !post.updated || post.updated >= post.date, {
+    message: 'The revision date must not precede publication.',
+    path: ['updated'],
   }),
 });
 

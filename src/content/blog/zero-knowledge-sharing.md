@@ -3,6 +3,7 @@ title: "End-to-end encrypted file sharing: GhostShare's browser encryption desig
 description: "How I designed GhostShare's encrypted notes and file sharing with browser-side Argon2id, AES-256-GCM, direct uploads to Cloudflare R2 and explicit trust limits."
 seoDescription: "How GhostShare encrypts files in the browser with Argon2id and AES-256-GCM before uploading to Cloudflare R2, and where the trust boundaries remain."
 date: 2026-07-18
+updated: 2026-11-13
 tag: "Applied crypto"
 cover: "/projects/ghostshare.png"
 ---

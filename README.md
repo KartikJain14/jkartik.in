@@ -50,6 +50,14 @@ the sitemap, and prev/next links all update automatically.
 
 Images: drop the file in `public/blog/` and reference it as `/blog/your-image.jpg`.
 
+After a substantial revision, set `updated: YYYY-MM-DD` without changing the original
+`date`. It updates the visible byline, article metadata and sitemap. Optional `socialImage`
+selects a representative large image for sharing when the original cover is too small.
+
+Run `npm run build && npm run check:seo` to check search metadata, dates, structured data,
+article image sizes and internal links. See [search visibility](docs/search-visibility.md)
+for supported search appearances, IndexNow and post-deployment webmaster setup.
+
 ### Authoring features (all shown in `_template.md`)
 
 - **Syntax highlighting** — put a language after the code fence; colours are automatic.

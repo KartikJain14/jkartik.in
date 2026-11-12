@@ -37,6 +37,7 @@ const jsonLd = {
         headline: p.data.title,
         url: `${SITE}/blog/${p.id}/`,
         datePublished: p.data.date.toISOString(),
+        dateModified: (p.data.updated ?? p.data.date).toISOString(),
         author: personRef,
       })),
     },

@@ -40,20 +40,9 @@ const isHome = Astro.url.pathname === '/';
 const path = Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/([^/])$/, '$1/');
 const canonical = new URL(path, Astro.site).href;
 
-// <title> stays ≤60 chars so results never truncate it mid-word, and keeps the name whenever it
-// can: a long "Headline: subtitle — Kartik Jain" becomes "Headline — Kartik Jain". Social cards
-// have room, so og:title keeps the full wording (as do the page's H1 and JSON-LD headline).
 const SUFFIX = ` — ${NAME}`;
 const bareTitle = title.endsWith(SUFFIX) ? title.slice(0, -SUFFIX.length) : title;
-const shortTitle = () => {
-  if (title.length <= 60) return title;
-  const head = bareTitle.split(/[:–—]\s/)[0];
-  if (head !== bareTitle && head.length + SUFFIX.length <= 60) return head + SUFFIX;
-  if (bareTitle.length <= 60) return bareTitle;
-  const cut = bareTitle.slice(0, 60);
-  return cut.slice(0, cut.lastIndexOf(' '));
-};
-const docTitle = shortTitle();
+const docTitle = title;
 const ogTitle = title.length <= 60 ? title : bareTitle;
 
 // meta description: ≤155 chars, cut at a word boundary (cards keep the full text).
