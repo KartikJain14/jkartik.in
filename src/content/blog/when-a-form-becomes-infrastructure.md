@@ -1,28 +1,24 @@
 ---
-title: "When a form becomes infrastructure: maintaining an official railway concession system"
-description: "Building the MPSTME Railway Concession system was only the beginning. The harder part was making it official, keeping it dependable, and staying responsible for the people and process around it."
-seoDescription: "Building MPSTME's Railway Concession system was only the beginning. The harder part was making it official, dependable and someone's responsibility."
+title: "Maintaining a student portal: booking rules, PostgreSQL and admin workflows"
+description: "How I maintain MPSTME's railway-concession portal for approximately 4,000 students: server-side booking rules, PostgreSQL history, admin tools and daily email reports."
+seoDescription: "Maintaining MPSTME's railway-concession portal: IST-aware booking validation, PostgreSQL history, admin workflows and reliable confirmation emails."
 date: 2026-08-23
 tag: "Backend"
 cover: "/blog/concession-pass.jpg"
 ---
 
-The first version of the MPSTME Railway Concession system looked like a form. Students entered their details, selected a date and time, and got a confirmation. It would have been easy to call the job finished there.
+**A student administration portal needs server-side policy validation, traceable records, and tools for the staff operating the process.** A successful form submission is only one step. Booking dates, collection status, exceptions and notifications must agree with what happens at the office.
 
-It was not finished. It was becoming official.
+I took over maintenance of [MPSTME's Railway Concession system](/projects/railway-concession/) in July 2026. The original system was built by the NeuroTechh team; I now maintain it solo for approximately 4,000 students. My work includes migrating the data layer to PostgreSQL, enforcing IST-aware booking windows, extending admin tools, and adding confirmation emails and daily collection reports.
 
-The system was built by [NeuroTechh](https://neurotechh.mpst.me), a team I am part of, and is used by MPSTME students for the railway concession process. I am now maintaining it and continuing to add features. That changed the nature of the work completely. A personal project can fail privately. An official college system backs a process students and administrators rely on, and the work of that day does not wait for the software.
-
-The current system is documented on the [Railway Concession project page](/projects/railway-concession/).
-
-This is the story of the work beyond the first deploy: getting a system accepted, translating administrative rules into software, supporting the people operating it, and learning that being responsible for software also means being responsible for its surroundings.
+This case study explains the backend decisions behind that work: where booking policy is enforced, how current records differ from history, and why an email failure should not turn a saved submission into an apparent failure.
 
 <figure>
   <img src="/blog/concession-form.jpg" alt="The MPSTME Railway Concession student submission form" />
   <figcaption>The public side is deliberately simple: collect the information, validate it, and give the student a clear next step.</figcaption>
 </figure>
 
-## Making it official is a different kind of engineering
+## What does an official student portal need beyond a form?
 
 There is a big difference between building something that works and building something an institution is willing to depend on.
 
@@ -43,7 +39,7 @@ That is the part that is easy to miss when you are trying to get a project shipp
 
 The code is only one part of the promise.
 
-## The real work happens in a loop
+## How do administrative requirements become maintainable software?
 
 Once a system is in use, development stops being a straight line from requirements to release. It becomes a loop:
 
@@ -58,7 +54,7 @@ That last step matters more than it sounds. A feature is not complete just becau
 
 I stayed in regular contact with the administration department because the software was modelling a real process, not inventing one. Booking windows, holidays, collection dates, blocked records, and out-of-schedule collections all came from operational needs. Anjali Barmukh and Omkar Gholap Sir, who coordinate the process on the college side, helped me understand not just what the rules are but why they exist, and their feedback was central to how I translated those requirements into the system. My job was to make those needs clear and enforceable without turning every small change into a code change and redeploy.
 
-## Turning administrative rules into one source of truth
+## How do you validate booking windows in Indian Standard Time?
 
 The booking flow is a good example of where a simple form becomes a backend problem.
 
@@ -87,7 +83,7 @@ The important design decision was not the date picker. It was deciding that poli
   <figcaption>The settings panel lets the process change without a code change: booking rules, and the exceptional records administrators need to block.</figcaption>
 </figure>
 
-## Owning the data layer
+## Why keep current submissions and PostgreSQL history separately?
 
 One of the first substantial changes I made while taking responsibility for the system was moving its data layer to PostgreSQL with Drizzle ORM.
 
@@ -107,7 +103,7 @@ That distinction is useful operationally. The current row answers, "What should 
 
 I also added indexes for the queries the system actually performs: SAP ID searches, collection-date searches, and date-plus-slot filtering. They are small details, but they are the kind of details that become visible when an admin is trying to find a record during a busy collection window.
 
-## The admin interface is part of the product
+## What tools do administrators need to operate the portal?
 
 The student-facing form is the most visible page, but the admin interface is where the process is actually operated.
 
@@ -127,7 +123,7 @@ The collection checkbox is also more meaningful than a boolean on a screen. It r
 
 The interface also has to fail in a way that makes sense. Admin requests include bearer-token validation, expired-session handling, logout, masked response helpers, and optimistic collection updates that revert if the server rejects the change. None of these features make for an impressive demo on their own. Together, they make the dashboard usable when it is being used as a work tool instead of a showcase.
 
-## Notifications are part of correctness
+## Should a confirmation email failure invalidate a saved submission?
 
 The system now sends a confirmation email after a successful submission. The important ordering is that the database write happens first. If the mail server is temporarily unavailable, a student should not receive an internal error that suggests their submission failed when the record was already saved.
 
@@ -149,7 +145,7 @@ The report is shaped around the administrator's next action: how many students w
 
 This is a small example of a broader rule: side effects should not silently redefine the primary operation. The submission is the primary operation. Email is a useful consequence of it, not the thing that decides whether it happened.
 
-## Support is not separate from engineering
+## How does support inform backend changes?
 
 The most important lesson has been that support is not what happens after engineering. Support is one of the inputs to engineering.
 
@@ -161,7 +157,7 @@ That means answering questions, checking the data, reproducing the issue, explai
 
 There is no clean boundary where the software ends and responsibility begins. If the system is official, that boundary is something the administration team and I carry together.
 
-## Designing for the whole process
+## How should a portal record out-of-schedule collections?
 
 The documented process is straightforward: a student submits the form, chooses a collection slot, and arrives at the selected time. In practice, the process also has room for legitimate exceptions that documentation does not spell out.
 
@@ -181,4 +177,4 @@ That is what I value most about maintaining this project. I did not just get to 
 
 The public system is [concession.mpst.me](https://concession.mpst.me). The screenshots and email examples in this post use synthetic development data.
 
-The form is the part students see. The real product is the responsibility behind it.
+For a similar example of enforcing operational rules under pressure, see how I used [PostgreSQL constraints for QR check-ins](/blog/what-conc-qr-taught-me-about-myself/). Both systems need to preserve what actually happened while giving staff enough flexibility to handle exceptions.

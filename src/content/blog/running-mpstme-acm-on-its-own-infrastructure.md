@@ -1,17 +1,17 @@
 ---
-title: "An inbox for every member: running MPSTME ACM on its own infrastructure"
-description: "How I set up Coolify and a Mailcow mail server for ACM MPSTME as Webmaster, what email deliverability actually takes, how Discord onboarding and a members-only Minecraft server fit in, and why seven to nine committees now depend on it."
-seoDescription: "How I set up Coolify and a Mailcow mail server for ACM MPSTME, what email deliverability takes, and why several college committees now depend on it."
+title: "Self-hosting college infrastructure with Coolify, Mailcow and Discord"
+description: "How I run ACM MPSTME's self-hosted infrastructure: Coolify deployments, Mailcow email for 7–9 committees, member mailboxes and Discord-based access."
+seoDescription: "ACM MPSTME's self-hosting case study: Coolify deployments, Mailcow email, SPF/DKIM/DMARC and Discord membership access across college committees."
 date: 2026-10-30
 tag: "Infra"
 cover: "/blog/acm-infra-cover.png"
 ---
 
-A student chapter changes hands every year. The people who set things up graduate, and whatever lived on their personal accounts tends to leave with them: the hosting, the domain settings, the one inbox everybody used, the bot running on someone's laptop.
+**A college chapter can use Coolify for application deployment and Mailcow for domain email while keeping code, accounts and access under the organization's control.** The tradeoff is ongoing responsibility for availability, email deliverability, membership changes and handover to the next team.
 
-When I became ACM MPSTME's Webmaster in July 2025, I wanted the chapter's tools to belong to the chapter. So I set up infrastructure that ACM runs itself: **Coolify** to deploy things, and **Mailcow** to handle mail. A year later I'm the chapter's Chairperson and I still run it, and it has grown well beyond ACM. It now handles mail for **seven to nine college committees**, and every ACM member gets their own **@mpstmeacm.com** address on it.
+I set up this infrastructure as ACM MPSTME's Webmaster and continue to operate it as Chairperson. Coolify hosts applications and bots; Mailcow handles mail for **7–9 college committees** and provides an **@mpstmeacm.com mailbox for every ACM member**, approximately 250 people. Discord roles and account linking also support members-only spaces.
 
-This is what that setup is, what I learnt putting it together, and why I think it's one of the more useful things the chapter owns.
+This is a case study of the setup we operate, including a readiness check for a Discord bot and the DNS work behind mail delivery. It is not a claim that self-hosting removes hosting costs or maintenance work.
 
 <figure>
   <picture>
@@ -21,7 +21,7 @@ This is what that setup is, what I learnt putting it together, and why I think i
   <figcaption>Two platforms and two members-only spaces. None of it is billed per person.</figcaption>
 </figure>
 
-## A place to deploy: Coolify
+## How does Coolify deploy college applications and bots?
 
 [Coolify](https://coolify.io) is an open-source, self-hosted platform-as-a-service. You give it a server, point it at a repository or a Dockerfile, and it builds the app, runs it in a container, and puts it behind a reverse proxy with HTTPS certificates it renews on its own. It's the Vercel or Heroku experience on hardware you control.
 
@@ -40,11 +40,11 @@ async def health(_request):
 
 The Docker image's `HEALTHCHECK` probes it every 30 seconds, so "running" in the dashboard means connected to Discord, not just that the process exists.
 
-## A place for mail: Mailcow
+## What does running Mailcow email involve?
 
 [Mailcow](https://mailcow.email) is an open-source mail server suite that runs in Docker: Postfix to send and receive, Dovecot for mailboxes, Rspamd for spam filtering, and a webmail client, managed from one admin panel.
 
-Running it is the easy part. Getting mail from it into people's inboxes instead of their spam folders is the actual work, because email is a reputation system. A receiving server has no reason to trust a message from a domain it has never heard of, so you have to give it reasons. That comes down to three DNS records, which I configured myself:
+Deploying Mailcow provides the mail services; it does not guarantee inbox placement. I configured SPF, DKIM and DMARC to authenticate messages and set the domain's handling policy. These records are part of deliverability, alongside sender reputation and how the server is used. The following abbreviated records illustrate our setup rather than values to copy into another domain:
 
 ```txt
 mpstmeacm.com.          TXT  "v=spf1 mx ~all"
@@ -53,8 +53,8 @@ _dmarc                  TXT  "v=DMARC1; p=quarantine; rua=mailto:…; fo=1"
 ```
 
 - **SPF** lists which servers may send mail for the domain. Ours says: only the domain's own mail server, and treat anything else with suspicion.
-- **DKIM** is a signature. Mailcow signs every outgoing message with a private key, and receivers check it against the public key published in DNS, so they know the message wasn't altered and really came from us.
-- **DMARC** ties the two together and tells receivers what to do when a message claiming to be from us fails both. Ours says quarantine it, and send us reports. Those reports are how you find out who is sending mail in your name, including people who shouldn't be.
+- **DKIM** signs messages with a domain's private key. Receivers use the public key in DNS to verify the signature and the integrity of the signed content; it does not establish the identity of the individual author.
+- **DMARC** requires the visible From domain to align with a domain authenticated by SPF or DKIM. Our policy asks receivers to quarantine messages that fail that check and send reports. The reports help identify legitimate senders that need configuration as well as unauthorized use of the domain.
 
 The DNS records are only the minimum, though. They make your mail *eligible* to be trusted; they don't make it trusted. Reputation builds up from how the server behaves over time, and since seven to nine committees now send through the same server, it's a shared reputation. One committee blasting a stale mailing list affects everyone else's deliverability, so running the server also means paying attention to how it's being used.
 
@@ -64,13 +64,13 @@ The DNS records are only the minimum, though. They make your mail *eligible* to 
 
 </div>
 
-## An inbox for every member
+## How do member mailboxes support a student chapter?
 
 Because the mail server is ours, every ACM member gets their own **@mpstmeacm.com** address, hosted and managed on that same Mailcow.
 
 Hosted email is priced per seat. For a chapter of about 250 members, a mailbox each would be a monthly bill the chapter could never justify. Self-hosted, a new mailbox costs a few clicks in the admin panel and no licence fee. Members get an address that says they're writing on behalf of the chapter, and the chapter decides what happens to those addresses, not a billing page.
 
-## Discord: onboarding without a registration desk
+## How does Discord automate member onboarding?
 
 The chapter's Discord is organised around departments and positions, so access matters: a Tech executive should see the Tech channels, and what else they see depends on their position. Handing that out by hand to every new member at the start of the year is a slow evening with a lot of mistakes, so a bot does it.
 
@@ -88,7 +88,7 @@ It's a heuristic rather than a guarantee: Discord doesn't tell a bot which invit
 
 acm-cord isn't the first version of this idea. I wrote the first one in Java for the 2024–25 committee, and the same pattern has run the MUN Society's Discord and Taqneeq's CyberCypher hackathon, where it onboarded **1,100+ participants** into their team channels. The [Discord bots](/projects/discord-bots/) page has the details of each.
 
-## A Minecraft server, for members only
+## How does Discord account linking restrict Minecraft access?
 
 For 2026–27 the chapter also runs a Minecraft server that only ACM members can play on. Knowing the address isn't enough: before you can play, you have to link your Minecraft account to your Discord account, and the only way to do that is through the chapter's Discord bot.
 
@@ -96,7 +96,7 @@ That bot lives only in the ACM server, so nobody outside the chapter can even me
 
 It's the least "infrastructure" thing on this list, but it follows the same rule as everything else here. Access comes from being a member of the chapter, and the chapter controls the list.
 
-## Who depends on it now
+## Which college services depend on this infrastructure?
 
 What started as ACM's setup has become shared infrastructure:
 
@@ -106,7 +106,7 @@ What started as ACM's setup has become shared infrastructure:
 
 That changes what a mistake costs. When it was only ACM's mail, a bad day was ACM's problem. Now a mistake on that server reaches committees I'm not part of.
 
-## What I learnt
+## What should the next infrastructure maintainer know?
 
 **Self-hosting doesn't remove the cost, it changes who pays it.** Instead of a monthly bill there's an operator: someone who patches the server, watches the mail queue and answers when a committee's mail stops arriving. I wrote about the same idea from a different angle in [When a form becomes infrastructure](/blog/when-a-form-becomes-infrastructure/). The software is only half of what you're responsible for.
 

@@ -1,19 +1,19 @@
 ---
-title: "We won a hackathon where the code was optional"
-description: "MAL 4 judged architecture instead of demos. Here's how the format worked, why our first design lost to our own decision records, and why it beat every hackathon I've done before."
-seoDescription: "MAL 4 judged architecture, not demos. How we won first prize at Paytm Mumbai, why our own decision records killed our first design, and what it taught me."
+title: "Clinic booking system design: PostgreSQL locks and ADRs at MAL 4"
+description: "How our three-person team designed a clinic appointment prototype at MAL 4 using PostgreSQL row locks, a partial unique index, idempotency keys and 19 ADRs."
+seoDescription: "Clinic appointment system design at MAL 4: PostgreSQL row locks, a partial unique index, idempotent retries and architecture decision records."
 date: 2026-11-02
 tag: "System design"
 cover: "/blog/mal4-cover.jpg"
 ---
 
-Most hackathons I've been to reward whatever looks best at the end. You build fast, you hide the rough parts, and you hope nobody clicks the wrong button while the judges are watching.
+**A clinic booking system can prevent double booking by serializing confirmations with PostgreSQL row locks and enforcing one confirmed appointment per slot with a partial unique index.** Idempotency keys handle retries when a phone loses the response after a successful request. These became central decisions in our MAL 4 architecture and prototype.
 
-MAL 4 was the opposite. Working code was optional, and a login screen earned you nothing. What got scored was whether you could explain your system and defend it: what it promises, what happens when it breaks, and what you'd change when the requirements move.
+[Manan Gandhi](https://manan.cloud), [Naitik Lodha](https://naitiklodha.in) and I entered as a team of three and won first prize. MAL 4, held at Paytm Mumbai on 1 November 2026, judged architecture with working code optional. We produced a brief, high-level and low-level designs, 19 architecture decision records, and a React Native prototype.
 
-[Manan Gandhi](https://manan.cloud), [Naitik Lodha](https://naitiklodha.in) and I won first prize, and ₹20,000 with it. The cash was nice. But I came away thinking I'd learnt things I might not have picked up in five years at a normal job, so this is what the day was and why I liked it so much.
+This is a hackathon case study, not a production deployment. It explains why we replaced our initial microservice design with a modular API, how the booking invariant is enforced, and what the failure walkthroughs revealed.
 
-## What MAL 4 was
+## What did the MAL 4 architecture hackathon require?
 
 [Mobile Architecture Lab](https://mobilearchitecturelab.com/) is a Mumbai engineering lab for senior mobile engineers. [MAL 4](https://mobilearchitecturelab.com/mal4) was its one-day hackathon, held on 1 November at Paytm in Mumbai from 10 to 6, with the theme "Architects in AI Era" and support from Measure, Google for Developers, Paytm and Ocean AI. Teams were up to three people, and the room had working professionals and experts as well as students like us.
 
@@ -21,7 +21,7 @@ Each team drew one of four domains at random: fintech, healthtech, proptech or m
 
 That's a small product. Which was the point: the event's line was to build something "small enough to finish—and thoughtful enough to defend."
 
-## How it was different
+## How was architecture evaluated at MAL 4?
 
 | | A typical hackathon | MAL 4 |
 |---|---|---|
@@ -36,7 +36,7 @@ The rubric made the priorities obvious. **60% of the score was architecture**: p
 
 Judges also checked that your diagrams, decision records and walkthroughs agreed with each other. So you can't just paste in a clever diagram you don't believe in.
 
-## I didn't know what an ADR was
+## What is an architecture decision record (ADR)?
 
 I walked in with no idea what an Architecture Decision Record was. The briefing at the start explained it well enough that we could use it straight away, and it's the thing I'm taking with me.
 
@@ -50,7 +50,7 @@ An ADR is a short record of one decision: the context, the alternatives you cons
 
 That last line is what changed how I think about this. A decision isn't permanent, and it isn't a matter of taste either. It comes with the evidence that would overturn it.
 
-## Our first design lost to our own ADRs
+## Why did we replace microservices with a modular API?
 
 We started with the design you draw when you want to impress someone: nine microservices on Kubernetes, a Redis lock per slot with fencing tokens, Kafka for events, ClickHouse for the audit log. It's all in the [production design](https://github.com/KartikJain14/mal-hackathon/blob/main/docs/architecture/production-design.md), and it does look serious.
 
@@ -67,7 +67,7 @@ All of those tools are good, and none of them was earning its place yet. Every r
 
 If a normal hackathon had given me that same problem, I'd have built the microservices and been proud of them.
 
-## One rule, enforced by the database
+## How do PostgreSQL locks and a partial unique index prevent double booking?
 
 The most useful moment came early. Pending requests don't hold a slot, so any number of patients can ask for the same one. That moves the race: it doesn't happen when a patient taps Request, it happens when clinic staff tap Confirm.
 
@@ -92,7 +92,7 @@ CREATE UNIQUE INDEX one_confirmation
 
 It's a *partial* index so a cancelled appointment doesn't block the slot from being booked again. A row lock and one index ended up doing the job I'd assumed needed Redis.
 
-## The walkthroughs are where it got real
+## How do idempotency keys handle booking retries?
 
 Every team had to walk through three things: the core journey, a failure, and a requirement change. These were the best part of the format, because you can't bluff them.
 
@@ -102,7 +102,7 @@ Every team had to walk through three things: the core journey, a failure, and a 
 
 Pointing at the exact records a change touches, and the ones it doesn't, is a very different experience from going quiet and thinking about your codebase.
 
-## We built a prototype too
+## What did the booking prototype actually verify?
 
 Code was optional, but a prototype earned extra credit, so we built one: a React Native and Expo app for patients, hospitals and doctors, an Express and TypeScript API, PostgreSQL, and the Measure SDK. After the event we checked it against the documents. We fired 2, 50 and then 200 simultaneous confirms at one slot, and each time exactly one was confirmed.
 
@@ -110,7 +110,7 @@ We also wrote down everything else that check found, because the rules told us n
 
 It also found a real bug: a doctor can complete a visit that's still in the future, which reopens its slot, and then a second patient can be confirmed on it. Our own invariant query is what caught it. That's all in the [as-built record](https://github.com/KartikJain14/mal-hackathon/blob/main/docs/architecture/as-built.md), and I trust the project more because that page exists.
 
-## Where AI fit in
+## How did we use AI in the architecture process?
 
 The theme was architects in the AI era, and we used AI throughout. The production design started as an AI draft from our answers to scoping questions, and it helped with the other documents and the prototype too. The rules allowed all of it, with one condition: your team has to understand and defend everything you submit.
 

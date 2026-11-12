@@ -1,19 +1,19 @@
 ---
-title: "The server can't read this: designing zero-knowledge sharing"
-description: "How GhostShare shares notes and files in real time while making the server mathematically unable to read them — in-browser key derivation, AES-GCM, and direct-to-R2 encrypted uploads."
-seoDescription: "How GhostShare shares notes and files in real time while the server can't read them: in-browser key derivation, AES-GCM and encrypted uploads to R2."
+title: "End-to-end encrypted file sharing: GhostShare's browser encryption design"
+description: "How I designed GhostShare's encrypted notes and file sharing with browser-side Argon2id, AES-256-GCM, direct uploads to Cloudflare R2 and explicit trust limits."
+seoDescription: "How GhostShare encrypts files in the browser with Argon2id and AES-256-GCM before uploading to Cloudflare R2, and where the trust boundaries remain."
 date: 2026-07-18
 tag: "Applied crypto"
 cover: "/projects/ghostshare.png"
 ---
 
-Almost every "private" sharing tool has the same asterisk: the server *could* read your data, it just promises not to. That's a policy, not a guarantee — one breach, one subpoena, one rogue admin, and the promise is gone. [GhostShare](/projects/ghostshare/) is built to remove the asterisk. The server never sees plaintext, so "please don't read this" is replaced by "the server can't."
+**End-to-end encrypted file sharing encrypts content on the sender's device and decrypts it on the recipient's device, keeping the content key away from the storage server.** In [GhostShare](/projects/ghostshare/), I implemented this in the browser: Argon2id derives a room key, AES-256-GCM encrypts notes and file chunks, and Cloudflare R2 stores the encrypted uploads.
 
-This post is how that actually works, and where the sharp edges are.
+The goal is specific: a database or object-storage leak should not reveal the shared content without the room secret. The design still trusts the client code delivered to the browser, exposes metadata, and grants access to anyone with the room link. Those boundaries matter as much as the encryption algorithm.
 
-## Start from the threat model, not the feature
+## What does GhostShare's encryption protect against?
 
-The design question isn't "how do I add encryption." It's "who am I defending against, and what do they get to see." For GhostShare the answer is deliberately aggressive: **assume the server is hostile.** Assume the database leaks, the object storage is public, and the operator is reading logs. If the design survives all of that, it survives the boring cases too.
+The threat model covers an observer who can read stored ciphertext and server-side activity without obtaining the room secret. This includes a database leak, exposed objects, or an operator inspecting stored content. It does not cover an attacker who can change the JavaScript the browser executes; that attacker could steal the secret before encryption.
 
 That single assumption dictates everything else. If the server is hostile, the key can never reach it — which means the key has to live and die in the browser.
 
@@ -22,7 +22,7 @@ That single assumption dictates everything else. If the server is hostile, the k
   <figcaption>The whole design in one line: encryption happens <em>before</em> the wire. Everything left of the dashed boundary is your browser; everything right of it only ever holds ciphertext.</figcaption>
 </figure>
 
-## The key is derived, never transmitted
+## How does a URL fragment keep the room secret out of HTTP requests?
 
 A room is identified by a secret that lives in the URL fragment — the part after `#`, which browsers famously *don't* send to the server. From that secret, the client derives an AES-256 key with **Argon2id**, a memory-hard KDF, so even if a room secret is weak, brute-forcing it is expensive.
 
@@ -35,7 +35,7 @@ const key = await argon2id({ password: roomSecret, salt });   // salt is per-roo
 
 Why Argon2id and not just `PBKDF2` or a raw hash? Because the room secret is the only thing standing between an attacker with the ciphertext and the plaintext. A memory-hard function makes an offline guessing attack cost real RAM per attempt, not just CPU.
 
-## Encrypt in the page, upload the ciphertext
+## How are files encrypted before upload to Cloudflare R2?
 
 Once the key exists, every write is encrypted with AES-256-GCM before it leaves the tab. GCM matters here specifically because it's **authenticated** — it doesn't just hide the content, it detects tampering, so a hostile server can't flip bits in your ciphertext and have you decrypt garbage that looks valid.
 
@@ -56,13 +56,13 @@ Files take the same idea and stream it. Instead of sending a file through the ap
 
 </div>
 
-## Realtime without giving anything away
+## How does realtime synchronization work with encrypted content?
 
 Collaboration is over Socket.IO with a Redis adapter so it scales past one node. But the realtime layer inherits the same rule: it moves **ciphertext**. A server relaying encrypted blobs between room members learns the shape of activity — who's connected, how often — but never content. That's an acceptable leak for this threat model; hiding metadata too is a much harder problem (and a different product).
 
 Rooms are ephemeral by construction: every room carries a TTL, and an hourly job reaps whatever's expired. "Delete" isn't a favor the server does you later — it's the default state everything decays into.
 
-## Where it's honest about limits
+## What are the limits of browser-based end-to-end encryption?
 
 Zero-knowledge is a strong claim, so here's what it does *not* buy you:
 
@@ -70,8 +70,8 @@ Zero-knowledge is a strong claim, so here's what it does *not* buy you:
 - **The client is trusted.** If the page you're served is malicious, it's game over — the key is in that page. This is the fundamental limit of in-browser E2E: you're trusting the code delivery, so subresource integrity and a tight origin matter.
 - **One key per room, for now.** Rotating keys on membership change (re-wrapping chunk keys) is the next step; today, a leaked link is a leaked room.
 
-Naming the limits is the point. "The server can't read this" is a precise, defensible claim — not a vibe — and the value is in knowing exactly how far it reaches.
+The defensible claim is that the storage and relay services do not receive plaintext content or the room key during the intended client flow. This is an architecture description, not a claim of an independent security audit. Encryption also cannot force a recipient to forget content or prove that every server-side copy was deleted after expiry.
 
 ---
 
-The code lives in [the GhostShare project](/projects/ghostshare/). The one-sentence takeaway: if you want a system nobody has to trust, don't build trust in — build it *out*, and let the architecture make the promise for you.
+See the [GhostShare project overview](/projects/ghostshare/) for the stack and application features. For another example of keeping policy enforceable on the server, read how I handled [booking rules in a college administration system](/blog/when-a-form-becomes-infrastructure/). Both projects start with the same question: which component actually enforces the promise?

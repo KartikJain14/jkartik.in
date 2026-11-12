@@ -1,15 +1,17 @@
 ---
-title: "Finding a bug's siblings: what I measured about AI for variant analysis"
-description: "I built VARSEER and a benchmark of 49 real vulnerability families mined from git history to test whether clone matching, code embeddings, or an LLM is the right tool for finding a patched bug's unpatched siblings. The gains were modest, and two results went against what I expected."
-seoDescription: "A benchmark of 49 real vulnerability families tests whether clone matching, code embeddings or an LLM best finds a patched bug's unpatched siblings."
+title: "AI vulnerability variant analysis: VARSEER benchmark results and limits"
+description: "My VARSEER study compares clone matching, retrieval signals and LLM triage on 49 vulnerability families across 12 C projects, including negative results and uncertainty."
+seoDescription: "VARSEER tests vulnerability variant analysis on 49 families in 12 C projects: retrieval fusion, clone matching, LLM triage and negative fuzzing results."
 date: 2026-10-20
 tag: "Research"
 cover: "/blog/varseer-cover.png"
 ---
 
-When a vulnerability gets patched, the fix usually covers the one place someone noticed. The mistaken assumption behind it is often still sitting somewhere else in the code base. Google's year-in-review counted [17 of the 41 in-the-wild 0-days of 2022](https://blog.google/threat-analysis-group/0-days-exploited-wild-2022/) as variants of bugs that had already been reported, and Project Zero [argued](https://projectzero.google/2022/06/2022-0-day-in-wild-exploitationso-far.html) that many could have been prevented with more comprehensive patching and regression tests.
+**Vulnerability variant analysis searches for other code locations that share the root cause of a known bug.** A patch supplies a starting point: the unsafe operation, the missing condition and the context in which it matters. The task is to rank similar risks for an analyst to investigate, not simply to find copied code.
 
-Starting from one confirmed bug and hunting for its siblings is called **variant analysis**. It is one of the most useful things a defender can do, because each finding is a bug an attacker could otherwise have found by reading the same patch.
+I built **VARSEER** to compare retrieval and LLM triage on **49 historical vulnerability families across 12 C projects**. Retrieval fusion found a labelled variant in the top 50 for 38.8% of families; LLM triage concentrated positives into a smaller shortlist without a statistically clear ranking improvement. Fuzzing confirmed no vulnerabilities. These results apply to this benchmark and its labelling limitations, not to AI security tools generally.
+
+The motivation is practical. Google's year-in-review counted [17 of the 41 in-the-wild 0-days of 2022](https://blog.google/threat-analysis-group/0-days-exploited-wild-2022/) as variants of previously reported bugs. Project Zero also [discussed](https://projectzero.google/2022/06/2022-0-day-in-wild-exploitationso-far.html) how broader patching and regression testing could address recurring root causes.
 
 There has been a lot of excitement about AI doing this. Google's [Big Sleep](https://projectzero.google/2024/10/from-naptime-to-big-sleep.html) agent found an exploitable bug in SQLite after being given a recent fix as a starting point. Sean Heelan [used o3 to find a Linux kernel SMB bug](https://sean.heelan.io/2025/05/22/how-i-used-o3-to-find-cve-2025-37899-a-remote-zeroday-vulnerability-in-the-linux-kernels-smb-implementation/), but also reported that the model found a known bug in only 8 of 100 runs while producing 28 false-positive reports. These are case studies. They do not tell you which technique to trust, how many functions you need to read before you find a variant, or how much an LLM adds over cheaper retrieval.
 
@@ -26,7 +28,7 @@ I wanted numbers for those questions. So I built **VARSEER**, a pipeline for ran
 
 </div>
 
-## A clone is not a variant
+## How is vulnerability variant analysis different from clone detection?
 
 This is the distinction everything else depends on. Here is a real pair from my benchmark, taken from libarchive's zip writer in 2012:
 
@@ -48,7 +50,7 @@ Both fixes are the same two-line change, a missing `NULL` check on the result of
 
 What they share is the **root cause**: a value that can be `NULL` flows into `strlen` without a check. A clone shares text. A variant shares a violated safety condition. Clone detectors like VUDDY, MOVERY and V1SCAN are built around the first, even when they are patch-aware.
 
-## Turning the question into something measurable
+## How do you measure vulnerability retrieval quality?
 
 I framed the task the way a defender actually experiences it:
 
@@ -62,7 +64,7 @@ The input is the **seed**: the vulnerable function, its patch, and the commit me
 
 Ground truth comes from history. A function counts as a variant if maintainers *later* fixed it for the same root cause, and its vulnerable code was already present when the seed was fixed. You are predicting the future from the past, which is exactly the position a defender is in. It also undercounts, because a variant nobody has fixed yet is scored as a miss.
 
-### Building the benchmark
+### How was the historical vulnerability benchmark built?
 
 I could not find a public benchmark that asks this question directly, so I mined one from git history.
 
@@ -108,7 +110,7 @@ A function rises when several independent signals agree on it. Nothing in this s
 
 Some departures from the original design: the sandbox I ran this in blocked HuggingFace, CodeQL and Joern. So the embeddings are TF-IDF + LSA fitted on each snapshot rather than a pretrained code model, the code graph is my own tree-sitter def-use construction, and the "CodeQL-style" baseline is my own structural query. The LLM parts ran as Claude subagents reading anonymised JSON, using about 0.87M tokens for adjudication and 2.83M for triage (roughly 1.9k tokens per candidate).
 
-## What the numbers say
+## Did retrieval fusion outperform clone matching and embeddings?
 
 ### Fusion wins, by less than I hoped
 
@@ -153,7 +155,7 @@ The data did not support it.
 
 My best explanation is that a short slice makes a sparse, noisy query, while the whole function carries the context that makes code risky: parsing loops, buffers, length arithmetic. The size/sink prior supports this. It knows nothing about the seed and just ranks large functions with many dangerous operations first, yet it still reaches 22.4% Hit@50. **Part of what makes a function a likely variant is its neighbourhood, not just the bug.**
 
-### The LLM is a filter, not a ranker
+### Did LLM triage improve vulnerability ranking?
 
 <figure>
   <picture>
@@ -173,7 +175,7 @@ The way I would use it: **let the LLM tell you which two functions to read first
 
 Difficulty also varied a lot by project. Hit@50 was 0% for FFmpeg (pools of up to 28k functions) and SQLite, and around 60% for libxml2 and libarchive. By bug class, NULL-dereference families were easiest (46%), then out-of-bounds (37%) and integer overflow (29%).
 
-### Fuzzing confirmed nothing
+### Did directed fuzzing confirm any vulnerabilities?
 
 The last stage was supposed to turn a ranked guess into a confirmed bug. I tried it on libxml2, the project with the most families, at four seed snapshots (2020, 2021, 2022 and 2025): clang 18, AddressSanitizer, a multi-target libFuzzer harness, and 45–60 seconds of directed fuzzing per target.
 
@@ -203,7 +205,7 @@ Three things explain the negative result. Many of the labelled variants are miss
 - **Use the LLM to cut, not to order.** Read what it flags first, and keep the retrieval ranking for everything else.
 - **Plan for fault injection.** Many real NULL-dereference variants sit on error paths a normal fuzzer never reaches.
 
-## Where this could be wrong
+## What are the benchmark's limitations?
 
 <div class="admonition warning">
 

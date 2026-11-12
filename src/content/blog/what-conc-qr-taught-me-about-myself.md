@@ -1,22 +1,24 @@
 ---
-title: "Building conc-qr, Social Conclave's check-in system"
-description: "The system behind Social Conclave's badge scanning with role-based access, a live-editable permission matrix, and a race condition I fixed by accident while chasing latency."
-seoDescription: "The system behind Social Conclave's badge scanning: role-based access, a live-editable permission matrix, and a race condition I fixed by accident."
+title: "Building a QR check-in system: PostgreSQL race conditions and role-based access"
+description: "How I built Social Conclave's QR check-in system for 500+ delegates, with editable role permissions, manual scanning fallback and PostgreSQL duplicate prevention."
+seoDescription: "Build reliable QR check-ins with PostgreSQL unique constraints, role-based permissions and manual fallback: lessons from Social Conclave's conc-qr."
 date: 2026-08-03
 tag: "Backend"
 cover: "/blog/conc-qr-cover.jpg"
 ---
 
-Last year, Social Conclave handed every attendee (12–16 year old kids) a QR code, and someone had to build the thing that decides whether a scan means yes or no, at the door, at food, at high tea. This year that someone was me. Solo, less than two weeks, mostly after everyone else had gone to sleep. The result is [conc-qr](/projects/conc-qr/): an Express/TypeScript API, a Postgres database, and a Next.js scanning app staff run off their own phones ([source](https://github.com/Social-Conclave/conc-qr)).
+**A reliable QR check-in system must authorize the scanner, validate the checkpoint, and prevent duplicate admission atomically.** Checking whether a badge has already been used and then inserting a record is unsafe under concurrent requests. In conc-qr, a PostgreSQL unique constraint enforces one scan per participant, checkpoint and day.
+
+I built [conc-qr](/projects/conc-qr/) solo in under two weeks for Social Conclave, supporting check-ins for 500+ delegates. It combines an Express/TypeScript API, PostgreSQL, and a Next.js scanner that staff use on their phones. The [source is public](https://github.com/Social-Conclave/conc-qr). The difficult parts were changing permissions during the event and making two near-simultaneous scans produce one admission.
 
 <figure>
   <img src="/blog/conc-qr-login.jpg" alt="conc-qr login screen on a phone - email and access code fields under a Conclave logo" />
   <figcaption>Role based login, pick a day and checkpoint.</figcaption>
 </figure>
 
-Since I had no one to bounce ideas off, I did something I don't normally bother with: before writing a line of code, I first wrote out, in full sentences, who'd be using it and how. People call that a prompt now; I call it a spec doc, and given how short the runway was, it was the only planning I had time for.
+Before implementation, I wrote down who would scan each badge and which actions each role could perform. That short specification separated three concerns: identifying the participant, authorizing staff at a checkpoint, and recording whether access had already been used.
 
-## the part that isn't obvious: who's allowed to scan what
+## How do editable role permissions work at each checkpoint?
 
 The interesting design problem wasn't the QR code, it was the permissions behind it. Four roles exist: `HOSPI`, `RND`, `MGMT`, `SECURITY` and none of them are hardcoded to a specific checkpoint. Instead there's an access matrix, a plain JSON blob stored in Postgres, shaped roughly like:
 
@@ -27,7 +29,7 @@ The interesting design problem wasn't the QR code, it was the permissions behind
 }
 ```
 
-An admin can edit this mid-event without a deploy reassign who scans what, add a checkpoint on day two that didn't exist on day one. The scan endpoint checks the caller's JWT role against `matrix[day][accessType]` on every request, with a five-minute in-memory cache so I'm not hitting Postgres on every single tap. It's a small decision, but it's the one that actually mattered: fest logistics change faster than I can push code, so the permission model had to be data, not `if` statements.
+An admin can change the matrix during the event without deploying code: reassign a role or add a checkpoint for another day. The scan endpoint checks the caller's JWT role against `matrix[day][accessType]`, using a five-minute in-memory cache to reduce database reads. That cache also means a permission change may take up to five minutes to appear in a process still using its cached matrix. Editable policy and immediate revocation are separate requirements.
 
 <figure>
   <img src="/blog/conc-qr-scanning.jpg" alt="Scan screen showing a phone camera pointed at a QR code badge" />
@@ -48,7 +50,7 @@ Scan works, get a green card:
   <figcaption>A real scan against a real badge, not a mockup.</figcaption>
 </figure>
 
-## the bug I didn't notice writing
+## How do PostgreSQL unique constraints prevent duplicate QR scans?
 
 The actual hard part underneath all of this is "has this badge already been used today." My first pass did the obvious thing: look it up, and if it's not there, create it. I wrote it without thinking twice, it was maybe the tenth small decision that hour, and I was more focused on the next screen than this one.
 
@@ -80,4 +82,6 @@ I'll take that fix. I just wish I could say I went looking for it on purpose, it
 
 ---
 
-It held. Nobody got fed twice, nobody got turned away. The permission matrix meant the one last-minute request I got like "can HOSPI also scan high tea on day two" and it was a two-minute admin-panel change, not a redeploy. And the correctness bug that could've actually hurt someone's night got fixed almost by accident, while I was busy worrying about something else entirely.
+The useful result was a workflow staff could operate: phone scanning for the normal case, manual entry for damaged badges, and configurable roles when logistics changed. Duplicate prevention belongs in the database because the rule must hold even when requests overlap.
+
+The same distinction appears in our [clinic-booking architecture](/blog/mal4-hackathon-where-code-was-optional/): a UI can guide users, but a database constraint must enforce exclusive use. For the full scope and stack, see the [conc-qr project](/projects/conc-qr/).
