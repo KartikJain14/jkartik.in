@@ -1,6 +1,6 @@
 ---
 title: "flap"
-description: "A Flappy-style arcade game you play over SSH, with collectible wings, second chances and a shared leaderboard. Nothing to install. Try it: ssh jkartik.in"
+description: "A Flappy-style arcade game you play over SSH, with collectible wings, second chances and a shared leaderboard. Nothing to install. Try it: ssh flap.jkartik.in"
 tag: "Game"
 cover: "/projects/flap.png"
 live: "ssh://jkartik.in"
@@ -12,7 +12,7 @@ status: "Live over SSH"
 order: 4
 ---
 
-<div class="play-cta"><p class="play-cta-label">Play it now, from any terminal</p><pre><code>ssh jkartik.in</code></pre><p class="play-cta-note">Works with the SSH client already on macOS, Linux and Windows 10/11; <code>ssh flap.jkartik.in</code> reaches the same game. <kbd>Space</kbd> to flap, <kbd>W</kbd> to spend wings on a revive after a crash, <kbd>L</kbd> for the leaderboard, <kbd>Q</kbd> to quit. Connect with an SSH key and the key becomes your account; without one you play as a guest.</p></div>
+<div class="play-cta"><p class="play-cta-label">Play it now, from any terminal</p><pre><code>ssh flap.jkartik.in</code></pre><p class="play-cta-note">Works with the SSH client already on macOS, Linux and Windows 10/11; <code>ssh flap.jkartik.in</code> reaches the same game. <kbd>Space</kbd> to flap, <kbd>W</kbd> to spend wings on a revive after a crash, <kbd>L</kbd> for the leaderboard, <kbd>Q</kbd> to quit. Connect with an SSH key and the key becomes your account; without one you play as a guest.</p></div>
 
 flap is a tiny arcade game that lives entirely in your terminal. There's no app, no browser and no account form: if you have `ssh`, you can play. Everyone who connects gets their own game on the same server, and every run lands on one shared leaderboard.
 
