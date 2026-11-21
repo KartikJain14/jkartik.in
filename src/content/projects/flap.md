@@ -1,6 +1,6 @@
 ---
 title: "flap"
-description: "A Flappy-style arcade game you play over SSH, with nothing to install. The server runs every game and keeps the leaderboard. Try it: ssh jkartik.in"
+description: "A Flappy-style arcade game you play over SSH, with collectible wings, second chances and a shared leaderboard. Nothing to install. Try it: ssh jkartik.in"
 tag: "Game"
 cover: "/projects/flap.png"
 live: "ssh://jkartik.in"
@@ -12,7 +12,7 @@ status: "Live over SSH"
 order: 4
 ---
 
-<div class="play-cta"><p class="play-cta-label">Play it now, from any terminal</p><pre><code>ssh jkartik.in</code></pre><p class="play-cta-note">Works with the SSH client already on macOS, Linux and Windows 10/11; <code>ssh flap.jkartik.in</code> reaches the same game. <kbd>Space</kbd> to flap, <kbd>L</kbd> for the leaderboard, <kbd>Q</kbd> to quit. Connect with an SSH key and the key becomes your account; without one you play as a guest.</p></div>
+<div class="play-cta"><p class="play-cta-label">Play it now, from any terminal</p><pre><code>ssh jkartik.in</code></pre><p class="play-cta-note">Works with the SSH client already on macOS, Linux and Windows 10/11; <code>ssh flap.jkartik.in</code> reaches the same game. <kbd>Space</kbd> to flap, <kbd>W</kbd> to spend wings on a revive after a crash, <kbd>L</kbd> for the leaderboard, <kbd>Q</kbd> to quit. Connect with an SSH key and the key becomes your account; without one you play as a guest.</p></div>
 
 flap is a tiny arcade game that lives entirely in your terminal. There's no app, no browser and no account form: if you have `ssh`, you can play. Everyone who connects gets their own game on the same server, and every run lands on one shared leaderboard.
 
@@ -20,6 +20,14 @@ flap is a tiny arcade game that lives entirely in your terminal. There's no app,
   <img src="/projects/flap-welcome.png" alt="flap's welcome screen in a terminal: the FLAP title in pixel art, a blue pixel bird, a leaderboard preview with the player's row highlighted, and flap.jkartik.in in the status bar" />
   <figcaption>The welcome screen. It's all terminal cells: half-block characters give square pixels and twice the vertical resolution.</figcaption>
 </figure>
+
+## Wings and second chances
+
+Every 15th pipe has a pair of white angel wings glowing gold in its gap. Touch them to collect a wing; just passing the pipe doesn't count. Pickups sparkle, burst into gold particles and add to your balance immediately.
+
+You start with 3 wings. After a crash, you have 5 seconds to press **W** and spend wings to continue the same flight, or **Space** to save the run and start fresh. Revives cost 1, 2, 4, 8… wings within a run, resetting to 1 for each new flight. A revive brings a gold feather burst, a countdown and 3 seconds of invincibility under a pulsing halo, so you have time to find your rhythm again.
+
+Wings stay with your SSH key between visits; guests keep them for their session.
 
 ## How it works
 
